@@ -1,0 +1,1 @@
+<img class="centered" src="$FlickrPhoto.SmallURL" alt="$Title.XML" title="$Title.XML"/> 
