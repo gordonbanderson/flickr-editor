@@ -120,7 +120,9 @@ class FlickrPhoto extends DataObject implements Mappable {
 
   // this one is what created the database FlickrPhoto_FlickrTagss
   static $many_many = array(
-    'FlickrTags' => 'FlickrTag'
+    'FlickrTags' => 'FlickrTag',
+    'FlickrBuckets' => 'FlickrBucket'
+
   );
 
 
@@ -241,11 +243,16 @@ class FlickrPhoto extends DataObject implements Mappable {
 
     $lfImage = new LiteralField( 'FlickrImage', $imageHtml );
     $fields->addFieldToTab( 'Root.Main', $lfImage );
+    $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
+        $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
 
-    $fields->push( new TextField( 'Title', 'Title' ) );
-    $fields->push( new TextAreaField( 'Description' ) );
-
-
+    $fields->addFieldToTab( "Root.Location", new LatLongField( array(
+          new TextField( 'Lat', 'Latitude' ),
+          new TextField( 'Lon', 'Longitude' ),
+          new TextField( 'ZoomLevel', 'Zoom' )
+        ),
+        array( 'Address' )
+      ) );
 
     return $fields;
   }
@@ -265,11 +272,11 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
 
-  public function getLatitude() {
+  public function getMappableLatitude() {
     return $this->Lat;
   }
 
-  public function getLongitude() {
+  public function getMappableLongitude() {
     return $this->Lon;
   }
 
