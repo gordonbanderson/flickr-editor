@@ -50,6 +50,9 @@ class FlickrController extends Page_Controller {
     public function createBucket() {
         $flickrPhotoIDs = $this->request->param('OtherID');
         $flickrSetID = Convert::raw2sql($this->request->param('ID'));
+        $ajax_bucket_row = Convert::raw2sql($_GET['bucket_row']);
+        error_log("BUCKET ROW:".$ajax_bucket_row);
+
         error_log("PARAMS:".print_r($this->request->params(),1));
 
         $sanitizedIDs = Convert::raw2sql($flickrPhotoIDs);
@@ -72,6 +75,18 @@ class FlickrController extends Page_Controller {
         error_log("BUCKET ID:".$bucket->ID);
 
         error_log($flickrPhotoIDs);
+
+        $result = Array(
+            'bucket_id' => $bucket->ID,
+            'flickr_set_id' => $flickrSet->ID,
+            'ajax_bucket_row' => $ajax_bucket_row
+
+        );
+
+        echo json_encode($result);
+
+        //echo $bucket->ID;
+        die; // abort render
 
     }
 
