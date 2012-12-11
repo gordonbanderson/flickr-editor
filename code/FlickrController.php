@@ -17,8 +17,34 @@ class FlickrController extends Page_Controller {
         'index',
         'importSet',
         'editprofile',
-        'sets'
+        'sets',
+        'primeBucketsTest'
     );
+
+
+    function primeBucketsTest() {
+        $fset = DataList::create('FlickrSet')->last();
+        $bucket = new FlickrBucket();
+        $bucket->write();// get an ID
+        $photos = $fset->FlickrPhotos();
+        error_log("FLICKR SET:".$fset->ID);
+        error_log("PHOTOS FOUND:".$photos->count());
+
+        $bucketPhotos = $bucket->FlickrPhotos();
+        $ctr = 0;
+        foreach ($photos as $key => $value) {
+            $bucketPhotos->add($value);
+            error_log("Adding photo ".$value->ID);
+            $ctr = $ctr + 1;
+            if ($ctr > 7) {
+                break;
+            }
+        }
+        $bucket->FlickrSetID = $fset->ID;
+        $bucket->write();
+    }
+
+
      
     public function init() {
         parent::init();
