@@ -1,5 +1,5 @@
 $Title
 
 <% control FlickrPhotos %>
-$Title
+<img src="$ThumbnailURL"/>
 <% end_control %>
