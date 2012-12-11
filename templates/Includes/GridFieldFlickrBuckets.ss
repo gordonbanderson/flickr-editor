@@ -25,20 +25,8 @@
 <tbody class="ss-gridfield-items" id="buckets">
 
 
-<tr class="ss-gridfield-item first odd" data-id="167" data-class="FlickrPhoto" style="cursor: default;">
-<td class="col-Thumbnail">****<img src="http://farm9.staticflickr.com/8208/8232426960_3353550603_t.jpg"></td>
-<td class="col-buttons">
-<a class="action action-detail edit-link" 
-href="admin/flickr_sets/FlickrSet/EditForm/field/FlickrSet/item/4/ItemEditForm/field/Flickr Photos/item/167/edit" title="Edit">edit</a>
-<button name="action_gridFieldAlterAction?StateID=50bddd55ef02c6_52235108" 
-class="action action gridfield-button-delete nolabel ss-ui-button ui-button ui-widget
- ui-state-default ui-corner-all ui-button-text-icon-primary" 
- id="action_DeleteRecord167" title="Delete" 
- data-icon="cross-circle" 
- data-url="admin/flickr_sets/FlickrSet/EditForm/field/FlickrSet/item/4/ItemEditForm/field/Flickr Photos"
-  role="button" aria-disabled="false"><span class="ui-button-icon-primary ui-icon btn-icon-cross-circle"></span><span class="ui-button-text">
-		
-	</span></button>
+<tr><td>
+<p>Images will appear here grouped by the time difference selected in the slider above</p>
 </td></tr>
 
 <tfoot><tr>
@@ -65,7 +53,7 @@ class="action action gridfield-button-delete nolabel ss-ui-button ui-button ui-w
 <tr>
 <% control FlickrPhotos %>
 <td id="flickrPhoto_$ID" data-time="$TakenAt" class="bucketPhoto">
-<img src="$ThumbnailURL" alt="$Title" title="$Title" style="width:{$ThumbnailWidth}px;"/>
+<img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" style="width:{$ThumbnailWidth}px;"/>
 </td>
 </tr>
 <% end_control %>
