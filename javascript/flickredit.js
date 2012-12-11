@@ -87,6 +87,9 @@ console.log("FLICKR EDIT");
 			onclick: function() {
 				var flickrPhotoIDS = new Array();
 				var photoDOM = $(this).parent().parent().find('td').first();
+				var ajax_bucket_id = $(this).parent().parent().attr('id');
+				ajax_bucket_id = ajax_bucket_id.replace('bucket_', '');
+				console.log('AJAX BUCKET ID:'+ajax_bucket_id);
 
 				$(photoDOM).find('img').each(function(index) {
 					flickrPhotoIDS.push($(this).attr('data-id'));
@@ -94,14 +97,29 @@ console.log("FLICKR EDIT");
 
 				console.log(flickrPhotoIDS);
 
-				var flickr_set_id = 7; // FIXME, param
- 
+				var flickr_set_id = 5; // FIXME, param
 				$.ajax({
-					url: "/flickr/createBucket/"+flickr_set_id+"/" + flickrPhotoIDS.join(),
-					context: document.body
-				}).done(function() {
-					$(this).addClass("done ");
-				});
+					url: "/flickr/createBucket/" + flickr_set_id + "/" + flickrPhotoIDS.join()+'?bucket_row='+ajax_bucket_id,
+					type: 'POST',
+					dataType: 'json',
+					//context: document.body,
+					success: function(data) {
+						console.log(data);
+
+						var bucketRow = $('#bucket_'+data.ajax_bucket_row);
+						//bucketRow.html('Bucket saved');						
+						bucketRow.effect("highlight", {}, 1000, function() {
+							bucketRow.addClass('hide');
+						});
+
+						
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						// log the error to the console
+						console.log("The following error occured: " + textStatus, errorThrown);
+					}
+				})
+
 
 
 				//console.log(photoDOM);
