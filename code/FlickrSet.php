@@ -73,7 +73,7 @@ class FlickrSet extends DataObject {
 
     $forTemplate = new ArrayData( array(
         'Title' => $this->Title,
-        'FlickrPhotos' => $this->FlickrPhotos()
+        'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
 
       ) );
     $html = $forTemplate->renderWith( 'GridFieldFlickrBuckets' );
@@ -99,6 +99,11 @@ class FlickrSet extends DataObject {
     if (!$this->KeepClean) {
       $this->IsDirty = true;
     }
+  }
+
+  function FlickrPhotosNotInBucket() {
+    error_log("FLICKR PHOTOS NOT IN BUCKETS");
+    return $this->FlickrPhotos()->where('FlickrPhoto.ID not in (select FlickrPhotoID as ID from FlickrPhoto_FlickrBuckets)');
   }
 
 
