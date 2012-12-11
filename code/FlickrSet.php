@@ -25,6 +25,10 @@ class FlickrSet extends DataObject {
     'AssetFolder' => 'Folder'
   );
 
+  static $has_many = array(
+    'FlickrBuckets' => 'FlickrBucket'
+  );
+
 
   /// model admin
   static $searchable_fields = array(
@@ -47,8 +51,8 @@ class FlickrSet extends DataObject {
 
 
 
-    $fields->push( new TextField( 'Title', 'Title' ) );
-    $fields->push( new TextAreaField( 'Description' ) );
+    $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
+    $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
 
     $gridConfig = GridFieldConfig_RelationEditor::create();
     // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
@@ -59,6 +63,12 @@ class FlickrSet extends DataObject {
     $gridField = new GridField( "Flickr Photos", "List of Photos:", $this->FlickrPhotos(), $gridConfig );
     $fields->addFieldToTab( "Root.FlickrPhotos", $gridField );
 
+    $gridConfig2 = GridFieldConfig_RelationEditor::create();
+    $gridConfig2->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
+    $gridConfig2->getComponentByType( 'GridFieldPaginator' )->setItemsPerPage( 100 );
+
+    $gridField2 = new GridField( "Flickr Buckets", "List of Buckets:", $this->FlickrBuckets(), $gridConfig2 );
+    $fields->addFieldToTab( "Root.SavedBuckets", $gridField2 );
 
 
     $forTemplate = new ArrayData( array(
