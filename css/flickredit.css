@@ -54,3 +54,7 @@ tr.sized1 {
 
 #buckets {
 }
+
+.createBucket {
+	padding-left: 24px;
+}
