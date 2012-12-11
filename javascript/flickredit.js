@@ -23,8 +23,8 @@ console.log("FLICKR EDIT");
 
 				$('#hiddenImageStore').find('.bucketPhoto').each(function(index) {
 					var t = new Date($(this).attr('data-time'));
-					console.log("TIME ATTR:" + $(this).attr('data-time'));
-					console.log(t);
+					//console.log("TIME ATTR:" + $(this).attr('data-time'));
+					//console.log(t);
 					if(groupTime == null) {
 						groupTime = t;
 					}
@@ -83,11 +83,29 @@ console.log("FLICKR EDIT");
 			}
 		});
 
-		// toggle boxes on drop down change
-		$('#bucketTimeProgressBarNOT').change(function(e) {
+		$('.createBucket').entwine({
+			onclick: function() {
+				var flickrPhotoIDS = new Array();
+				var photoDOM = $(this).parent().parent().find('td').first();
+
+				$(photoDOM).find('img').each(function(index) {
+					flickrPhotoIDS.push($(this).attr('data-id'));
+				});
+
+				console.log(flickrPhotoIDS);
+
+				var flickr_set_id = 7; // FIXME, param
+ 
+				$.ajax({
+					url: "/flickr/createBucket/"+flickr_set_id+"/" + flickrPhotoIDS.join(),
+					context: document.body
+				}).done(function() {
+					$(this).addClass("done ");
+				});
 
 
-
+				//console.log(photoDOM);
+			}
 		});
 	});
 })(jQuery);
