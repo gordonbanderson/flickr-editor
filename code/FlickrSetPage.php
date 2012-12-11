@@ -195,29 +195,25 @@ class FlickrSetPage_Controller extends Page_Controller {
 
     function FlickrPhotos() {
         if (!$this->FlickrPhotos) {
-            $kids = $this->AllChildren();
+            
+            $images = $this->FlickrSetForPage()->FlickrPhotos();
 
-            $fpids = array();
-            foreach ($kids as $key => $value) {
-                array_push($fpids,$value->FlickrPhotoForPageID);
-            }
-
-
-            $splode = implode(',',$fpids);
-            $flickrPhotos = DataObject::get('FlickrPhoto', "ID IN ($splode)");
-
-            $flickrPhotoPages = $kids->toArray();
-
-            foreach ($flickrPhotos as $key => $fp) {
-                $fpp = $flickrPhotoPages[$key];
+            error_log("T1 image size:".$images->count());
+/*
+            foreach ($images as $key => $fp) {
+                $fpp = $images[$key];
                 $fp->TakenAt = strtotime($fp->TakenAt)+3600*($this->TimeShiftHours);
-                $fp->FlickrPageURL = $fpp->Link();
-
-                error_log("FP LINK:".$fp->FlickrPageURL);
+                error_log("CHECKING IMAGE ".$fp->Title);
             }
+*/
+            $this->FlickrPhotos = $images;
+            error_log("T2 image size:".$images->count());
+            error_log("T3 image size:".$this->FlickrPhotos->count());
 
-            $this->FlickrPhotos = $flickrPhotos;
+
         }
+
+        error_log("IMAGE COUNT:".$this->FlickrPhotos->count());
         return $this->FlickrPhotos;
     }
 
