@@ -3,34 +3,54 @@
 	margin-right: auto;
 }
 
-ul.bucket {
-	list-style-type: none;
-		display: block;
-		clear: both;
-}
 
-ul.bucket li {
-		display: inline;
-		float: left;
+tr.bucket td {
+	/*
 		width: 120px;
 		height: 120px;
+		*/
 }
 
-ul.bucket li img {
+tr.bucket tr {
+	background: pink;
+}
+
+#bucketTimeProgressBar {
+	width: 700px;
+}
+
+
+
+tr.bucket td img, .imageStrip img {
 	margin-left: auto;
 	margin-right: auto;
-	float: none;
+	float: left;
+	display: block;
 	border-left: solid #CCC 1px;
 	border-top: solid #CCC 1px;
 	border-bottom: solid #333 1px;
-	border-right: solid #333 1px;
+	border-right: solid #333 1px;	
 }
 
-ul.sized1 {
+.imageStrip img {
+	max-height: 70px;
+}
+
+.col-ImageStrip .imageStrip img {
+	max-height: 50px;
+	max-width: 70px;
+}
+
+tr.sized1 {
 	display: none;
+	/*
 	height: 0px;
+	*/
 }
 
 #hiddenImageStore {
 	display: none;
+}
+
+#buckets {
 }
