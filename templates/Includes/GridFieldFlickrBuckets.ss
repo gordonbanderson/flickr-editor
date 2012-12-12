@@ -22,7 +22,7 @@
 </tr>
 </tbody>
 
-<tbody class="ss-gridfield-items" id="buckets">
+<tbody class="ss-gridfield-items" data-flickr-set-id="$ID"  id="buckets">
 
 
 <tr><td>
@@ -53,7 +53,7 @@
 <tr>
 <% control FlickrPhotosNotInBucket %>
 <td id="flickrPhoto_$ID" data-time="$TakenAt" class="bucketPhoto">
-<img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" style="width:{$ThumbnailWidth}px;"/>
+<img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" class="imgDrag" style="width:{$ThumbnailWidth}px;"/>
 </td>
 </tr>
 <% end_control %>
