@@ -141,7 +141,7 @@ console.log("FLICKR EDIT");
 						var bucketRow = $('#bucket_'+data.ajax_bucket_row);
 						bucketRow.find('td').first().find('img').each(function(index,element) {
 							var imageID  = $(this).attr('data-id');
-							imageID = imageID.replace('data-id', 'flickrPhoto_');
+							imageID = '#flickrPhoto_'+imageID;
 							console.log("Removing "+imageID);
 							$(imageID).remove();
 						});
