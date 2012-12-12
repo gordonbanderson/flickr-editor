@@ -11,7 +11,8 @@ class FlickrSet extends DataObject {
     'Description' => 'HTMLText',
     'FirstPictureTakenAt' => 'Datetime',
     // flag to indicate requiring a flickr API update
-    'IsDirty' => 'Boolean'
+    'IsDirty' => 'Boolean',
+    'LockGeo' => 'Boolean'
   );
 
 
@@ -53,6 +54,7 @@ class FlickrSet extends DataObject {
 
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
     $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
+    $fields->addFieldToTab( 'Root.Main', new CheckBoxField( 'LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features' )  );
 
     $gridConfig = GridFieldConfig_RelationEditor::create();
     // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
