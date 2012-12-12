@@ -1,6 +1,8 @@
 <?php
 
 Director::addRules(100, array('flickr/$Action/$ID' => 'FlickrController'));
+Director::addRules(100, array('flickr/$Action/$ID' => 'FlickrController'));
+Director::addRules(100, array('flickr/$Action/$ID/$OtherID' => 'FlickrController'));
 Director::addRules(100, array('tags/$Action/$ID' => 'FlickrTagsController'));
 
 //define global path to Components' root folder
