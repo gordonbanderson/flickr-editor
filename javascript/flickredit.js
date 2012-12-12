@@ -78,8 +78,40 @@ console.log("FLICKR EDIT");
 
 				};
 
+				$('.imgDrag').draggable();
+
+				$('tr.bucket').droppable({
+					drop: function(event,ui) {
+						console.log("Dropped");
+						console.log(event);
+						console.log(ui);
+
+						var draggedImage = $(ui.draggable.context);
+						console.log("Dragged image:");
+						console.log(draggedImage);
+
+						console.log("Dropped on:");
+						console.log(event.target);
+
+						draggedImage.detach();
+						draggedImage.css('left', '0px');
+						draggedImage.css('top', '0px');
+						$(event.target).find('td').first().append(draggedImage);
+					},
+					receive: function(event,ui) {
+						console.log("RECEIVED");
+					}
+				})
+
 				console.log('**** TOTAL IMAGES ****:' + totalImages);
 
+			}
+		});
+
+		$('.imgDrag').entwine({
+			onclick: function() {
+				console.log('bucket img entwine');
+				$(this).html('test');
 			}
 		});
 
@@ -97,7 +129,7 @@ console.log("FLICKR EDIT");
 
 				console.log(flickrPhotoIDS);
 
-				var flickr_set_id = 5; // FIXME, param
+				var flickr_set_id = $('#buckets').attr('data-flickr-set-id');
 				$.ajax({
 					url: "/flickr/createBucket/" + flickr_set_id + "/" + flickrPhotoIDS.join()+'?bucket_row='+ajax_bucket_id,
 					type: 'POST',
@@ -107,6 +139,12 @@ console.log("FLICKR EDIT");
 						console.log(data);
 
 						var bucketRow = $('#bucket_'+data.ajax_bucket_row);
+						bucketRow.find('td').first().find('img').each(function(index,element) {
+							var imageID  = $(this).attr('data-id');
+							imageID = imageID.replace('data-id', 'flickrPhoto_');
+							console.log("Removing "+imageID);
+							$(imageID).remove();
+						});
 						//bucketRow.html('Bucket saved');						
 						bucketRow.effect("highlight", {}, 1000, function() {
 							bucketRow.addClass('hide');
