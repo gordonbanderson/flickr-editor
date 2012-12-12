@@ -73,6 +73,7 @@ class FlickrSet extends DataObject {
 
     $forTemplate = new ArrayData( array(
         'Title' => $this->Title,
+        'ID' => $this->ID,
         'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
 
       ) );
