@@ -69,7 +69,7 @@ class FlickrSet extends DataObject {
     $gridConfig2->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
     $gridConfig2->getComponentByType( 'GridFieldPaginator' )->setItemsPerPage( 100 );
 
-    $gridField2 = new GridField( "Flickr Buckets", "List of Buckets:", $this->FlickrBuckets(), $gridConfig2 );
+    $gridField2 = new GridField( "Flickr Buckets", "List of Buckets:", $this->FlickrBucketsByDate(), $gridConfig2 );
     $fields->addFieldToTab( "Root.SavedBuckets", $gridField2 );
 
 
@@ -107,6 +107,23 @@ class FlickrSet extends DataObject {
   function FlickrPhotosNotInBucket() {
     error_log("FLICKR PHOTOS NOT IN BUCKETS");
     return $this->FlickrPhotos()->where('FlickrPhoto.ID not in (select FlickrPhotoID as ID from FlickrPhoto_FlickrBuckets)');
+  }
+
+  function FlickrBucketsByDate() {
+    /*
+    The following does not work as the TakenAt field is returned with the results, meaning things cannot be uniquified
+    $result = $this->FlickrBuckets()->innerJoin('FlickrPhoto_FlickrBuckets','FlickrBucketID = FlickrBucket.ID')->
+    innerJoin('FlickrPhoto', 'FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID')->
+    sort('TakenAt');
+    */
+    $result = $this->FlickrBuckets()->where('
+      FlickrBucket.ID in (select distinct FlickrBucketID from FlickrBucket 
+      INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
+      INNER JOIN FlickrPhoto ON FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID
+      WHERE (FlickrSetID = '.$this->ID.') order by TakenAt)');
+
+    
+    return $result;
   }
 
 
