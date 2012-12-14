@@ -19,6 +19,7 @@ class FlickrBucket extends DataObject {
   );
 
   public static $summary_fields = array(
+    'Title',
     'ImageStrip' => 'ImageStrip'
   );
 
@@ -53,14 +54,39 @@ class FlickrBucket extends DataObject {
         $fields->push($lf2);
 
 
-         $fields->addFieldToTab( "Root.Location", new LatLongField( array(
+         // only show a map for editing if no sets have geolock on them
+        $lockgeo = false;
+        foreach ($this->FlickrPhotos() as $fp) {
+          foreach ($fp->FlickrSets() as $set) {
+
+            if ($set->LockGeo) {
+              $lockgeo = true;
+              break;
+            }
+          } 
+
+          if ($lockgeo) {
+            break;
+          }
+        }
+    
+
+    error_log("++++ LOCK GEO: BUCKET - ".$lockgeo);  
+
+    if (!$lockgeo) {
+      error_log("Adding location tab as lock geo is ".$lockgeo);
+       $fields->addFieldToTab( "Root.Location", new LatLongField( array(
           new TextField( 'Lat', 'Latitude' ),
           new TextField( 'Lon', 'Longitude' ),
           new TextField( 'ZoomLevel', 'Zoom' )
         ),
         array( 'Address' )
       ) );
-         
+    }
+   
+
+
+       
         return $fields;
     }
 
@@ -72,6 +98,15 @@ class FlickrBucket extends DataObject {
       }
       $html = $html . "</div>";
       return DBField::create_field( 'HTMLText',  $html);
+    }
+
+
+    public function onBeforeWrite() {
+      parent::onBeforeWrite();
+      if ($this->Title == '') {
+        error_log("Blank title");
+        $this->Title = $this->FlickrPhotos()->first()->TakenAt.' - '.$this->FlickrPhotos()->last()->TakenAt;
+      }
     }
 
 }
