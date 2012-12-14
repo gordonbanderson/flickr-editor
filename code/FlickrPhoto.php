@@ -246,13 +246,26 @@ class FlickrPhoto extends DataObject implements Mappable {
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
         $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
 
-    $fields->addFieldToTab( "Root.Location", new LatLongField( array(
+    // only show a map for editing if no sets have geolock on them
+    $lockgeo = false;
+    foreach ($this->FlickrSets() as $set) {
+      error_log("++++ CHECKING SET ".$set." for lock geo, has ".$set->LockGeo);
+      if ($set->LockGeo == true) {
+        $lockgeo = true;
+        break;
+      }
+    }
+
+    if (!$lockgeo) {
+       $fields->addFieldToTab( "Root.Location", new LatLongField( array(
           new TextField( 'Lat', 'Latitude' ),
           new TextField( 'Lon', 'Longitude' ),
           new TextField( 'ZoomLevel', 'Zoom' )
         ),
         array( 'Address' )
       ) );
+    }
+   
 
     return $fields;
   }
