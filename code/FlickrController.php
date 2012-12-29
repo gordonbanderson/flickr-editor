@@ -19,8 +19,94 @@ class FlickrController extends Page_Controller {
         'editprofile',
         'sets',
         'primeBucketsTest',
-        'createBucket'
+        'createBucket',
+        'fixSetPhotoManyMany'
     );
+
+
+    /* Fix the many many relationships, previously FlickrSetPhoto pages which have now been deleted */
+     public function fixSetPhotoManyMany() {
+        $flickrSetID = Convert::raw2sql($this->request->param('ID'));
+        error_log("Fixing many to many relationship for set $flickrSetID");
+        $flickrSets = DataList::create('FlickrSet')->where("FlickrID=".$flickrSetID);
+
+        error_log("Sets found:".$flickrSets->count());
+
+        $allPagesRead = false;
+                    $flickrPhotoIDs = array();
+
+
+        if ($flickrSets->count() == 1) {
+            $flickrSet = $flickrSets->first();
+            error_log("Found set titled ".$flickrSet->Title);
+            error_log("SS ID:".$flickrSet->ID);
+            error_log("Photos prior to resetting: ".$flickrSet->FlickrPhotos()->count());
+
+
+            //while ()
+
+            $pageCtr = 1;
+
+            while (!$allPagesRead) {
+
+//      function photosets_getPhotos ($photoset_id, $extras = NULL, $privacy_filter = NULL, $per_page = NULL, $page = NULL, $media = NULL) {
+
+
+                $photos = $this->f->photosets_getPhotos($flickrSetID,
+                    'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
+                    NULL,
+                    500,
+                    $pageCtr);
+
+                $pageCtr = $pageCtr+1;
+
+                
+
+               //print_r($photos);
+                $photoset = $photos['photoset'];
+                $page = $photoset['page'];
+                $pages = $photoset['pages'];
+                $allPagesRead = ($page == $pages);
+                error_log("Fixing page $page of $pages, all read = $allPagesRead");
+
+
+
+
+                /*
+                10K-V: id --> 72157623671474680
+    K-V: primary --> 4452974511
+    K-V: owner --> 45224965@N04
+    K-V: ownername --> gordon.b.anderson
+    K-V: photo --> Array
+    K-V: page --> 1
+    K-V: per_page --> 500
+    K-V: perpage --> 500
+    K-V: pages --> 1
+    K-V: total --> 115
+    */
+
+
+                foreach ($photoset['photo'] as $key => $photo) {
+                    array_push($flickrPhotoIDs, $photo['id']);
+                }
+
+                
+            }
+
+            $flickrPhotos = DataList::create('FlickrPhoto')->where("FlickrID in (".implode(',', $flickrPhotoIDs).")");
+            error_log("Number of pictures from Flickr:" . $flickrPhotos->count());
+            $flickrSet->FlickrPhotos()->removeAll();
+            $flickrSet->FlickrPhotos()->addMany($flickrPhotos);
+            $flickrSet->write();
+
+
+
+        } else {
+            // no flickr set found for the given ID
+            error_log("Flickr set not found for id ".$flickrSetID);
+        }
+  
+    }
 
 
     function primeBucketsTest() {
@@ -178,7 +264,7 @@ class FlickrController extends Page_Controller {
             foreach ($photos as $key => $photo) {
                 $title = $photo['title'];
                 $takenAt = $photo['datetaken'];
-                $dateParts = split(' ',$takenAt);
+                $dateParts = explode(' ',$takenAt);
                 $date = $dateParts[0];
 
                 if (!isset($dateToImages[$date])) {
@@ -357,10 +443,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         error_log("DATE:".print_r($flickrSet->FirstPictureTakenAt,1));
 
-        $datetime = split(' ', $flickrSet->FirstPictureTakenAt);
+        $datetime = explode(' ', $flickrSet->FirstPictureTakenAt);
         $datetime = $datetime[0];
         error_log("DT:".$datetime);
-        list($year, $month, $day) = split('[/.-]', $datetime);
+        list($year, $month, $day) = explode('[/.-]', $datetime);
         echo "Month: $month; Day: $day; Year: $year<br />\n";
 
         
