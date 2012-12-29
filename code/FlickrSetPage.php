@@ -151,6 +151,8 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 
+
+
     function getFlickrSetFolders() {
         error_log("Getting flickr set folders");
         if($Pages = DataObject::get('FlickrSetFolder'))
@@ -177,7 +179,12 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
         // FIXME
         $this->Dirty = true;
 
-       error_log("PARENT FOLDER ID:".$this->ParentFolderID);
+       error_log("ID:".$this->ID);
+       error_log("PARENT FOLDER ID:".$this->ParentID);
+    }
+
+    function Map() {
+        return $this->FlickrSetForPage()->Map();
     }
 
    
@@ -194,7 +201,7 @@ class FlickrSetPage_Controller extends Page_Controller {
 
 
     function FlickrPhotos() {
-        if (!$this->FlickrPhotos) {
+        if (!isset($this->FlickrPics)) {
             
             $images = $this->FlickrSetForPage()->FlickrPhotos();
 
@@ -206,15 +213,30 @@ class FlickrSetPage_Controller extends Page_Controller {
                 error_log("CHECKING IMAGE ".$fp->Title);
             }
 */
-            $this->FlickrPhotos = $images;
+            $this->FlickrPics = $images;
             error_log("T2 image size:".$images->count());
-            error_log("T3 image size:".$this->FlickrPhotos->count());
+            error_log("T3 image size:".$this->FlickrPics->count());
 
 
         }
 
-        error_log("IMAGE COUNT:".$this->FlickrPhotos->count());
-        return $this->FlickrPhotos;
+        error_log("IMAGE COUNT:".$this->FlickrPics->count());
+        return $this->FlickrPics;
+    }
+
+
+
+    /*
+    I use this for highslide to replace the URLs in javascript if javascript is available, otherwise default to normal page URLs
+    @return Mapping of silverstripe ID to URL
+    */
+    function IdToUrlJson() {
+        $result = array();
+        foreach ($this->FlickrPhotos() as $fp) {
+            $result[$fp->ID] = $fp->LargeURL;
+        }
+
+        return json_encode($result);
     }
 
 
