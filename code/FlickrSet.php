@@ -12,7 +12,9 @@ class FlickrSet extends DataObject {
     'FirstPictureTakenAt' => 'Datetime',
     // flag to indicate requiring a flickr API update
     'IsDirty' => 'Boolean',
-    'LockGeo' => 'Boolean'
+    'LockGeo' => 'Boolean',
+    'TagsCSV' => 'Varchar',
+    'ImageFooter' => 'Text'
   );
 
 
@@ -54,6 +56,7 @@ class FlickrSet extends DataObject {
 
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
     $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
+    $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'ImageFooter', 'This text will be appended to every image in the set' )  );
     $fields->addFieldToTab( 'Root.Main', new CheckBoxField( 'LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features' )  );
 
     $gridConfig = GridFieldConfig_RelationEditor::create();
@@ -125,6 +128,31 @@ class FlickrSet extends DataObject {
     
     return $result;
   }
+
+
+
+  public function Map() {
+    //    $prod->SetZoom(4);
+
+
+
+    $map = $this->FlickrPhotos()->RenderMap();
+   // $map->setDelayLoadMapFunction( true );
+    $map->setZoom( 10 );
+    $map->setAdditionalCSSClasses( 'fullWidthMap' );
+    $map->setShowInlineMapDivStyle( true );
+    $map->setClusterer(true);
+    $map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
+
+   /*
+    $map->addLine(
+      array(13.836966000000000,100.525958000000003),
+      array(13.719272000000000,100.504747000000005)
+    );
+*/
+    return $map;
+  }
+
 
 
 
