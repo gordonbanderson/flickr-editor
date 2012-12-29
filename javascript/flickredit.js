@@ -1,10 +1,24 @@
-console.log("FLICKR EDIT");
-
-
-
 /*jslint white: true */
 (function($) {
 	$(document).ready(function() {
+
+		$('.flickrThumbnail').entwine({
+			onmouseover: function(e) {
+				var image = $(e.target);
+				console.log(image);
+				image.attr('src', image.attr('data-flickr-medium-url'));
+				image.addClass('hoverLarge');
+				e.preventDefault();
+				return false;
+			},
+			onmouseout: function(e) {
+				var image = $(e.target);
+				image.attr('src', image.attr('data-flickr-thumbnail-url'));
+				image.removeClass('hoverLarge');
+				e.preventDefault();
+				return false;
+			}
+		});
 
 		$('#bucketTimeProgressBar').entwine({
 			onchange: function() {
@@ -16,10 +30,6 @@ console.log("FLICKR EDIT");
 				$('#selectedBucketTime').html($(this).val() + 's');
 				var bucketsDOM = $('#buckets');
 				bucketsDOM.html('');
-
-
-
-				console.log("BUCKET DELTA:" + bucketDelta);
 
 				$('#hiddenImageStore').find('.bucketPhoto').each(function(index) {
 					var t = new Date($(this).attr('data-time'));
