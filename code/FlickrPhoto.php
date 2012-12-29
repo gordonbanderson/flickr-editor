@@ -8,7 +8,8 @@ class FlickrPhoto extends DataObject implements Mappable {
   static $searchable_fields = array(
     'Title',
     'Description',
-    'FlickrID'
+    'FlickrID',
+    'TagsCSV' => 'Varchar'
   );
 
 
@@ -280,7 +281,8 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
   public function getThumbnail() {
-    return DBField::create_field( 'HTMLVarchar', '<img src="'.$this->ThumbnailURL.'"/>' );
+    return DBField::create_field( 'HTMLVarchar', 
+      '<img class="flickrThumbnail" data-flickr-medium-url="'.$this->MediumURL.'" src="'.$this->ThumbnailURL.'"  data-flickr-thumbnail-url="'.$this->ThumbnailURL.'"/>' );
   }
 
 
