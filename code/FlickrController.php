@@ -1,19 +1,19 @@
 <?php
 /**
  *  // _config.php
- *	Director::addRules(10, array(
- *		'emptycache' => 'EmptyCacheController',
- *	));
+ * Director::addRules(10, array(
+ *  'emptycache' => 'EmptyCacheController',
+ * ));
  */
 
 
-require_once("phpFlickr.php");
+require_once "phpFlickr.php";
 
 class FlickrController extends Page_Controller {
 
-	
 
-	static $allowed_actions = array(
+
+    static $allowed_actions = array(
         'index',
         'importSet',
         'editprofile',
@@ -25,105 +25,86 @@ class FlickrController extends Page_Controller {
 
 
     /* Fix the many many relationships, previously FlickrSetPhoto pages which have now been deleted */
-     public function fixSetPhotoManyMany() {
-        $flickrSetID = Convert::raw2sql($this->request->param('ID'));
-        error_log("Fixing many to many relationship for set $flickrSetID");
-        $flickrSets = DataList::create('FlickrSet')->where("FlickrID=".$flickrSetID);
+    public function fixSetPhotoManyMany() {
+        $flickrSetID = Convert::raw2sql( $this->request->param( 'ID' ) );
+        error_log( "Fixing many to many relationship for set $flickrSetID" );
+        $flickrSets = DataList::create( 'FlickrSet' )->where( "FlickrID=".$flickrSetID );
 
-        error_log("Sets found:".$flickrSets->count());
+        error_log( "Sets found:".$flickrSets->count() );
 
         $allPagesRead = false;
-                    $flickrPhotoIDs = array();
+        $flickrPhotoIDs = array();
 
 
-        if ($flickrSets->count() == 1) {
+        if ( $flickrSets->count() == 1 ) {
             $flickrSet = $flickrSets->first();
-            error_log("Found set titled ".$flickrSet->Title);
-            error_log("SS ID:".$flickrSet->ID);
-            error_log("Photos prior to resetting: ".$flickrSet->FlickrPhotos()->count());
+            error_log( "Found set titled ".$flickrSet->Title );
+            error_log( "SS ID:".$flickrSet->ID );
+            error_log( "Photos prior to resetting: ".$flickrSet->FlickrPhotos()->count() );
 
 
             //while ()
 
             $pageCtr = 1;
 
-            while (!$allPagesRead) {
+            while ( !$allPagesRead ) {
 
-//      function photosets_getPhotos ($photoset_id, $extras = NULL, $privacy_filter = NULL, $per_page = NULL, $page = NULL, $media = NULL) {
-
-
-                $photos = $this->f->photosets_getPhotos($flickrSetID,
+                $photos = $this->f->photosets_getPhotos( $flickrSetID,
                     'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
                     NULL,
                     500,
-                    $pageCtr);
+                    $pageCtr );
 
                 $pageCtr = $pageCtr+1;
 
-                
 
-               //print_r($photos);
+
+                //print_r($photos);
                 $photoset = $photos['photoset'];
                 $page = $photoset['page'];
                 $pages = $photoset['pages'];
-                $allPagesRead = ($page == $pages);
-                error_log("Fixing page $page of $pages, all read = $allPagesRead");
+                $allPagesRead = ( $page == $pages );
+                error_log( "Fixing page $page of $pages, all read = $allPagesRead" );
 
 
-
-
-                /*
-                10K-V: id --> 72157623671474680
-    K-V: primary --> 4452974511
-    K-V: owner --> 45224965@N04
-    K-V: ownername --> gordon.b.anderson
-    K-V: photo --> Array
-    K-V: page --> 1
-    K-V: per_page --> 500
-    K-V: perpage --> 500
-    K-V: pages --> 1
-    K-V: total --> 115
-    */
-
-
-                foreach ($photoset['photo'] as $key => $photo) {
-                    array_push($flickrPhotoIDs, $photo['id']);
+                foreach ( $photoset['photo'] as $key => $photo ) {
+                    array_push( $flickrPhotoIDs, $photo['id'] );
                 }
 
-                
+
             }
 
-            $flickrPhotos = DataList::create('FlickrPhoto')->where("FlickrID in (".implode(',', $flickrPhotoIDs).")");
-            error_log("Number of pictures from Flickr:" . $flickrPhotos->count());
+            $flickrPhotos = DataList::create( 'FlickrPhoto' )->where( "FlickrID in (".implode( ',', $flickrPhotoIDs ).")" );
+            error_log( "Number of pictures from Flickr:" . $flickrPhotos->count() );
             $flickrSet->FlickrPhotos()->removeAll();
-            $flickrSet->FlickrPhotos()->addMany($flickrPhotos);
+            $flickrSet->FlickrPhotos()->addMany( $flickrPhotos );
             $flickrSet->write();
 
 
 
         } else {
             // no flickr set found for the given ID
-            error_log("Flickr set not found for id ".$flickrSetID);
+            error_log( "Flickr set not found for id ".$flickrSetID );
         }
-  
+
     }
 
 
     function primeBucketsTest() {
-        $fset = DataList::create('FlickrSet')->last();
+        $fset = DataList::create( 'FlickrSet' )->last();
         $bucket = new FlickrBucket();
         $bucket->write();// get an ID
         $photos = $fset->FlickrPhotos();
-        error_log("FLICKR SET:".$fset->ID);
-        error_log("PHOTOS FOUND:".$photos->count());
+        error_log( "FLICKR SET:".$fset->ID );
+        error_log( "PHOTOS FOUND:".$photos->count() );
 
         $bucketPhotos = $bucket->FlickrPhotos();
         $ctr = 0;
-        foreach ($photos as $key => $value) {
-            $bucketPhotos->add($value);
-            error_log("Adding photo ".$value->ID);
+        foreach ( $photos as $key => $value ) {
+            $bucketPhotos->add( $value );
+            error_log( "Adding photo ".$value->ID );
             $ctr = $ctr + 1;
-            if ($ctr > 7) {
+            if ( $ctr > 7 ) {
                 break;
             }
         }
@@ -134,42 +115,42 @@ class FlickrController extends Page_Controller {
 
 
     public function createBucket() {
-        $flickrPhotoIDs = $this->request->param('OtherID');
-        $flickrSetID = Convert::raw2sql($this->request->param('ID'));
-        $ajax_bucket_row = Convert::raw2sql($_GET['bucket_row']);
-        error_log("BUCKET ROW:".$ajax_bucket_row);
+        $flickrPhotoIDs = $this->request->param( 'OtherID' );
+        $flickrSetID = Convert::raw2sql( $this->request->param( 'ID' ) );
+        $ajax_bucket_row = Convert::raw2sql( $_GET['bucket_row'] );
+        error_log( "BUCKET ROW:".$ajax_bucket_row );
 
-        error_log("PARAMS:".print_r($this->request->params(),1));
+        error_log( "PARAMS:".print_r( $this->request->params(), 1 ) );
 
-        $sanitizedIDs = Convert::raw2sql($flickrPhotoIDs);
+        $sanitizedIDs = Convert::raw2sql( $flickrPhotoIDs );
 
 
-        $flickrPhotos = DataList::create('FlickrPhoto')->where('ID in ('.$sanitizedIDs.')');
-        $flickrSet = DataList::create('FlickrSet')->where('ID='.$flickrSetID)->first();
-        error_log("FLICKR SET:".$flickrSet);
-        error_log("FLICKR SET ID:".$flickrSet->ID);
+        $flickrPhotos = DataList::create( 'FlickrPhoto' )->where( 'ID in ('.$sanitizedIDs.')' );
+        $flickrSet = DataList::create( 'FlickrSet' )->where( 'ID='.$flickrSetID )->first();
+        error_log( "FLICKR SET:".$flickrSet );
+        error_log( "FLICKR SET ID:".$flickrSet->ID );
         $bucket = new FlickrBucket();
         $bucket->write();
 
         $bucketPhotos = $bucket->FlickrPhotos();
-        foreach ($flickrPhotos as $fp) {
-            $bucketPhotos->add($fp);
+        foreach ( $flickrPhotos as $fp ) {
+            $bucketPhotos->add( $fp );
         }
         $bucket->FlickrSetID = $flickrSet->ID;
         $bucket->write();
 
-        error_log("BUCKET ID:".$bucket->ID);
+        error_log( "BUCKET ID:".$bucket->ID );
 
-        error_log($flickrPhotoIDs);
+        error_log( $flickrPhotoIDs );
 
-        $result = Array(
+        $result = array(
             'bucket_id' => $bucket->ID,
             'flickr_set_id' => $flickrSet->ID,
             'ajax_bucket_row' => $ajax_bucket_row
 
         );
 
-        echo json_encode($result);
+        echo json_encode( $result );
 
         //echo $bucket->ID;
         die; // abort render
@@ -179,40 +160,40 @@ class FlickrController extends Page_Controller {
 
 
 
-     
+
     public function init() {
         parent::init();
 
         // get flickr details from config
-        $key = Config::inst()->get($this->class, 'api_key');
-        $secret = Config::inst()->get($this->class, 'secret');
-        $access_token = Config::inst()->get($this->class, 'access_token');
+        $key = Config::inst()->get( $this->class, 'api_key' );
+        $secret = Config::inst()->get( $this->class, 'secret' );
+        $access_token = Config::inst()->get( $this->class, 'access_token' );
 
-        $this->f = new phpFlickr($key,$secret);
+        $this->f = new phpFlickr( $key, $secret );
 
         //Fleakr.auth_token    = ''
-        $this->f->setToken($access_token);
+        $this->f->setToken( $access_token );
 
 
         // Requirements, etc. here
     }
-     
+
     public function index() {
         // Code for the index action here
         return array();
     }
 
     public function sets() {
-         $sets = $this->f->photosets_getList('45224965@N04');
+        $sets = $this->f->photosets_getList( '45224965@N04' );
 
-        if ($sets) {
+        if ( $sets ) {
             echo "Sets set";
         }
 
 
-        foreach ($sets['photoset'] as $key => $value) {
+        foreach ( $sets['photoset'] as $key => $value ) {
             echo '#'.$value['title'];
-            echo "\nsapphire/sake flickr/importSet ".$value['id'];
+            echo "\nframework/sake flickr/importSet/".$value['id'];
             echo "\n\n";
 
         }
@@ -222,15 +203,15 @@ class FlickrController extends Page_Controller {
 
     public function splitMoblog() {
 
-/*
+        /*
         echo "Created set";
         var_dump($r);
         die;
 */
 
         $flickrSetID = '72157624403053639';
-       
-       // var_dump($photo_response);
+
+        // var_dump($photo_response);
 
         $dateToImages = array();
 
@@ -242,36 +223,36 @@ class FlickrController extends Page_Controller {
         $completed = false;
 
 
-        while (!$completed) {
-            # code...
+        while ( !$completed ) {
+            // code...
 
             echo "GETING PAGE ".$page;
 
-             $photo_response = $this->f->photosets_getPhotos($flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description', NULL, NULL, $page);
+            $photo_response = $this->f->photosets_getPhotos( $flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description', NULL, NULL, $page );
 
-             $page++;
+            $page++;
 
-        
-        
+
+
 
             $photos = $photo_response['photoset']['photo'];
-            $completed = (count($photos) != 500);
+            $completed = ( count( $photos ) != 500 );
 
 
-            echo "COUNT:".count($photos);
+            echo "COUNT:".count( $photos );
             echo "COMPLETED?:".$completed;
 
-            foreach ($photos as $key => $photo) {
+            foreach ( $photos as $key => $photo ) {
                 $title = $photo['title'];
                 $takenAt = $photo['datetaken'];
-                $dateParts = explode(' ',$takenAt);
+                $dateParts = split( ' ', $takenAt );
                 $date = $dateParts[0];
 
-                if (!isset($dateToImages[$date])) {
+                if ( !isset( $dateToImages[$date] ) ) {
                     $dateToImages[$date] = array();
                 }
 
-                array_push($dateToImages[$date], $photo);
+                array_push( $dateToImages[$date], $photo );
 
 
 
@@ -283,26 +264,26 @@ class FlickrController extends Page_Controller {
 
         echo "************ DONE";
 
-        foreach ($dateToImages as $date => $photosForDate) {
+        foreach ( $dateToImages as $date => $photosForDate ) {
             echo "DATE:".$date."\n";
             $firstPic = $dateToImages[$date][0]['id'];
-            error_log("FIRST PIC:".$firstPic);
+            error_log( "FIRST PIC:".$firstPic );
 
-            $set = $this->f->photosets_create('Moblog '.$date, 'Mobile photos for '.$date, $firstPic);
-            var_dump($set);
+            $set = $this->f->photosets_create( 'Moblog '.$date, 'Mobile photos for '.$date, $firstPic );
+            var_dump( $set );
 
             $setId = $set['id'];
 
 
-//      function photosets_addPhoto ($photoset_id, $photo_id) {
+            //      function photosets_addPhoto ($photoset_id, $photo_id) {
 
 
-            foreach ($dateToImages[$date] as $key => $image) {
+            foreach ( $dateToImages[$date] as $key => $image ) {
                 echo "\t".$image['title']."\n";
-                $this->f->photosets_addPhoto($setId, $image['id']);
+                $this->f->photosets_addPhoto( $setId, $image['id'] );
                 //      function photos_addTags ($photo_id, $tags) {
 
-                $this->f->photos_addTags($image['id'], "moblog iphone3g");
+                $this->f->photos_addTags( $image['id'], "moblog iphone3g" );
             };
 
             echo "SET COMPLETED\n\n\n\n";
@@ -313,9 +294,9 @@ class FlickrController extends Page_Controller {
 
 
 
-  
-  //FIXME - oreination missing
-  /*
+
+    //FIXME - oreination missing
+    /*
   mysql> update FlickrPhoto set Orientation = 90 where (ThumbnailWidth > ThumbnailHeight);
 Query OK, 70 rows affected (0.01 sec)
 Rows matched: 70  Changed: 70  Warnings: 0
@@ -325,17 +306,17 @@ Query OK, 53 rows affected (0.00 sec)
 Rows matched: 53  Changed: 53  Warnings: 0
 
 */
-     
+
     public function importSet() {
 
 
         $page= 1;
-        static $only_new_photos = false;
+        static $only_new_photos = true;
 
 
 
-       // phpInfo();
-        
+        // phpInfo();
+
         /*
         ini_set('xdebug.profiler_enable', 'On');
         ini_set('xdebug.show_local_vars',1);
@@ -350,7 +331,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 */
 
 
-/*
+        /*
 
 
         $sets = $this->f->photosets_getList('45224965@N04');
@@ -371,26 +352,26 @@ Rows matched: 53  Changed: 53  Warnings: 0
 */
 
 
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
-        if(!$canAccess) return Security::permissionFailure($this);
+        $canAccess = ( Director::isDev() || Director::is_cli() || Permission::check( "ADMIN" ) );
+        if ( !$canAccess ) return Security::permissionFailure( $this );
 
         // Code for the register action here
-        error_log("import set");
-        $flickrSetID = $this->request->param('ID');
+        error_log( "import set" );
+        $flickrSetID = $this->request->param( 'ID' );
         //error_log("ID PARAM:".print_r($flickrSetID, 1));
 
         $this->FlickrSetId = $flickrSetID;
 
 
 
-        $photos = $this->f->photosets_getPhotos($flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description');
+        $photos = $this->f->photosets_getPhotos( $flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description' );
 
         $photoset = $photos['photoset'];
 
-        echo count($photoset);
+        echo count( $photoset );
 
-        foreach ($photoset as $key => $value) {
-            error_log("K-V: ".$key.' --> '.$value);
+        foreach ( $photoset as $key => $value ) {
+            error_log( "K-V: ".$key.' --> '.$value );
         }
 
 
@@ -398,135 +379,115 @@ Rows matched: 53  Changed: 53  Warnings: 0
         //var_dump($photoset);
 
 
-       // error_log("PHOTOSET:".print_r($photoset, 1));
-       // $this->photoDebug = print_r($photoset, 1);
-
-        $setInfo = $this->f->photosets_getInfo($flickrSetID);
-
-        $setTitle = $setInfo['title'];
-        $setDescription = $setInfo['description'];
+        // error_log("PHOTOSET:".print_r($photoset, 1));
+        // $this->photoDebug = print_r($photoset, 1);
 
 
-       // error_log(print_r($photoset,1));
 
-//FirstPictureTakenAt
+        $flickrSet = $this->getFlickrSet( $flickrSetID );
 
 
-       
-        // do we have a set object or not
-        $flickrSet = DataObject::get_one('FlickrSet', 'FlickrID=\''.$flickrSetID."'");
 
-        // if a set exists update data, otherwise create
-        if (!$flickrSet) {
-            error_log("Creating new flickr set:".$flickrSetID);
-            $flickrSet = new FlickrSet();   
-            $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
-            error_log("Setting first pic date to ".$flickrSet->FirstPictureTakenAt);
-        } else {
-            error_log("Reusing existing set");
-        }
-
-        $flickrSet->Title = $setTitle;
-        $flickrSet->Description = $setDescription;
-        $flickrSet->FlickrID = $flickrSetID;
-        $flickrSet->KeepClean = true;
-        $flickrSet->write();
-
-        error_log("Searching for flickr set with flickr ID *".$flickrSetID."*");
+        error_log( "Searching for flickr set with flickr ID *".$flickrSetID."*" );
 
         // reload from DB with date - note the use of quotes as flickr set id is a string
-        $flickrSet = DataObject::get_one('FlickrSet', 'FlickrID=\''.$flickrSetID."'");
+        $flickrSet = DataObject::get_one( 'FlickrSet', 'FlickrID=\''.$flickrSetID."'" );
+        $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
+
         $flickrSet->KeepClean = true;
 
 
-        error_log("AFTER RELOAD FS = ".$flickrSet);
+        error_log( "AFTER RELOAD FS = ".$flickrSet." (".$flickrSet->ID.")" );
 
-        error_log("DATE:".print_r($flickrSet->FirstPictureTakenAt,1));
-
-        $datetime = explode(' ', $flickrSet->FirstPictureTakenAt);
-        $datetime = $datetime[0];
-        error_log("DT:".$datetime);
-        list($year, $month, $day) = explode('[/.-]', $datetime);
-        echo "Month: $month; Day: $day; Year: $year<br />\n";
-
-        
-
-        // now try and find a flickr set page
-        $flickrSetPage = DataObject::get_one('FlickrSetPage', 'FlickrSetForPageID='.$flickrSet->ID);
-        if (!$flickrSetPage) {
-            $flickrSetPage = new FlickrSetPage();   
+        if ( $flickrSet->Title == null ) {
+            error_log( "ABORTING DUE TO NULL TITLE FOUND IN SET" );
+            die;
         }
 
-        $flickrSetPage->Title = $flickrSet->Title;
-        $flickrSetPage->Description = $flickrSet->Description;
-        //update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
+        error_log( "DATE:".print_r( $flickrSet->FirstPictureTakenAt, 1 ) );
 
-        $flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
-        $flickrSetPage->write();
+        $datetime = split( ' ', $flickrSet->FirstPictureTakenAt );
+        $datetime = $datetime[0];
+        error_log( "DT:".$datetime );
+        list( $year, $month, $day ) = split( '[/.-]', $datetime );
+        echo "Month: $month; Day: $day; Year: $year<br />\n";
 
-        // create a stage version also
-        $flickrSetPage->publish("Live", "Stage");
+
+
+        // now try and find a flickr set page
+        $flickrSetPage = DataObject::get_one( 'FlickrSetPage', 'FlickrSetForPageID='.$flickrSet->ID );
+        if ( !$flickrSetPage ) {
+            $flickrSetPage = new FlickrSetPage();
+            $flickrSetPage->Title = $flickrSet->Title;
+            $flickrSetPage->Description = $flickrSet->Description;
+            //update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
+
+            $flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
+            $flickrSetPage->write();
+            // create a stage version also
+            $flickrSetPage->publish( "Live", "Stage" );
+
+        }
 
         $flickrSetPageID = $flickrSetPage->ID;
-
         gc_enable();
 
 
 
 
-         $f1 = Folder::find_or_make("flickr/$year");
-            $f1->Title = $year;
-            $f1->write();
+        $f1 = Folder::find_or_make( "flickr/$year" );
+        $f1->Title = $year;
+        $f1->write();
 
 
 
-            $f1 = Folder::find_or_make("flickr/$year/$month");
-            $f1->Title = $month;
-            $f1->write();
+        $f1 = Folder::find_or_make( "flickr/$year/$month" );
+        $f1->Title = $month;
+        $f1->write();
 
-            $f1 = Folder::find_or_make("flickr/$year/$month/$day");
-            $f1->Title = $day;
-            $f1->write();
+        $f1 = Folder::find_or_make( "flickr/$year/$month/$day" );
+        $f1->Title = $day;
+        $f1->write();
 
-            exec("chmod 775 ../assets/flickr/$year");
-            exec("chmod 775 ../assets/flickr/$year/$month");
-            exec("chmod 775 ../assets/flickr/$year/$month/$day");
-            exec("chown gordon:www-data ../assets/flickr/$year");;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month");;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");;
-
-
-            $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);
-
-            $cmd = "chown gordon:www-data ../assets/flickr";
-            exec($cmd);
-
-            exec('chmod 775 ../assets/flickr');
-
-            error_log("FOLDER - find or make:".$folder->ID);
+        exec( "chmod 775 ../assets/flickr/$year" );
+        exec( "chmod 775 ../assets/flickr/$year/$month" );
+        exec( "chmod 775 ../assets/flickr/$year/$month/$day" );
+        exec( "chown gordon:www-data ../assets/flickr/$year" );;
+        exec( "chown gordon:www-data ../assets/flickr/$year/$month" );;
+        exec( "chown gordon:www-data ../assets/flickr/$year/$month/$day" );;
 
 
+        $folder = Folder::find_or_make( "flickr/$year/$month/$day/" . $flickrSetID );
 
- // new folder case
-        if ($flickrSet->AssetFolderID == 0) {
-            error_log("Setting flickr set asset folder id");
+        $cmd = "chown gordon:www-data ../assets/flickr";
+        exec( $cmd );
+
+        exec( 'chmod 775 ../assets/flickr' );
+
+        error_log( "FOLDER - find or make:".$folder->ID );
+
+
+
+        // new folder case
+        if ( $flickrSet->AssetFolderID == 0 ) {
+            error_log( "Setting flickr set asset folder id" );
             $flickrSet->AssetFolderID = $folder->ID;
             $folder->Title = $flickrSet->Title;
             $folder->write();
 
-            error_log("FOLDER ID:".$folder->ID);
+            error_log( "FOLDER ID:".$folder->ID );
 
-            error_log("Written folder");
-            
+            error_log( "Written folder" );
 
 
-             $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
-             error_log("CMD:".$cmd);
-            exec($cmd);
+
+            $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
+            error_log( "CMD:".$cmd );
+            exec( $cmd );
 
             $cmd = "chmod 775 ../assets/flickr/$year/$month/$day/".$flickrSetID;
-            error_log("CMD:.$cmd");
-            exec($cmd);
+            error_log( "CMD:.$cmd" );
+            exec( $cmd );
 
 
         }
@@ -539,40 +500,40 @@ Rows matched: 53  Changed: 53  Warnings: 0
         //$flickrSet = NULL;
         $flickrSetPage = NULL;
 
+        $numberOfPics = count($photoset['photo']);
 
-
-        foreach ($photoset['photo'] as $key => $value) {
+        foreach ( $photoset['photo'] as $key => $value ) {
 
             gc_collect_cycles();
 
 
-            error_log("\n\n\n====".$key.":".$value['title']);
-            error_log("MEMORY:".memory_get_usage(true));
+            error_log( "\n\n\n====".$key."/".$numberOfPics.":".$value['title'] );
+            error_log( "MEMORY:".memory_get_usage( true ) );
 
-            error_log(print_r($value,1));
+            error_log( print_r( $value, 1 ) );
 
             $flickrPhotoID = $value['id'];
 
             // do we have a set object or not
-            $flickrPhoto = DataObject::get_one('FlickrPhoto', 'FlickrID='.$flickrPhotoID);
+            $flickrPhoto = DataObject::get_one( 'FlickrPhoto', 'FlickrID='.$flickrPhotoID );
 
             // if a set exists update data, otherwise create
-            if (!$flickrPhoto) {
-                $flickrPhoto = new FlickrPhoto();   
+            if ( !$flickrPhoto ) {
+                $flickrPhoto = new FlickrPhoto();
             }
 
             // if we are in the mode of only importing new then skip to the next iteration if this pic already exists
-            else if ($only_new_photos) {
-                error_log("\tPhoto already imported - skipping");
-                continue;
-            }
-            error_log("Importing pic");
+            else if ( $only_new_photos ) {
+                    error_log( "\tPhoto already imported - skipping" );
+                    continue;
+                }
+            error_log( "Importing pic" );
 
             $flickrPhoto->Title = $value['title'];
 
             $flickrPhoto->FlickrID = $flickrPhotoID;
             $flickrPhoto->KeepClean = true;
-            
+
 
             $flickrPhoto->MediumURL = $value['url_m'];
             $flickrPhoto->MediumHeight = $value['height_m'];
@@ -602,34 +563,34 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $flickrPhoto->Description = $value['description'];
 
 
-          
 
 
-            $lat = number_format($value['latitude'], 15);
-            $lon = number_format($value['longitude'], 15);
 
-  error_log("LAT:".$lat);
-            error_log("LON:".$lon);
+            $lat = number_format( $value['latitude'], 15 );
+            $lon = number_format( $value['longitude'], 15 );
 
-
-            if($value['latitude']) {$flickrPhoto->Lat = $lat;}
-            if($value['longitude']) {$flickrPhoto->Lon = $lon;}
-            if($value['accuracy']) {$flickrPhoto->Accuracy = $value['accuracy'];}
-            if(isset($value['geo_is_public'])) {$flickrPhoto->GeoIsPublic = $value['geo_is_public'];}
-            if( isset($value['woeid'])) {$flickrPhoto->WoeID = $value['woeid'];}
-            
-            error_log("GETTING FLICKR PHOTO INFO");
+            error_log( "LAT:".$lat );
+            error_log( "LON:".$lon );
 
 
-            $singlePhotoInfo = $this->f->photos_getInfo($flickrPhotoID);
+            if ( $value['latitude'] ) {$flickrPhoto->Lat = $lat;}
+            if ( $value['longitude'] ) {$flickrPhoto->Lon = $lon;}
+            if ( $value['accuracy'] ) {$flickrPhoto->Accuracy = $value['accuracy'];}
+            if ( isset( $value['geo_is_public'] ) ) {$flickrPhoto->GeoIsPublic = $value['geo_is_public'];}
+            if ( isset( $value['woeid'] ) ) {$flickrPhoto->WoeID = $value['woeid'];}
 
-           // error_log(print_r($singlePhotoInfo, 1));
-//die;
+            error_log( "GETTING FLICKR PHOTO INFO" );
+
+
+            $singlePhotoInfo = $this->f->photos_getInfo( $flickrPhotoID );
+
+            // error_log(print_r($singlePhotoInfo, 1));
+            //die;
             $flickrPhoto->Description = $singlePhotoInfo['photo']['description'];
             $flickrPhoto->TakenAt = $singlePhotoInfo['photo']['dates']['taken'];
             $flickrPhoto->Rotation = $singlePhotoInfo['photo']['rotation'];
 
-            if(isset($singlePhotoInfo['photo']['visibility'])) {
+            if ( isset( $singlePhotoInfo['photo']['visibility'] ) ) {
                 $flickrPhoto->IsPublic = $singlePhotoInfo['photo']['visibility']['ispublic'];
             }
 
@@ -638,17 +599,17 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
             $photoTagIDs = array();
 
-            error_log("PRE TAGS FLICKR PHOTO ID:".$flickrPhoto->ID);
+            error_log( "PRE TAGS FLICKR PHOTO ID:".$flickrPhoto->ID );
 
 
-            foreach ($singlePhotoInfo['photo']['tags']['tag'] as $key => $taginfo) {
+            foreach ( $singlePhotoInfo['photo']['tags']['tag'] as $key => $taginfo ) {
 
-                error_log("Checking tag ".$taginfo['_content']);
-              //  $tag = DataObject::get_one('Tag', 'Value = \''.$taginfo['_content']+'\'');
+                error_log( "Checking tag ".$taginfo['_content'] );
+                //  $tag = DataObject::get_one('Tag', 'Value = \''.$taginfo['_content']+'\'');
 
-                $tag = DataObject::get_one('FlickrTag', "\"Value\"='".$taginfo['_content']."'");
+                $tag = DataObject::get_one( 'FlickrTag', "\"Value\"='".$taginfo['_content']."'" );
 
-                if (!$tag) {
+                if ( !$tag ) {
                     $tag = new FlickrTag();
                 }
 
@@ -661,15 +622,15 @@ Rows matched: 53  Changed: 53  Warnings: 0
                 $tag->write();
 
 
-                error_log("TA, PHOTO IDS:".$tag->ID.", ".$flickrPhoto->ID);
+                error_log( "TA, PHOTO IDS:".$tag->ID.", ".$flickrPhoto->ID );
 
 
-                error_log("EXPLODED TAG");
+                error_log( "EXPLODED TAG" );
 
                 $ftags= $flickrPhoto->FlickrTags();
-                $ftags->add($tag);
+                $ftags->add( $tag );
 
-                error_log("Added tag ".$tag->ID." to pics ".$flickrPhoto->ID);
+                error_log( "Added tag ".$tag->ID." to pics ".$flickrPhoto->ID );
                 $flickrPhoto->write();
 
 
@@ -684,9 +645,9 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
 
-/*
+                /*
                 $tag->FlickrPhotos = DataObject::get ('FlickrPhoto', "ID=-1");
-                $tag->write(); 
+                $tag->write();
 
                 $tag->FlickrPhotos->add($flickrPhoto);
 
@@ -696,24 +657,24 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
             $flickrPhoto->write();
-            $flickrSet->FlickrPhotos()->add($flickrPhoto);
+            $flickrSet->FlickrPhotos()->add( $flickrPhoto );
             gc_collect_cycles();
 
 
 
 
             // now get the exif data
-            error_log("Loading EXIF data");
-            $exifData = $this->f->photos_getExif($flickrPhotoID);
-           // error_log(print_r($exifData,1));
+            error_log( "Loading EXIF data" );
+            $exifData = $this->f->photos_getExif( $flickrPhotoID );
+            // error_log(print_r($exifData,1));
 
             // delete the old exif data
             $sql = "DELETE from FlickrExif where FlickrPhotoID=".$flickrPhoto->ID;
-            error_log($sql);
-            DB::query($sql);
+            error_log( $sql );
+            DB::query( $sql );
 
 
-            foreach ($exifData['exif'] as $key => $exifInfo) {
+            foreach ( $exifData['exif'] as $key => $exifInfo ) {
                 $exif = new FlickrExif();
                 $exif->TagSpace = $exifInfo['tagspace'];
                 $exif->TagSpaceID = $exifInfo['tagspaceid'];
@@ -723,30 +684,30 @@ Rows matched: 53  Changed: 53  Warnings: 0
                 $exif->FlickrPhotoID = $flickrPhoto->ID;
                 $exif->write();
 
-                if ($exif->Tag == 'ImageUniqueID') {
+                if ( $exif->Tag == 'ImageUniqueID' ) {
                     $flickrPhoto->ImageUniqueID = $exif->Raw;
                 } else
-                if ($exif->Tag == 'ISO') {
-                    $flickrPhoto->ISO = $exif->Raw;
-                } else
-                if ($exif->Tag == 'ExposureTime') {
-                    $flickrPhoto->ShutterSpeed = $exif->Raw;
-                } else
-                if ($exif->Tag == 'FocalLengthIn35mmFormat') {
-                    $raw35 = $exif->Raw;
-                    error_log("RAW 35:".$raw35);
-                    $fl35 = str_replace(' mm', '', $raw35);
+                    if ( $exif->Tag == 'ISO' ) {
+                        $flickrPhoto->ISO = $exif->Raw;
+                    } else
+                    if ( $exif->Tag == 'ExposureTime' ) {
+                        $flickrPhoto->ShutterSpeed = $exif->Raw;
+                    } else
+                    if ( $exif->Tag == 'FocalLengthIn35mmFormat' ) {
+                        $raw35 = $exif->Raw;
+                        error_log( "RAW 35:".$raw35 );
+                        $fl35 = str_replace( ' mm', '', $raw35 );
 
-                    error_log("POST MANGLING 1: ".$fl35);
+                        error_log( "POST MANGLING 1: ".$fl35 );
 
-                    $fl35 = (int) $fl35;
+                        $fl35 = (int) $fl35;
 
-                    error_log("POST MANGLING 2: ".$fl35);
-                    $flickrPhoto->FocalLength35mm = $fl35;
-                } else
-                if ($exif->Tag == 'FNumber') {
-                     $flickrPhoto->Aperture = $exif->Raw;
-                };
+                        error_log( "POST MANGLING 2: ".$fl35 );
+                        $flickrPhoto->FocalLength35mm = $fl35;
+                    } else
+                    if ( $exif->Tag == 'FNumber' ) {
+                        $flickrPhoto->Aperture = $exif->Raw;
+                    };
 
                 $exif = NULL;
                 gc_collect_cycles();
@@ -756,21 +717,21 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
             $flickrPhoto->write();
-                    gc_collect_cycles();
+            gc_collect_cycles();
 
 
 
-            if(!$flickrPhoto->LocalCopyOfImage) {
+            if ( !$flickrPhoto->LocalCopyOfImage ) {
 
 
                 //mkdir appears to be relative to teh sapphire dir
                 $structure = "../assets/flickr/$year/$month/$day/".$flickrSetID;
 
-                if (!file_exists('../assets/flickr')) {
+                if ( !file_exists( '../assets/flickr' ) ) {
                     echo "Creating path:".$structure;
 
-/*
-                    // To create the nested structure, the $recursive parameter 
+                    /*
+                    // To create the nested structure, the $recursive parameter
                     // to mkdir() must be specified.
 
                     if (!mkdir($structure, 0, true)) {
@@ -787,119 +748,119 @@ Rows matched: 53  Changed: 53  Warnings: 0
                     exec("chmod 775 $structure");
 
 
-                    error_log("Created dir?");    
+                    error_log("Created dir?");
                 } else {
                     echo "Dir already exists";
                 }
 
 
                 */
-                    $galleries = Folder::find_or_make('flickr');
+                    $galleries = Folder::find_or_make( 'flickr' );
                     $galleries->Title = 'Flickr Images';
                     $galleries->write();
                     $galleries = NULL;
                 }
 
 
-               
 
-/*
+
+                /*
                     if (!$folder->ID) {
                         $folder->Title = $flickrSet->Title;
                         $folder->setName($flickrSet->Title);
                         $folder->write();
 
-                        
 
-                          
+
+
                     } else {
                         error_log("FOLDER EXISTS");
                     }
 */
 
 
-                   
-                   
-
-
-                   
-
-                          
-
-                    
-
-                    
-                    
-                   // $this->requireDefaultAlbum();
-                    //FormResponse::add( "\$( 'Form_EditForm' ).getPageFromServer( $this->ID );" );
-                
-
-               
 
 
 
 
-                
-                $download_images = Config::inst()->get($this->class, 'download_images');
-                error_log("DOWNLOAD IMAGES? ".$download_images);
 
-                if ($download_images && !($flickrPhoto->LocalCopyOfImageID)) {
-                    error_log("No local copy - downloading from flickr");
-                    error_log("MEM IMAGE T1:".memory_get_usage(true));
+
+
+
+
+
+
+
+                // $this->requireDefaultAlbum();
+                //FormResponse::add( "\$( 'Form_EditForm' ).getPageFromServer( $this->ID );" );
+
+
+
+
+
+
+
+
+                $download_images = Config::inst()->get( $this->class, 'download_images' );
+                error_log( "DOWNLOAD IMAGES? ".$download_images );
+
+                if ( $download_images && !( $flickrPhoto->LocalCopyOfImageID ) ) {
+                    error_log( "No local copy - downloading from flickr" );
+                    error_log( "MEM IMAGE T1:".memory_get_usage( true ) );
                     $largeURL = $flickrPhoto->LargeURL;
                     $fpid = $flickrPhoto->FlickrID;
-                    error_log("MEM IMAGE T2:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T2:".memory_get_usage( true ) );
 
                     $cmd = "wget -O $structure/$fpid.jpg $largeURL";
-                    exec($cmd);
+                    exec( $cmd );
 
-                    error_log("MEM IMAGE T3:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T3:".memory_get_usage( true ) );
 
 
                     $cmd = "chown  gordon:www-data $structure/$fpid.jpg";
-                   // $cmd = "pwd";
-                    error_log("COMMAND:".$cmd);
+                    // $cmd = "pwd";
+                    error_log( "COMMAND:".$cmd );
 
-                    echo "EXECCED:".exec($cmd);
+                    echo "EXECCED:".exec( $cmd );
 
-                    error_log("MEM IMAGE T4:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T4:".memory_get_usage( true ) );
 
                     $image = new Image();
                     $image->Name = $this->Title;
                     $image->Title = $this->Title;
-                    $image->Filename = str_replace('../', '', $structure.'/'.$fpid.".jpg");
-                    error_log("Setting title of image to ".$flickrPhoto->Title);
+                    $image->Filename = str_replace( '../', '', $structure.'/'.$fpid.".jpg" );
+                    error_log( "Setting title of image to ".$flickrPhoto->Title );
                     $image->Title = $flickrPhoto->Title;
                     //$image->Name = $flickrPhoto->Title;
                     $image->ParentID = $flickrSetAssetFolderID;
-                    error_log("MEM IMAGE T5:".memory_get_usage(true));
-        gc_collect_cycles();
+                    error_log( "MEM IMAGE T5:".memory_get_usage( true ) );
+                    gc_collect_cycles();
 
                     $image->write();
-        gc_collect_cycles();
+                    gc_collect_cycles();
 
-                    error_log("MEM IMAGE T6:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T6:".memory_get_usage( true ) );
 
 
-                    error_log("Setting image parent id to "+$flickrSetAssetFolderID);
+                    error_log( "Setting image parent id to "+$flickrSetAssetFolderID );
 
 
                     $flickrPhoto->LocalCopyOfImageID = $image->ID;
-                    error_log("MEM IMAGE T7:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T7:".memory_get_usage( true ) );
 
                     $flickrPhoto->write();
-                                        error_log("MEM IMAGE T8:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T8:".memory_get_usage( true ) );
 
                     $image = NULL;
-                                        error_log("MEM IMAGE T9:".memory_get_usage(true));
+                    error_log( "MEM IMAGE T9:".memory_get_usage( true ) );
 
                 }
 
 
 
-            
 
-               
+
+
 
 
             }
@@ -908,29 +869,29 @@ Rows matched: 53  Changed: 53  Warnings: 0
             // do we have a page, if not create one.  Then populate it with the photo
 
 
-            error_log("MEM T10:".memory_get_usage(true));
+            error_log( "MEM T10:".memory_get_usage( true ) );
 
-        
-            error_log("MEM T11:".memory_get_usage(true));
+
+            error_log( "MEM T11:".memory_get_usage( true ) );
 
 
 
             $flickrPhoto = NULL;
 
-            error_log("MEM T14:".memory_get_usage(true));
+            error_log( "MEM T14:".memory_get_usage( true ) );
 
 
         }
 
 
         //update orientation
-        error_log("Updating orientations");
+        error_log( "Updating orientations" );
         $sql = 'update FlickrPhoto set Orientation = 90 where ThumbnailHeight > ThumbnailWidth;';
-        DB::query($sql);
+        DB::query( $sql );
 
         //error_log(print_r($photos,1));
 
-        error_log("Abort render");
+        error_log( "Abort render" );
         die(); // abort rendering
 
 
@@ -938,11 +899,44 @@ Rows matched: 53  Changed: 53  Warnings: 0
     }
 
 
+    /*
+    Either get the set from the database, or if it does not exist get the details from flickr and add it to the database
+    */
+    private function getFlickrSet( $flickrSetID ) {
+        // do we have a set object or not
+        $flickrSet = DataObject::get_one( 'FlickrSet', 'FlickrID=\''.$flickrSetID."'" );
 
-     
+        // if a set exists update data, otherwise create
+        if ( !$flickrSet ) {
+            error_log( "Creating new flickr set:".$flickrSetID );
+            $flickrSet = new FlickrSet();
+            $setInfo = $this->f->photosets_getInfo( $flickrSetID );
+
+            $setTitle = $setInfo['title'];
+            $setDescription = $setInfo['description'];
+            $flickrSet->Title = $setTitle;
+            $flickrSet->Description = $setDescription;
+            $flickrSet->FlickrID = $flickrSetID;
+            $flickrSet->KeepClean = true;
+            $flickrSet->write();
+            error_log( "Setting first pic date to ".$flickrSet->FirstPictureTakenAt );
+        } else {
+            error_log( "Reusing existing set" );
+        }
+
+        return $flickrSet;
+
+
+
+    }
+
+
+
+
     public function editprofile() {
         // Code for the editprofile action here
         return array();
     }
-	
+
 }
+?>
