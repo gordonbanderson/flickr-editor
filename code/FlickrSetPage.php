@@ -183,6 +183,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
        error_log("PARENT FOLDER ID:".$this->ParentID);
     }
 
+
     function Map() {
         return $this->FlickrSetForPage()->Map();
     }
