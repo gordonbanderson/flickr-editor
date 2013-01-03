@@ -8,8 +8,7 @@ class FlickrPhoto extends DataObject implements Mappable {
   static $searchable_fields = array(
     'Title',
     'Description',
-    'FlickrID',
-    'TagsCSV' => 'Varchar'
+    'FlickrID'
   );
 
 
@@ -188,6 +187,7 @@ class FlickrPhoto extends DataObject implements Mappable {
       $this->IsDirty = true;
     }
   }
+
 
 
 
