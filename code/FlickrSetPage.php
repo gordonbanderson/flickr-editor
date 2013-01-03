@@ -241,16 +241,8 @@ class FlickrSetPage_Controller extends Page_Controller {
     }
 
 
-    function _HasCoordinates() {
-        $hasGeo = false;
-        foreach ($this->FlickrPhotos() as $position => $fp) {
-            if ($fp->Latitude != 0) {
-                $hasGeo = true;
-                break;
-            }
-        }
-
-        return $hasGeo;
+    function HasGeo() {
+        return $this->FlickrSetForPage()->HasGeo();
     }
 
    
