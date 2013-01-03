@@ -1,7 +1,9 @@
 <h1>$Title</h1>
 $Description
 
-$Map
+
+
+<% if HasGeo %>$Map<% end_if %>
 
 <ul class="imageList">
 <% control FlickrPhotos %>
