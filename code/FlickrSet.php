@@ -13,7 +13,9 @@ class FlickrSet extends DataObject {
     // flag to indicate requiring a flickr API update
     'IsDirty' => 'Boolean',
     'LockGeo' => 'Boolean',
-    'TagsCSV' => 'Varchar',
+    'BatchTags' => 'Varchar',
+    'BatchTitle' => 'Varchar',
+    'BatchDescription' => 'HTMLText',
     'ImageFooter' => 'Text'
   );
 
@@ -25,7 +27,8 @@ class FlickrSet extends DataObject {
 
   // this is the assets folder
   static $has_one = array (
-    'AssetFolder' => 'Folder'
+    'AssetFolder' => 'Folder',
+    'PrimaryFlickrPhoto' => 'FlickrPhoto'
   );
 
   static $has_many = array(
@@ -56,8 +59,9 @@ class FlickrSet extends DataObject {
 
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
     $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
-    $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'ImageFooter', 'This text will be appended to every image in the set' )  );
+    $fields->addFieldToTab( 'Root.Main',  new TextField( 'ImageFooter', 'Text to be added to each image in this album when saving') );
     $fields->addFieldToTab( 'Root.Main', new CheckBoxField( 'LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features' )  );
+
 
     $gridConfig = GridFieldConfig_RelationEditor::create();
     // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
@@ -90,6 +94,14 @@ class FlickrSet extends DataObject {
     $lfImage = new LiteralField( 'BucketEdit', $html );
     $fields->addFieldToTab( 'Root.Buckets', $lfImage );
 
+    $fields->addFieldToTab( 'Root.Batch',  new TextField( 'BatchTitle', 'Batch Title') );
+    $fields->addFieldToTab( 'Root.Batch', new TextAreaField( 'BatchDescription', 'Batch Description' )  );
+    $fields->addFieldToTab( 'Root.Batch', new TextAreaField( 'BatchTags', 'Batch Tags' )  );
+    
+    $htmlBatch = "<p>Click on the batch update button to update the description and title of all of the images, and add tags to each image</p>";
+    $htmlBatch .= '<input type="button" id="batchUpdatePhotographs" value="Batch Update"></input>';
+    $lf = new LiteralField( 'BatchUpdate', $htmlBatch );
+    $fields->addFieldToTab( 'Root.Batch', $lf);
 
 
     return $fields;
@@ -131,18 +143,27 @@ class FlickrSet extends DataObject {
 
 
 
+/*
+  Count the number of non zero lat and lon points - if > 0 then we can draw a map
+*/
+  public function HasGeo() {
+    return $this->FlickrPhotos()->where('Latitude != 0 AND Longitude != 0')->count() > 0;
+  }
+
+
+
   public function Map() {
     //    $prod->SetZoom(4);
 
 
 
-    $map = $this->FlickrPhotos()->RenderMap();
+    $map = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0')->RenderMap();
    // $map->setDelayLoadMapFunction( true );
     $map->setZoom( 10 );
     $map->setAdditionalCSSClasses( 'fullWidthMap' );
     $map->setShowInlineMapDivStyle( true );
     $map->setClusterer(true);
-    $map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
+    //$map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
 
    /*
     $map->addLine(
