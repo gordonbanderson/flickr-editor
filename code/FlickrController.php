@@ -20,8 +20,137 @@ class FlickrController extends Page_Controller {
         'sets',
         'primeBucketsTest',
         'createBucket',
-        'fixSetPhotoManyMany'
+        'fixSetPhotoManyMany',
+        'fixSetMainImages',
+        'PublishAllFlickrSetPages',
+        'batchUpdateSet'
     );
+
+
+    public function batchUpdateSet() {
+        //FIXME authentication
+        error_log("batch update set");
+        error_log(print_r($_POST,1));
+
+        $flickrSetID = Convert::raw2sql( $this->request->param( 'ID' ) );
+        $batchTitle = Convert::raw2sql($_POST['BatchTitle']);
+        $batchDescription = Convert::raw2sql($_POST['BatchDescription']);
+        $batchTags = str_getcsv(Convert::raw2sql($_POST['BatchTags']));
+
+        error_log("BATCH TITLE:".$batchTitle);
+        error_log("BATCH DESCRIPTION:".$batchDescription);
+        error_log("BATCH TAGS:".$batchTags);
+
+        error_log("looking for flickr set with id ".$flickrSetID);
+        $flickrSet = DataList::create('FlickrSet')->where('ID = '.$flickrSetID)->first();
+        error_log("SET:".$flickrSet->FlickrID." , ".$flickrSet->Title);
+        $flickrPhotos = $flickrSet->FlickrPhotos();
+
+        $tags = array();
+        foreach ($batchTags as $batchTag) {
+            $batchTag = trim($batchTag);
+            error_log("BATCH TAG:".$batchTag);
+            $lowerCaseTag = strtolower($batchTag);
+            $possibleTags = DataList::create('FlickrTag')->where("Value='".$lowerCaseTag."'");
+
+            if ($possibleTags->count() == 0) {
+                error_log("Creating new tag for ".$lowerCaseTag);
+                $tag = new FlickrTag();
+                $tag->Value = $lowerCaseTag;
+                $tag->RawValue = $batchTag;
+                $tag->write();
+            }  else {
+                error_log("Else found tag ".$lowerCaseTag);
+                $tag = $possibleTags->first();
+            }
+
+            error_log("TAG:".$tag->ID);
+
+            array_push($tags, $tag->ID);
+            //$tag = DataList::create('FlickrExif')->where('WIP');
+        }
+
+
+        error_log("TAGS:".print_r($tags,1));
+
+        foreach ($flickrPhotos as $fp) {
+            error_log("Updating ".$fp->ID);
+            error_log("Changing title from '".$fp->Title."' to '".$batchTitle."'");
+            $fp->Title=$batchTitle;
+            $fp->Description = $batchDescription;
+            $fp->FlickrTags()->addMany($tags);
+            $fp->write();
+        }
+
+        $result = array(
+            'number_of_images_updated' => $flickrPhotos->count()
+        );
+
+        return json_encode($result);
+
+    }
+
+
+    public function PublishAllFlickrSetPages() {
+        $pages = DataList::create('FlickrSetPage');
+        foreach ($pages as $fsp) {
+            error_log("Publshing page ".$fsp->Title);
+            $fsp->publish( "Stage", "Live" );
+        }
+
+        $pages = DataList::create('FlickrSetFolder');
+        foreach ($pages as $fsp) {
+            error_log("Publshing page ".$fsp->Title);
+            $fsp->publish( "Stage", "Live" );
+        }
+    }
+
+
+    public function fixSetMainImages() {
+        $sets = DataList::create('FlickrSet');
+        foreach($sets as $set) {
+            error_log("Finding main image for set ".$set->ID.':'.$set->Title."\n");
+
+            $pageCtr = 1;
+            $flickrSetID = $set->FlickrID;
+
+            $mainImageFlickrID = null;
+            $allPagesRead = false;
+
+            while ( !$allPagesRead ) {
+
+                $photos = $this->f->photosets_getPhotos( $flickrSetID,
+                    'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
+                    NULL,
+                    500,
+                    $pageCtr );
+
+                $pageCtr = $pageCtr+1;
+
+
+
+                //print_r($photos);
+                $photoset = $photos['photoset'];
+                $page = $photoset['page'];
+                $pages = $photoset['pages'];
+                $allPagesRead = ( $page == $pages );
+                error_log( "Fixing page $page of $pages, all read = $allPagesRead" );
+
+
+                foreach ( $photoset['photo'] as $key => $photo ) {
+                    echo '.';
+                    if ($photo['isprimary'] == 1) {
+                        error_log("\nFound main image\n\n");
+                        $fp = DataList::create('FlickrPhoto')->where('FlickrID = '.$photo['id'])->first();
+                        $set->PrimaryFlickrPhotoID = $fp->ID;
+                        $set->write();
+                    }
+                }
+
+
+            }
+        }
+    }
 
 
     /* Fix the many many relationships, previously FlickrSetPhoto pages which have now been deleted */
@@ -595,6 +724,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
             }
 
             $flickrPhoto->write();
+
+            if ($value['isprimary'] == 1) {
+                $flickrSet->MainImage = $flickrPhoto;
+            }
 
 
             $photoTagIDs = array();
