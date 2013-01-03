@@ -1,6 +1,52 @@
 /*jslint white: true */
+console.log('flickr edit');
+
 (function($) {
 	$(document).ready(function() {
+
+		console.log("Flickr edit doc ready");
+
+
+		$('#batchUpdatePhotographs').entwine({
+			onclick: function(e) {
+				var flickr_set_id = $('#buckets').attr('data-flickr-set-id');
+				var batchTitle = $('input[name="BatchTitle"]').val();
+				var batchDescription = $('textarea[name="BatchDescription"]').val();
+				var batchTags = $('textarea[name="BatchTags"]').val();
+				console.log(batchTitle);
+				console.log(batchDescription);
+				console.log(batchTags);
+
+				$('#batchUpdatePhotographs').val('Please wait, updating photographs...');
+
+				statusMessage('Batch updating photographs in this set');
+
+				$.ajax({
+					url: "/flickr/batchUpdateSet/" + flickr_set_id,
+					type: 'POST',
+					dataType: 'json',
+					data: '&BatchTitle='+batchTitle+'&BatchDescription='+batchDescription+'&BatchTags='+batchTags,
+					//context: document.body,
+					success: function(data) {
+						console.log(data);
+
+						$('#batchUpdatePhotographs').val('Batch Update');
+						statusMessage('Batch update completed');
+
+
+						var numberOfImages = $(data.number_of_images_updated);
+						alert(numberOfImages);
+
+						
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						// log the error to the console
+						console.log("The following error occured: " + textStatus, errorThrown);
+					}
+				})
+			}
+		});
+
 
 		$('.flickrThumbnail').entwine({
 			onmouseover: function(e) {
