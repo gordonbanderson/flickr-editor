@@ -29,7 +29,13 @@ class FlickrBucket extends DataObject {
 
 
   static $belongs_many_many = array(
-    'FlickrPhotos' => 'FlickrPhoto'
+    'FlickrPhotos' => 'FlickrPhoto',
+    'FlickrTags' => 'FlickrTag'
+  );
+
+
+  static $many_many = array(
+    'FlickrTags' => 'FlickrTag'
   );
 
 
@@ -67,6 +73,13 @@ class FlickrBucket extends DataObject {
           array( 'Address' )
         ) );
     }
+
+
+    $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
+    $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
+    $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
+    $fields->addFieldToTab( "Root.Tags", $gridField );
+
 
 
 
@@ -166,6 +179,8 @@ class FlickrBucket extends DataObject {
           $fp->Lon = $this->Lon;
           error_log("Updated flickr pic coords ".$fp->ID);
       }
+
+      $fp->FlickrTags()->addMany($this->FlickrTags());
 
       $fp->write();
     }
