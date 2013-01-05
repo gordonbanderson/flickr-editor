@@ -65,7 +65,10 @@ class FlickrPhoto extends DataObject implements Mappable {
     'OriginalURL' => 'Varchar(255)',
     'OriginalHeight' => 'Int',
     'OriginalWidth' => 'Int',
-    'TimeShiftHours' => 'Int'
+    'TimeShiftHours' => 'Int',
+
+
+
 
 
 
@@ -122,7 +125,6 @@ class FlickrPhoto extends DataObject implements Mappable {
   static $many_many = array(
     'FlickrTags' => 'FlickrTag',
     'FlickrBuckets' => 'FlickrBucket'
-
   );
 
 
@@ -202,40 +204,6 @@ class FlickrPhoto extends DataObject implements Mappable {
     $mainTab->setTitle( _t( 'SiteTree.TABMAIN', "Main" ) );
 
 
-
-
-
-    /*
-          $gridFieldConfig = GridFieldConfig::create()->addComponents(
-      new GridFieldToolbarHeader(),
-      new GridFieldAddNewButton('toolbar-header-right'),
-      new GridFieldSortableHeader(),
-      new GridFieldDataColumns(),
-      new GridFieldPaginator(10),
-      new GridFieldEditButton(),
-      new GridFieldDeleteAction(),
-      new GridFieldDetailForm()
-    $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
-
-
-    );
-    */
-
-
-    /*
-        $gridConfig = GridFieldConfig::create()->addComponent( new GridFieldFlickrImage());
-
-
-        // FIXME is there a better way of doing this?
-        $fl = new FieldList();
-        $fl ->push($this);
-       $gridField = new GridField( 'FlickrImage','The Flickr Image',$fl,$gridConfig );
-      $fields->addFieldToTab( "Root.Main", $gridField );
-
-
-        //$fields->push( new UploadField('LocalCopyOfImage'));
-        */
-
     $forTemplate = new ArrayData( array(
         'FlickrPhoto' => $this
       ) );
@@ -267,6 +235,13 @@ class FlickrPhoto extends DataObject implements Mappable {
       ) );
     }
    
+
+    $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
+    $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
+    $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
+    $fields->addFieldToTab( "Root.Tags", $gridField );
+
+
 
     return $fields;
   }
