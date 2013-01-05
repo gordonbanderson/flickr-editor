@@ -151,7 +151,16 @@ class FlickrBucket extends DataObject {
     error_log("COORS: ".$this->Lat.",".$this->Lon);
     foreach ( $this->FlickrPhotos() as $fp ) {
       $fp->Title = $this->Title;
-      $fp->Description = $this->Description;
+      $description = $this->Description;
+      $description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
+      $description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
+      error_log("TAKEN AT:".$fp->TakenAt);
+      $year =substr(''.$fp->TakenAt,0,4);
+      error_log("YEAR:".$year);
+      $description = str_replace('$Year', $year, $description);
+      $fp->Description = $description;
+      error_log("DESCRIPTION:".$description);
+
       if ( !$lockgeo ) {
           $fp->Lat = $this->Lat;
           $fp->Lon = $this->Lon;
