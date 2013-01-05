@@ -46,8 +46,8 @@ class FlickrController extends Page_Controller {
         error_log("SET:".$flickrSet->FlickrID." , ".$flickrSet->Title);
         $flickrPhotos = $flickrSet->FlickrPhotos();
 
-        $batchDescription = $batchDescription ."\n\n".$flickrSet->ImageFooter;
-        $batchDescription = $batchDescription ."\n\n".$this->SiteConfig()->ImageFooter;
+       // $batchDescription = $batchDescription ."\n\n".$flickrSet->ImageFooter;
+       // $batchDescription = $batchDescription ."\n\n".$this->SiteConfig()->ImageFooter;
 
         $tags = array();
         foreach ($batchTags as $batchTag) {
