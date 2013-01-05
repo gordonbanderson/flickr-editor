@@ -31,11 +31,11 @@ console.log('flickr edit');
 						console.log(data);
 
 						$('#batchUpdatePhotographs').val('Batch Update');
-						statusMessage('Batch update completed');
-
-
 						var numberOfImages = $(data.number_of_images_updated);
-						alert(numberOfImages);
+
+						statusMessage('Batch update completed '+numberOfImages+' updated');
+
+
 
 						
 					},
