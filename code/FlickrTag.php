@@ -11,6 +11,23 @@ class FlickrTag extends DataObject {
   'RawValue' => 'HTMLText'
   );
 
+  static $display_fields = array(
+    'RawValue'
+  );
+
+
+  static $searchable_fields = array(
+    'Value',
+    'RawValue',
+    'FlickrID'
+  );
+
+  static $summary_fields = array(
+    'Value',
+    'RawValue',
+    'FlickrID'
+  );
+
 
   
 
@@ -28,13 +45,18 @@ class FlickrTag extends DataObject {
 
 
 
-   function getCMSFields_forPopup() {
-        $fields = new FieldSet();
+   function getCMSFields() {
+        $fields = new FieldList();
          
         $fields->push( new TextField( 'Value' ) );
         $fields->push( new TextField( 'RawValue' ) );
          
         return $fields;
+    }
+
+    // this is required so the grid field autocompleter returns readable entries after searching
+    function Title() {
+      return $this->RawValue;
     }
 
 }
