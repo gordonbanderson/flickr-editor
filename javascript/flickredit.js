@@ -6,6 +6,38 @@ console.log('flickr edit');
 
 		console.log("Flickr edit doc ready");
 
+		$('.flickrSetDraggable').draggable();
+
+		$('.flickrSetFolderDroppable').droppable({
+			drop: function(event,ui) {
+				var parentID = $(event.target).attr('data-id');
+				var flickrSet = $(ui.draggable.context);
+				var sourceID = flickrSet.attr('data-id');
+				console.log("update SiteTree set ParentID="+parentID+' where ID='+sourceID+';');
+				console.log("update SiteTree_Live set ParentID="+parentID+' where ID='+sourceID+';');
+				flickrSet.fadeOut(500, function() { $(flickrSet).remove(); });
+				/*
+				console.log(event);
+				console.log(ui);
+
+				var draggedImage = $(ui.draggable.context);
+				console.log("Dragged image:");
+				console.log(draggedImage);
+
+				console.log("Dropped on:");
+				console.log(event.target);
+
+				draggedImage.detach();
+				draggedImage.css('left', '0px');
+				draggedImage.css('top', '0px');
+				$(event.target).find('td').first().append(draggedImage);
+				*/
+			},
+			receive: function(event,ui) {
+				console.log("RECEIVED");
+			}
+		})
+
 
 		$('#batchUpdatePhotographs').entwine({
 			onclick: function(e) {
