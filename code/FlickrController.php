@@ -23,8 +23,59 @@ class FlickrController extends Page_Controller {
         'fixSetPhotoManyMany',
         'fixSetMainImages',
         'PublishAllFlickrSetPages',
-        'batchUpdateSet'
+        'batchUpdateSet',
+        'fixArticles'
     );
+
+
+    public function fixArticles() {
+        $articles = DataList::create('Article')->sort('Title');
+//        $articles->where('Article_Live.ID=32469');
+        foreach($articles as $article) {
+            error_log("Fixing: ".$article->Title);
+            $content = $article->Content;
+            $sections = split('FLICKRPHOTO_', $content);
+            $alteredContent = '';
+            foreach($sections as $section) {
+                //$splits2 = split(' ', $section);
+                //$flickrIDwithCrud = array_shift($splits2);
+                $flickrID = '';
+                for($i=0;  $i<strlen($section);$i++) {
+                    if (is_numeric($section[$i])) {
+                        $flickrID .= $section[$i];
+                    } else {
+                        break;
+                    }
+                }
+
+                error_log("FOUND PICTURE *".$flickrID.'*');
+//                $restOfCrud = str_replace($flickrID, '', $flickrIDwithCrud);
+                $section = str_replace($flickrID, '', $section);
+                $section = '[FlickrPhoto id='.$flickrID.']'. $section;
+
+                $section = str_replace('<p> </p>', '', $section);
+                $alteredContent .= $section;
+            }
+
+           
+            error_log("CONTENT");
+            error_log($content);
+            error_log("ALTERED CONTENT");
+            error_log($alteredContent);
+           
+            $article->Content = $alteredContent;
+
+            try {
+                $article->write();
+                $article->publish( "Live", "Stage" );
+  
+            } catch (Exception $e) {
+                error_log("Unable to write article ".$article->ID);
+                error_log($e);
+            }
+            
+        }
+    }
 
 
     public function batchUpdateSet() {
