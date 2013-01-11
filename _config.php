@@ -4,6 +4,7 @@ Director::addRules(100, array('flickr/$Action/$ID' => 'FlickrController'));
 Director::addRules(100, array('flickr/$Action/$ID' => 'FlickrController'));
 Director::addRules(100, array('flickr/$Action/$ID/$OtherID' => 'FlickrController'));
 Director::addRules(100, array('tags/$Action/$ID' => 'FlickrTagsController'));
+ShortcodeParser::get('default')->register('FlickrPhoto',array('FlickrPhotoShortCodeHandler','parse_flickr'));
 
 //define global path to Components' root folder
 if(!defined('FLICKR_EDIT_TOOLS_PATH'))
