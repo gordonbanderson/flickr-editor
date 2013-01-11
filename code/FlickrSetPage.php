@@ -100,52 +100,14 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
         error_log("T1");
-        $folders = $this->getFlickrSetFolders();
-
-       
-
-
-
-        $bts = array(
-                '-- N/A --', 'Mochit', 'Ratachewi', 'Ekemai', 'On Nut'
-                );
-
-        $fields->addFieldToTab("Root.Transport", new DropdownField("BTS", $this->owner->fieldLabel('Nearest BTS Station'), $bts));
-
-
-        $oData = DataObject::get("FlickrSetFolder");
-        if ($oData) { 
-           /*
-            $folders = $oData->toDropDownMap('ID','Title', '-- Please Select --'); 
-            $dropdown = new DropdownField('ParentFolderID', 'Flickr Set Folder', $folders, $this->ParentID);
-            $fields->addFieldToTab('Root.ParentGallery', 
-                $dropdown
-            );
+   
+        //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
+        /*
+        $dropdown->setEmptyString('-- Please Select One --');
+        $fields->addFieldToTab('Root.ParentGallery', 
+            $dropdown
+        );
         */
-
-        }
-
-
-   /*
-    $map_layer_records = new ManyManyDataObjectManager(
-      $this,
-      'MapLayers',
-      'MapLayer',
-      array('Title' => 'Title'),
-      'getCMSFields_forPopup'
-    );
-
-
-  $fields->addFieldToTab("Root.MapOverlays",$map_layer_records);
-*/
-
-
-        error_log("T2");
-
-
-
-
-         
         return $fields;
     }
 
@@ -153,18 +115,6 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 
-    function getFlickrSetFolders() {
-        error_log("Getting flickr set folders");
-        if($Pages = DataObject::get('FlickrSetFolder'))
-        {
-        return $Pages->map('ID', 'Title', 'Please Select');
-        }
-        else
-        {
-        return array('No Objects found');
-        }
-    }
-    
     
     
     function onBeforeWrite() {
