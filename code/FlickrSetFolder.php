@@ -7,6 +7,10 @@ class FlickrSetFolder extends Page {
    
    static $allowed_children = array('FlickrSetPage', 'FlickrSetFolder');
 
+   static $db = array(
+    'PromoteToHomePage' => 'Boolean'
+   );
+
    static $has_one = array(
       'CoverPhoto' => 'Image',
    );
@@ -18,19 +22,21 @@ class FlickrSetFolder extends Page {
 
     
     $fields->renameField("Content", "Brief Description");
-   
+    $fields->addFieldToTab("Root.HomePage", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
 
-    /*
-    $fields->addFieldToTab('Root.Content.Main', new CalendarDateField('Date'), 'Content');
-    $fields->addFieldToTab('Root.Content.Main', new TextField('Author'), 'Content');
-    */
-    return $fields;
+   return $fields;
   }
   
 }
  
 class FlickrSetFolder_Controller extends Page_Controller {
- 
+  public function FlickrSetsNewestFirst() {
+    return DataList::create('FlickrSetPage')->where('ParentID = '.$this->ID)->sort('FirstPictureTakenAt desc');
+  }
+
+  public function FlickrSetFoldersNewestFirst() {
+    return DataList::create('FlickrSetFolder')->where('ParentID = '.$this->ID)->sort('Created desc');
+  }
 }
  
 ?>
