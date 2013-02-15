@@ -1,4 +1,7 @@
 <?php
+
+require_once "phpFlickr.php";
+
 /**
  * Only show a page with login when not logged in
  */
@@ -13,7 +16,7 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
   static $db = array(
-    'Title' => 'Varchar',
+    'Title' => 'Varchar(255)',
     'FlickrID' => 'Varchar',
     'Description' => 'HTMLText',
     'TakenAt' => 'Datetime',
@@ -66,53 +69,9 @@ class FlickrPhoto extends DataObject implements Mappable {
     'OriginalHeight' => 'Int',
     'OriginalWidth' => 'Int',
     'TimeShiftHours' => 'Int',
-
-
-
-
-
-
-
-
-
-
+    'PromoteToHomePage' => 'Boolean'
     //TODO - place id
   );
-
-
-  /*
-  [id] => 5585296500
-                    [secret] => 15a4f4dee3
-                    [server] => 5223
-                    [farm] => 6
-                    [title] => IMG_2675
-                    [isprimary] => 0
-                    [license] => 2
-                    [dateupload] => 1301838968
-                    [datetaken] => 2011-04-03 06:27:34
-                    [datetakengranularity] => 0
-                    [ownername] => gordon.b.anderson
-                    [iconserver] => 2796
-                    [iconfarm] => 3
-                    [originalsecret] => d2046d36d6
-                    [originalformat] => jpg
-                    [lastupdate] => 1301840457
-
-                    [accuracy] => 13
-
-                    [place_id] => ymXOuPpQULp1CrCb
-                    [geo_is_family] => 0
-                    [geo_is_friend] => 0
-                    [geo_is_contact] => 0
-                    [geo_is_public] => 1
-                    [tags] =>
-                    [machine_tags] =>
-                    [o_width] => 2048
-                    [o_height] => 1364
-                    [views] => 7
-                    [media] => photo
-
-*/
 
 
 
@@ -187,6 +146,8 @@ class FlickrPhoto extends DataObject implements Mappable {
 
     if (!$this->KeepClean) {
       $this->IsDirty = true;
+    } else {
+      $this->IsDirty = false;
     }
   }
 
@@ -231,8 +192,9 @@ class FlickrPhoto extends DataObject implements Mappable {
           new TextField( 'Lon', 'Longitude' ),
           new TextField( 'ZoomLevel', 'Zoom' )
         ),
-        array( 'Address' )
-      ) );
+          array( 'Address' )
+          ) 
+       );
     }
    
 
@@ -241,8 +203,7 @@ class FlickrPhoto extends DataObject implements Mappable {
     $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
     $fields->addFieldToTab( "Root.Tags", $gridField );
 
-
-
+    $fields->addFieldToTab("Root.HomePage", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
     return $fields;
   }
 
@@ -283,33 +244,63 @@ class FlickrPhoto extends DataObject implements Mappable {
     return false; //standard pin
   }
 
+  private function initialiseFlickr() {
+    if (!isset($this->f)) {
+              // get flickr details from config
+        $key = Config::inst()->get( 'FlickrController', 'api_key' );
+        $secret = Config::inst()->get('FlickrController', 'secret' );
+        $access_token = Config::inst()->get( 'FlickrController', 'access_token' );
 
+        $this->f = new phpFlickr( $key, $secret );
 
+        //Fleakr.auth_token    = ''
+        $this->f->setToken( $access_token );
+    }
+  }
 
-
-
+  public function HasGeo() {
+    return $this->Lat != 0 || $this->Lon != 0;
+  }
 
 
   /*
---------------------+----------------+------+-----+---------+----------------+
-| Field               | Type           | Null | Key | Default | Extra          |
-+---------------------+----------------+------+-----+---------+----------------+
-| id                  | int(11)        | NO   | PRI | NULL    | auto_increment |
-| flickr_id           | varchar(255)   | YES  | UNI | NULL    |                |
-| title               | varchar(255)   | YES  |     | NULL    |                |
-| description         | text           | YES  |     | NULL    |                |
-| taken_at            | datetime       | YES  | MUL | NULL    |                |
-| position            | int(11)        | YES  |     | NULL    |                |
-| created_at          | datetime       | YES  |     | NULL    |                |
-| updated_at          | datetime       | YES  |     | NULL    |                |
-| flickr_last_updated | datetime       | YES  |     | NULL    |                |
-| latitude            | decimal(15,10) | YES  |     | NULL    |                |
-| longitude           | decimal(15,10) | YES  |     | NULL    |                |
-| zoom_level          | int(11)        | YES  |     | NULL    |                |
-| timezone_name_id    | int(11)        | YES  |     | NULL    |                |
-| permalink           | varchar(255)   | YES  | UNI | NULL    |                |
-| orientation_id      | int(11)        | YES  |     | NULL    |
+  Update Flickr with details held in SilverStripe
+  @param $descriptionSuffix The suffix to be appended to the photographic description
   */
+  public function writeToFlickr($descriptionSuffix) {
+    $this->initialiseFlickr();
+    error_log("Updated flickr photo ".$this->FlickrID);
+
+    $fullDesc = $this->Description."\n\n".$descriptionSuffix;
+    $fullDesc = trim($fullDesc);
+
+    $year = substr($this->TakenAt,0,4);
+    $fullDesc = str_replace('$Year', $year, $fullDesc);
+    $this->f->photos_setMeta($this->FlickrID, $this->Title, $fullDesc);
+
+    $tagString = '';
+    foreach ($this->FlickrTags() as $tag) {
+      $tagString .= '"'.$tag->Value.'" ';
+    }
+
+    error_log("Setting tags:".$tagString);
+    
+    $this->f->photos_setTags($this->FlickrID, $tagString);
+
+    if ($this->HasGeo()) {
+      error_log("Updating map coordinates");
+      $this->f->photos_geo_setLocation ($this->FlickrID, $this->getMappableLatitude(), $this->getMappableLongitude());
+    }
+
+    $this->KeepClean = true;
+    $this->write();
+
+      //function photos_setMeta ($photo_id, $title, $description)
+      //                $this->f->photos_addTags( $image['id'], "moblog iphone3g" );
+
+  }
+
+
 }
 
 ?>
