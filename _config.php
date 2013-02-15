@@ -13,4 +13,5 @@ if(!defined('FLICKR_EDIT_TOOLS_PATH'))
 }
 
 Object::add_extension('SiteConfig', 'FlickrSiteConfig');
+Object::add_extension('FlickrSet','MapLayerExtension');
 ?>
