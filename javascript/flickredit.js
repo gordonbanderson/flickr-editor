@@ -9,13 +9,15 @@ console.log('flickr edit');
 		$('.flickrSetDraggable').draggable();
 
 		$('.flickrSetFolderDroppable').droppable({
-			drop: function(event,ui) {
+			drop: function(event, ui) {
 				var parentID = $(event.target).attr('data-id');
 				var flickrSet = $(ui.draggable.context);
 				var sourceID = flickrSet.attr('data-id');
-				console.log("update SiteTree set ParentID="+parentID+' where ID='+sourceID+';');
-				console.log("update SiteTree_Live set ParentID="+parentID+' where ID='+sourceID+';');
-				flickrSet.fadeOut(500, function() { $(flickrSet).remove(); });
+				console.log("update SiteTree set ParentID=" + parentID + ' where ID=' + sourceID + ';');
+				console.log("update SiteTree_Live set ParentID=" + parentID + ' where ID=' + sourceID + ';');
+				flickrSet.fadeOut(500, function() {
+					$(flickrSet).remove();
+				});
 				/*
 				console.log(event);
 				console.log(ui);
@@ -33,10 +35,48 @@ console.log('flickr edit');
 				$(event.target).find('td').first().append(draggedImage);
 				*/
 			},
-			receive: function(event,ui) {
+			receive: function(event, ui) {
 				console.log("RECEIVED");
 			}
-		})
+		});
+
+
+		/*
+		Search for image by ID
+		*/
+		$('.imageFlickrID').entwine({
+			onchange: function(e) {
+				console.log("Value changed");
+				console.log($(this));
+				var flickr_photo_id = $(this).val();
+				console.log("FLICKR PHOTO ID T1:" + flickr_photo_id);
+
+				if(flickr_photo_id != '') {
+					$.ajax({
+						url: "/flickr/ajaxSearchForPhoto/" + flickr_photo_id,
+						type: 'POST',
+						dataType: 'json',
+						//data: '&BatchTitle='+batchTitle+'&BatchDescription='+batchDescription+'&BatchTags='+batchTags,
+						//context: document.body,
+						success: function(data) {
+							if (data.found) {
+								var imageHtml = '<h4>'+data.title+'</h4><img src="'+data.small_url+'"/>';
+								$(e.target).parent().find('.chosenFlickrImage').first().html(imageHtml);
+								$(e.target).parent().find('.flickrPhotoSelectionField').first().val(data.id);
+							}
+						},
+						error: function(jqXHR, textStatus, errorThrown) {
+							// log the error to the console
+							console.log("The following error occured: " + textStatus, errorThrown);
+						}
+					})
+
+				} else {
+					console.log("Ignoring blank flickr photo id");
+				}
+
+			}
+		});
 
 
 		$('#batchUpdatePhotographs').entwine({
@@ -57,7 +97,7 @@ console.log('flickr edit');
 					url: "/flickr/batchUpdateSet/" + flickr_set_id,
 					type: 'POST',
 					dataType: 'json',
-					data: '&BatchTitle='+batchTitle+'&BatchDescription='+batchDescription+'&BatchTags='+batchTags,
+					data: '&BatchTitle=' + batchTitle + '&BatchDescription=' + batchDescription + '&BatchTags=' + batchTags,
 					//context: document.body,
 					success: function(data) {
 						console.log(data);
@@ -65,11 +105,10 @@ console.log('flickr edit');
 						$('#batchUpdatePhotographs').val('Batch Update');
 						var numberOfImages = $(data.number_of_images_updated);
 
-						statusMessage('Batch update completed '+numberOfImages+' updated');
+						statusMessage('Batch update completed ' + numberOfImages + ' updated');
 
 
 
-						
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						// log the error to the console
@@ -169,7 +208,7 @@ console.log('flickr edit');
 				$('.imgDrag').draggable();
 
 				$('tr.bucket').droppable({
-					drop: function(event,ui) {
+					drop: function(event, ui) {
 						console.log("Dropped");
 						console.log(event);
 						console.log(ui);
@@ -186,7 +225,7 @@ console.log('flickr edit');
 						draggedImage.css('top', '0px');
 						$(event.target).find('td').first().append(draggedImage);
 					},
-					receive: function(event,ui) {
+					receive: function(event, ui) {
 						console.log("RECEIVED");
 					}
 				})
@@ -209,7 +248,7 @@ console.log('flickr edit');
 				var photoDOM = $(this).parent().parent().find('td').first();
 				var ajax_bucket_id = $(this).parent().parent().attr('id');
 				ajax_bucket_id = ajax_bucket_id.replace('bucket_', '');
-				console.log('AJAX BUCKET ID:'+ajax_bucket_id);
+				console.log('AJAX BUCKET ID:' + ajax_bucket_id);
 
 				$(photoDOM).find('img').each(function(index) {
 					flickrPhotoIDS.push($(this).attr('data-id'));
@@ -219,18 +258,18 @@ console.log('flickr edit');
 
 				var flickr_set_id = $('#buckets').attr('data-flickr-set-id');
 				$.ajax({
-					url: "/flickr/createBucket/" + flickr_set_id + "/" + flickrPhotoIDS.join()+'?bucket_row='+ajax_bucket_id,
+					url: "/flickr/createBucket/" + flickr_set_id + "/" + flickrPhotoIDS.join() + '?bucket_row=' + ajax_bucket_id,
 					type: 'POST',
 					dataType: 'json',
 					//context: document.body,
 					success: function(data) {
 						console.log(data);
 
-						var bucketRow = $('#bucket_'+data.ajax_bucket_row);
-						bucketRow.find('td').first().find('img').each(function(index,element) {
-							var imageID  = $(this).attr('data-id');
-							imageID = '#flickrPhoto_'+imageID;
-							console.log("Removing "+imageID);
+						var bucketRow = $('#bucket_' + data.ajax_bucket_row);
+						bucketRow.find('td').first().find('img').each(function(index, element) {
+							var imageID = $(this).attr('data-id');
+							imageID = '#flickrPhoto_' + imageID;
+							console.log("Removing " + imageID);
 							$(imageID).remove();
 						});
 						//bucketRow.html('Bucket saved');						
@@ -238,7 +277,7 @@ console.log('flickr edit');
 							bucketRow.addClass('hide');
 						});
 
-						
+
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						// log the error to the console
