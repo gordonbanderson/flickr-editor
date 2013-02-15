@@ -12,6 +12,9 @@ class FlickrSetPage extends Page {
         'Description' => 'HTMLText',
             // flag to indicate requiring a flickr API update
         'IsDirty' => 'Boolean',
+
+        //FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
+        'FirstPictureTakenAt' => 'Datetime'
     );
 
 
@@ -24,10 +27,7 @@ class FlickrSetPage extends Page {
     );
 
 
-    static $many_many = array(
-      'MapLayers' => 'MapLayer'
-   );
-
+    
 
 
     /*
