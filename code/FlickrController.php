@@ -24,8 +24,62 @@ class FlickrController extends Page_Controller {
         'fixSetMainImages',
         'PublishAllFlickrSetPages',
         'batchUpdateSet',
-        'fixArticles'
+        'ajaxSearchForPhoto',
+        'fixArticles',
+        'fixDateSetTaken',
+        'fixPhotoTitles',
+        'ajaxSearchForPhoto',
+        'updateEditedImagesToFlickr'
     );
+
+
+    public function updateEditedImagesToFlickr() {
+        $flickrSetID = $this->request->param( 'ID' );
+        $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
+        $flickrSet->writeToFlickr();
+    }
+
+    public function fixDateSetTaken() {
+        $fsps = DataList::create('FlickrSetPage')->where('FirstPictureTakenAt is NULL');
+        error_log($fsps->count()." set pages to fix");
+        foreach ($fsps as $fsp) {
+            error_log("---- FSP:".$fsp->ID.' ----');
+            $fs = $fsp->FlickrSetForPage();
+            error_log("FLICKR SET FOR PAGE:".$fs." - ".$fs->ID);
+
+            if ($fs->ID == 0) {
+                error_log("BROKEN FLICKR SET PAGE:".$fsp->ID);
+                continue;
+            }
+            if ($fs->FirstPictureTakenAt == null) {
+                error_log("T1 Flickr set first picture taken at date is null");
+                $firstDate = $fs->FlickrPhotos()->sort('TakenAt')->where('TakenAt is not null');
+                error_log($firstDate->sql());
+                $firstDate = $firstDate->first();
+
+                error_log("FD:".print_r($firstDate,1));
+                error_log("IS SET:".isset($firstDate));
+
+                if ($firstDate) {
+                    $fs->FirstPictureTakenAt = $firstDate->TakenAt;
+                    error_log("FROM PICS TAKEN AT:".$firstDate->TakenAt);
+                    $fs->KeepClean = true;
+                    $fs->write();
+                } else {
+                    error_log("Set page has no photos with a non null time");
+                }
+               
+            } else {
+                error_log("T2 Flickr set first picture takent at date:".$fs->FirstPictureTakenAt);
+            }
+            $fsp->FirstPictureTakenAt = $fs->FirstPictureTakenAt;
+            $fsp->write();
+
+            error_log('FIRSTPICDATETIME:'.$fsp->Title . ' => '. $fsp->FirstPictureTakenAt);
+
+            $fsp->publish( "Live", "Stage" );
+        }
+    }
 
 
     public function fixArticles() {
@@ -75,6 +129,38 @@ class FlickrController extends Page_Controller {
             }
             
         }
+    }
+
+
+
+    public function ajaxSearchForPhoto() {
+        //FIXME authentication
+        error_log("batch update set");
+        error_log(print_r($_POST,1));
+
+        $flickrPhotoID = Convert::raw2sql( $this->request->param( 'ID' ) );
+        error_log("AJAX SEARCH: ".$flickrPhotoID);
+
+        $flickrPhoto = DataList::create('FlickrPhoto')->where('FlickrID='.$flickrPhotoID)->first();
+        error_log("FLICKR PHOTO:".$flickrPhoto);
+        $not_found = !$flickrPhoto ;
+
+        $result = array(
+            'found' => !$not_found
+        );
+
+        if ($flickrPhoto) {
+            $result['title'] = $flickrPhoto->Title;
+            $result['small_url'] = $flickrPhoto->SmallURL;
+            $result['medium_url'] = $flickrPhoto->MediumURL;
+            $result['id'] = $flickrPhoto->ID;
+            $result['description'] = $flickrPhoto->Description;
+        }
+
+        error_log("RESULT:".print_r($result,1));
+
+        return json_encode($result);
+
     }
 
 
@@ -160,6 +246,62 @@ class FlickrController extends Page_Controller {
     }
 
 
+     public function fixPhotoTitles() {
+
+       
+        $sets = DataList::create('FlickrSet');
+        foreach($sets as $set) {
+            error_log("Fixing titles for ".$set->ID.':'.$set->Title."\n");
+
+            $pageCtr = 1;
+            $flickrSetID = $set->FlickrID;
+
+            $mainImageFlickrID = null;
+            $allPagesRead = false;
+
+            while ( !$allPagesRead ) {
+                $photos = $this->f->photosets_getPhotos( $flickrSetID,
+                    'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
+                    NULL,
+                    500,
+                    $pageCtr );
+
+                $pageCtr = $pageCtr+1;
+
+
+
+                //print_r($photos);
+                $photoset = $photos['photoset'];
+                $page = $photoset['page'];
+                $pages = $photoset['pages'];
+                $allPagesRead = ( $page == $pages );
+                error_log( "Fixing page $page of $pages, all read = $allPagesRead" );
+
+
+                foreach ( $photoset['photo'] as $key => $photo ) {
+                    $fp = DataList::create('FlickrPhoto')->where('FlickrID = '.$photo['id'])->first();
+
+                    if ($fp == null) {
+                        error_log("MISSING IMAGE IN SS DB:".$photo['id']);
+                        continue;
+                    }
+
+                    $title = $photo['title'];
+                    if (strlen($title) > 48) {
+                        error_log($fp->Title.' --> '.$title);
+                        $fp->Title = $title;
+                        $fp->write();
+                        //error_log($fp->FlickrID . '==' . $photo['id']. '??');
+                    };
+                    
+                }
+
+
+            }
+        }
+    }
+
+
     public function fixSetMainImages() {
         $sets = DataList::create('FlickrSet')->where('PrimaryFlickrPhotoID = 0');
         foreach($sets as $set) {
@@ -194,10 +336,20 @@ class FlickrController extends Page_Controller {
                 foreach ( $photoset['photo'] as $key => $photo ) {
                     echo '.';
                     if ($photo['isprimary'] == 1) {
-                        error_log("\nFound main image\n\n");
+                        error_log("\nFound main image of ID ".$photo['id']."\n\n");
                         $fp = DataList::create('FlickrPhoto')->where('FlickrID = '.$photo['id'])->first();
-                        $set->PrimaryFlickrPhotoID = $fp->ID;
-                        $set->write();
+
+                        if (isset($fp)) {
+                             error_log("FlickrPhoto in SS DB:".$fp->ID);
+                            $set->PrimaryFlickrPhotoID = $fp->ID;
+                            $set->write();
+                        } else {
+                            error_log("USING FIRST AAVILABLE IMAGE");
+                            $firstPicID = $set->FlickrPhotos()->first()->ID;
+                            $set->PrimaryFlickrPhotoID = $firstPicID;
+                            $set->write();
+                        }
+                       
                     }
                 }
 
@@ -478,7 +630,7 @@ class FlickrController extends Page_Controller {
 
 
 
-    //FIXME - oreination missing
+    //FIXME - oreintation missing
     /*
   mysql> update FlickrPhoto set Orientation = 90 where (ThumbnailWidth > ThumbnailHeight);
 Query OK, 70 rows affected (0.01 sec)
@@ -576,8 +728,8 @@ Rows matched: 53  Changed: 53  Warnings: 0
         // reload from DB with date - note the use of quotes as flickr set id is a string
         $flickrSet = DataObject::get_one( 'FlickrSet', 'FlickrID=\''.$flickrSetID."'" );
         $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
-
         $flickrSet->KeepClean = true;
+        $flickrSet->write();
 
 
         error_log( "AFTER RELOAD FS = ".$flickrSet." (".$flickrSet->ID.")" );
