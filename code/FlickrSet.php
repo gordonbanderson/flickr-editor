@@ -147,59 +147,46 @@ class FlickrSet extends DataObject {
   Count the number of non zero lat and lon points - if > 0 then we can draw a map
 */
   public function HasGeo() {
-    return $this->FlickrPhotos()->where('Latitude != 0 AND Longitude != 0')->count() > 0;
+    $ct = $this->FlickrPhotos()->where('Lat != 0 OR Lon != 0')->count();
+    error_log("SET HAS GEO? CT=".$ct);
+    $result = ($ct > 0);
+    error_log($result);
+
+    return $result;
+
   }
 
 
 
   public function Map() {
-    //    $prod->SetZoom(4);
-
-
-
-    $map = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0')->RenderMap();
-   // $map->setDelayLoadMapFunction( true );
+    $photosWithLocation = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0');
+    if ($photosWithLocation->count() == 0) {
+      return ''; // don't render a map
+    }
+    $map = $photosWithLocation->RenderMap();
+    // $map->setDelayLoadMapFunction( true );
     $map->setZoom( 10 );
     $map->setAdditionalCSSClasses( 'fullWidthMap' );
     $map->setShowInlineMapDivStyle( true );
     $map->setClusterer(true);
     //$map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
-
-   /*
-    $map->addLine(
-      array(13.836966000000000,100.525958000000003),
-      array(13.719272000000000,100.504747000000005)
-    );
-*/
     return $map;
   }
 
 
+  public function writeToFlickr() {
+    $suffix = $this->ImageFooter ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
+    $imagesToUpdate = $this->FlickrPhotos()->where('IsDirty = 1');
+    $ctr = 1;
+    $amount = $imagesToUpdate->count();
 
+    foreach ($imagesToUpdate as $fp) {
+      error_log("\n\n==".$ctr.'/'.$amount."==");
+      $fp->writeToFlickr($suffix);
+      $ctr++;
+    }
+  }
 
-
-  /*
---------------------+----------------+------+-----+---------+----------------+
-| Field               | Type           | Null | Key | Default | Extra          |
-+---------------------+----------------+------+-----+---------+----------------+
-| id                  | int(11)        | NO   | PRI | NULL    | auto_increment |
-| flickr_id           | varchar(255)   | YES  | UNI | NULL    |                |
-| title               | varchar(255)   | YES  |     | NULL    |                |
-| description         | text           | YES  |     | NULL    |                |
-| taken_at            | datetime       | YES  | MUL | NULL    |                |
-| position            | int(11)        | YES  |     | NULL    |                |
-| created_at          | datetime       | YES  |     | NULL    |                |
-| updated_at          | datetime       | YES  |     | NULL    |                |
-| flickr_last_updated | datetime       | YES  |     | NULL    |                |
-| latitude            | decimal(15,10) | YES  |     | NULL    |                |
-| longitude           | decimal(15,10) | YES  |     | NULL    |                |
-| zoom_level          | int(11)        | YES  |     | NULL    |                |
-| timezone_name_id    | int(11)        | YES  |     | NULL    |                |
-| permalink           | varchar(255)   | YES  | UNI | NULL    |                |
-| orientation_id      | int(11)        | YES  |     | NULL    |
-  */
 }
-
-
 
 ?>
