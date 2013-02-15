@@ -14,6 +14,10 @@ class FlickrPhotoShortCodeHandler {
         /*** SET DEFAULTS ***/
         $fp = DataList::create('FlickrPhoto')->where('FlickrID='.$arguments['id'])->first();
 
+        if (!$fp) {
+            return '';
+        }
+
         $customise['FlickrImage'] = $fp;
         //set the caption
         $customise['Caption'] = $caption ? Convert::raw2xml( $caption ) : $fp->Title ;
