@@ -65,20 +65,35 @@ class FlickrBucket extends DataObject {
 
     if ( !$lockgeo ) {
       error_log( "Adding location tab as lock geo is ".$lockgeo );
-      $fields->addFieldToTab( "Root.Location", new LatLongField( array(
+      $mapField = new LatLongField( array(
             new TextField( 'Lat', 'Latitude' ),
             new TextField( 'Lon', 'Longitude' ),
             new TextField( 'ZoomLevel', 'Zoom' )
           ),
           array( 'Address' )
-        ) );
+        );
+
+      $guidePoints = array();
+      foreach ($this->FlickrSet()->FlickrPhotos()->where('Lat != 0 and Lon != 0') as $fp) {
+        if (($fp->Lat != 0) && ($fp->Lon != 0)) {
+          error_log("Set lat lon");
+          array_push($guidePoints, array('latitude' => $fp->Lat, 'longitude' => $fp->Lon));
+        }
+      }
+
+      if (count($guidePoints) > 0) {
+        $mapField->setGuidePoints($guidePoints);
+      }
+      $fields->addFieldToTab( "Root.Location", $mapField );
     }
 
 
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
     $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
-    $fields->addFieldToTab( "Root.Tags", $gridField );
+
+    // keep in the main tab to avoid wasting time tab switching
+    $fields->addFieldToTab( "Root.Main", $gridField );
 
 
 
@@ -165,8 +180,8 @@ class FlickrBucket extends DataObject {
     foreach ( $this->FlickrPhotos() as $fp ) {
       $fp->Title = $this->Title;
       $description = $this->Description;
-      $description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
-      $description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
+      //$description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
+      //$description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
       error_log("TAKEN AT:".$fp->TakenAt);
       $year =substr(''.$fp->TakenAt,0,4);
       error_log("YEAR:".$year);
@@ -175,6 +190,7 @@ class FlickrBucket extends DataObject {
       error_log("DESCRIPTION:".$description);
 
       if ( !$lockgeo ) {
+        error_log("Setting photo lat to ".$this->Lat);
           $fp->Lat = $this->Lat;
           $fp->Lon = $this->Lon;
           error_log("Updated flickr pic coords ".$fp->ID);
