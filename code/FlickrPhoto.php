@@ -196,6 +196,10 @@ class FlickrPhoto extends DataObject implements Mappable {
           ) 
        );
     }
+
+    // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
+    $fields->addFieldToTab( 'Root.Main',  new TextField( 'QuickTags', 'Enter tags here separated by commas') );
+
    
 
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
