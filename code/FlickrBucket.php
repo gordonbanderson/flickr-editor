@@ -55,6 +55,10 @@ class FlickrBucket extends DataObject {
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Bucket Title' ) );
     $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Bucket Description' )  );
 
+     // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
+    $fields->addFieldToTab( 'Root.Main',  new TextField( 'QuickTags', 'Quick tags - enter tags here separated by commas') );
+
+
 
 
     $lf2 = new LiteralField( 'ImageStrip', $this->getImageStrip() );
@@ -142,6 +146,9 @@ class FlickrBucket extends DataObject {
 
 
     error_log( "OBW: ID = ".$this->ID );
+    error_log("QUICK TAGS:".$this->QuickTags);
+    $quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
+    $this->FlickrTags()->addMany($quickTags);
 
     if ( $this->ID && ( $this->FlickrPhotos()->count() > 0 ) ) {
       error_log( "TESTING TITLE" );
@@ -166,6 +173,9 @@ class FlickrBucket extends DataObject {
     parent::onAfterWrite();
 
     error_log( "+++ POST BUCKET SAVE ++++" );
+    error_log("QUICK TAGS:".$this->QuickTags);
+
+   
 
     // if the title is blank resave in order to create a time from / time to title
     // this needs checked here as on before write cannot do this when the bucket has not been saved
@@ -198,7 +208,9 @@ class FlickrBucket extends DataObject {
 
       $fp->FlickrTags()->addMany($this->FlickrTags());
 
+      error_log("BUCKET TAGS:".$this->FlickrTags()->count());
       $fp->write();
+      error_log("AFTER WRITE FP TAGS:".$fp->FlickrTags()->count());
     }
   }
 
