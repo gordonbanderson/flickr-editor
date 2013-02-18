@@ -59,6 +59,45 @@ class FlickrTag extends DataObject {
       return $this->RawValue;
     }
 
+
+    /*
+    Static helper
+    */
+    public static function CreateOrFindTags($csv) {
+      $result = new ArrayList();
+      error_log("\n\n ++++ CREATING TAGS FROM ".$csv.'++++');
+
+      if (trim($csv) == '') {
+        return $result; // ie empty array
+      }
+      $tags = explode(',', $csv);
+      foreach($tags as $tagName) {
+        $tagName = trim($tagName);
+        if (!$tagName) {
+          continue;
+        }
+        error_log("Checking for tag:".$tagName);
+        $ftag = DataList::create('FlickrTag')->where("Value='".strtolower($tagName)."'")->first();
+        if (!$ftag) {
+          $ftag = FlickrTag::create();
+          $ftag->RawValue = $tagName;
+          $ftag->Value  = strtolower($tagName);
+          error_log("Set value to ".$tagName);
+          $ftag->write();
+          error_log("Created tag:".$tagName);
+        } else {
+          error_log("Found tag:".$tagName);
+        }
+
+        $result->add($ftag);
+
+      }
+
+      error_log("RESULT:".print_r($result,1));
+
+      return $result;
+    }
+
 }
 
 
