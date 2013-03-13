@@ -120,7 +120,6 @@ class FlickrPhoto extends DataObject implements Mappable {
 
   function HorizontalMargin( $intendedWidth ) {
     //FIXME - is there a way to avoid a database call here?
-    error_log( "HORIZONTAL" );
     $fp = DataObject::get_by_id( 'FlickrPhoto', $this->ID );
     return ( $intendedWidth-$fp->ThumbnailWidth )/2;
   }
@@ -144,6 +143,11 @@ class FlickrPhoto extends DataObject implements Mappable {
   function onBeforeWrite() {
     parent::onBeforeWrite();
 
+    error_log("APRENT ON BEFORE WRITE FP ***********");
+
+    $quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
+    $this->FlickrTags()->addMany($quickTags);
+
     if (!$this->KeepClean) {
       $this->IsDirty = true;
     } else {
@@ -160,6 +164,7 @@ class FlickrPhoto extends DataObject implements Mappable {
     Requirements::css( FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.js' );
 
     $fields = new FieldList();
+
 
     $fields->push( new TabSet( "Root", $mainTab = new Tab( "Main" ) ) );
     $mainTab->setTitle( _t( 'SiteTree.TABMAIN', "Main" ) );
@@ -205,9 +210,9 @@ class FlickrPhoto extends DataObject implements Mappable {
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
     $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
-    $fields->addFieldToTab( "Root.Tags", $gridField );
+    $fields->addFieldToTab( "Root.Main", $gridField );
 
-    $fields->addFieldToTab("Root.HomePage", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
+    $fields->addFieldToTab("Root.Main", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
     return $fields;
   }
 
@@ -236,10 +241,9 @@ class FlickrPhoto extends DataObject implements Mappable {
   }
 
   public function getMapContent() {
-
-    return 'wip';
-    //return GoogleMapUtil::sanitize($this->renderWith('MapBubbleMember'));
+    return MapUtil::sanitize($this->renderWith('FlickrPhotoMapInfoWindow'));
   }
+
   public function getMapCategory() {
     return 'photo';
   }
