@@ -23,7 +23,6 @@ class FlickrSetPage extends Page {
         "filter_fields" => array(),
         "index_filter" => '"ShowInSearch" = 1',
         "sort_fields" => array("Title")
-        
     );
 
 
@@ -152,26 +151,11 @@ class FlickrSetPage_Controller extends Page_Controller {
 
 
     function FlickrPhotos() {
-        if (!isset($this->FlickrPics)) {
-            
+        if (!isset($this->FlickrPics)) {            
             $images = $this->FlickrSetForPage()->FlickrPhotos();
-
-            error_log("T1 image size:".$images->count());
-/*
-            foreach ($images as $key => $fp) {
-                $fpp = $images[$key];
-                $fp->TakenAt = strtotime($fp->TakenAt)+3600*($this->TimeShiftHours);
-                error_log("CHECKING IMAGE ".$fp->Title);
-            }
-*/
             $this->FlickrPics = $images;
-            error_log("T2 image size:".$images->count());
-            error_log("T3 image size:".$this->FlickrPics->count());
-
-
         }
 
-        error_log("IMAGE COUNT:".$this->FlickrPics->count());
         return $this->FlickrPics;
     }
 
