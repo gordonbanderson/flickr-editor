@@ -46,6 +46,7 @@ class FlickrSet extends DataObject {
 
 
   function getCMSFields() {
+    error_log("FLICKR SET GET CMS FIELDS");
 
     Requirements::javascript( FLICKR_EDIT_TOOLS_PATH . '/javascript/flickredit.js' );
     Requirements::css( FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.css' );
@@ -54,8 +55,6 @@ class FlickrSet extends DataObject {
 
     $fields->push( new TabSet( "Root", $mainTab = new Tab( "Main" ) ) );
     $mainTab->setTitle( _t( 'SiteTree.TABMAIN', "Main" ) );
-
-
 
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'Title', 'Title') );
     $fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
@@ -93,6 +92,7 @@ class FlickrSet extends DataObject {
 
     $lfImage = new LiteralField( 'BucketEdit', $html );
     $fields->addFieldToTab( 'Root.Buckets', $lfImage );
+    $this->extend('updateCMSFields', $fields);
 
     $fields->addFieldToTab( 'Root.Batch',  new TextField( 'BatchTitle', 'Batch Title') );
     $fields->addFieldToTab( 'Root.Batch', new TextAreaField( 'BatchDescription', 'Batch Description' )  );
@@ -102,6 +102,8 @@ class FlickrSet extends DataObject {
     $htmlBatch .= '<input type="button" id="batchUpdatePhotographs" value="Batch Update"></input>';
     $lf = new LiteralField( 'BatchUpdate', $htmlBatch );
     $fields->addFieldToTab( 'Root.Batch', $lf);
+
+
 
 
     return $fields;
@@ -169,6 +171,12 @@ class FlickrSet extends DataObject {
     $map->setAdditionalCSSClasses( 'fullWidthMap' );
     $map->setShowInlineMapDivStyle( true );
     $map->setClusterer(true);
+    foreach($this->MapLayers() as $layer) {
+      error_log("LINK".$layer->KmlFile()->getAbsoluteURL());
+      $map->addKML($layer->KmlFile()->getAbsoluteURL());
+    }
+
+
     //$map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
     return $map;
   }
