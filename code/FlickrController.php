@@ -9,7 +9,7 @@
 
 require_once "phpFlickr.php";
 
-class FlickrController extends Page_Controller {
+class FlickrController extends Page_Controller implements PermissionProvider {
 
 
 
@@ -32,6 +32,13 @@ class FlickrController extends Page_Controller {
         'updateEditedImagesToFlickr',
         'dumpSetAsJson'
     );
+
+
+    public function providePermissions() {
+        return array(
+            "FLICKR_EDIT" => "Able to import and edit flickr data"
+        );
+    } 
 
 
     public function dumpSetAsJson() {
@@ -103,6 +110,8 @@ class FlickrController extends Page_Controller {
             error_log('FIRSTPICDATETIME:'.$fsp->Title . ' => '. $fsp->FirstPictureTakenAt);
 
             $fsp->publish( "Live", "Stage" );
+
+  
         }
     }
 
@@ -524,6 +533,13 @@ class FlickrController extends Page_Controller {
     public function init() {
         parent::init();
 
+        if (!Permission::check("FLICKR_EDIT")) {
+            error_log("No permission to edit flickr");
+            //FIXME - enable in the CMS first, then do
+            //Security::permissionFailure();
+        }
+
+
         // get flickr details from config
         $key = Config::inst()->get( $this->class, 'api_key' );
         $secret = Config::inst()->get( $this->class, 'secret' );
@@ -675,6 +691,8 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
 
+
+
         // phpInfo();
 
         /*
@@ -718,6 +736,11 @@ Rows matched: 53  Changed: 53  Warnings: 0
         // Code for the register action here
         error_log( "import set" );
         $flickrSetID = $this->request->param( 'ID' );
+        $path = $_GET['path'];
+        error_log("PATH:".$path);
+        $parentNode = SiteTree::get_by_link($path);
+        error_log("PARENT NODE:".$parentNode);
+        
         //error_log("ID PARAM:".print_r($flickrSetID, 1));
 
         $this->FlickrSetId = $flickrSetID;
@@ -785,9 +808,16 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
             $flickrSetPage->write();
             // create a stage version also
-            $flickrSetPage->publish( "Live", "Stage" );
 
         }
+
+        $flickrSetPage->ParentID = $parentNode->ID;
+        $flickrSetPage->write();
+        $flickrSetPage->publish( "Live", "Stage" );
+
+
+        error_log("Updated FSP ".$flickrSetPage->ID);
+        error_log("PARENT NOW ".$parentNode->ID);
 
         $flickrSetPageID = $flickrSetPage->ID;
         gc_enable();
