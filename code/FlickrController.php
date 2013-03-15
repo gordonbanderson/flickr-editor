@@ -29,14 +29,39 @@ class FlickrController extends Page_Controller {
         'fixDateSetTaken',
         'fixPhotoTitles',
         'ajaxSearchForPhoto',
-        'updateEditedImagesToFlickr'
+        'updateEditedImagesToFlickr',
+        'dumpSetAsJson'
     );
+
+
+    public function dumpSetAsJson() {
+        error_log("DUMPING SET AS JSON");
+
+        die;
+    }
+
+
+    public function setToJson() {
+        error_log("+++ SET TO JSON +++");
+        $flickrSetID = $this->request->param( 'ID' );
+        $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
+        error_log("FLICKR SET:".$flickrSet);
+         $images = array();
+        foreach ($flickrSet->FlickrPhotos() as $fp) {
+            $image = array();
+            $image['MediumURL'] = $fp-> MediumURL;
+            $image['BatchTitle'] = $fp-> Title;
+        }
+
+        error_log(json_decode($images));
+    }
 
 
     public function updateEditedImagesToFlickr() {
         $flickrSetID = $this->request->param( 'ID' );
         $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
         $flickrSet->writeToFlickr();
+       
     }
 
     public function fixDateSetTaken() {
