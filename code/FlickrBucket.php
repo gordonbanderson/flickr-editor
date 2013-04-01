@@ -88,8 +88,15 @@ class FlickrBucket extends DataObject {
       if (count($guidePoints) > 0) {
         $mapField->setGuidePoints($guidePoints);
       }
-      $fields->addFieldToTab( "Root.Location", $mapField );
+
+      $locationTab = $fields->findOrMakeTab('Root.Location');
+      $locationTab->extraClass('mappableLocationTab');
+
+      $fields->addFieldToTab( 'Root.Location', $mapField );
     }
+
+
+    error_log(print_r($fields,1));
 
 
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
