@@ -1,6 +1,6 @@
 <?php
  
-class FlickrSetPage extends Page {
+class FlickrSetPage extends Page implements RenderableAsPortlet {
  
     static $has_one = array(
         'FlickrSetForPage' => 'FlickrSet'
@@ -24,6 +24,41 @@ class FlickrSetPage extends Page {
         "index_filter" => '"ShowInSearch" = 1',
         "sort_fields" => array("Title")
     );
+
+
+    function getPortletTitle() {
+        return $this->Title;
+    }
+    
+
+    /**
+     * An accessor method for an image for a portlet
+     * @example
+     * <code>
+     *  return $this->NewsItemImage;
+     * </code>
+     *
+     * @return string
+     */
+    public function getPortletImage() {
+        error_log("FSP: PI=".$this->FlickrSetForPage()->PrimaryFlickrPhoto());
+
+        return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
+    }
+    
+    
+    /**
+     * An accessor for text associated with the portlet
+     * @example
+     * <code>
+     * return $this->Summary
+     * </code>
+     *
+     * @return string
+     */ 
+    public function getPortletCaption() {
+        return $this->Descripton;
+    }
 
 
     
@@ -178,6 +213,9 @@ class FlickrSetPage_Controller extends Page_Controller {
     function HasGeo() {
         return $this->FlickrSetForPage()->HasGeo();
     }
+
+
+
 
    
 }
