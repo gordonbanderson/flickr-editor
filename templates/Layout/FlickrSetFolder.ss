@@ -5,7 +5,7 @@ $Description
 <% loop FlickrSetFoldersNewestFirst %>
 <li class="media">
 <a class="pull-left listingThumbnail" href="$Link">
-<% with CoverPhoto.SetWidth(100) %><img class="media-object" src="$URL"><% end_with %></a>
+<% with MainFlickrPhoto %><img class="media-object" src="$ThumbnailURL"><% end_with %></a>
 <div class="media-body">
 <h4 class="media-heading"><a href="$Link">$Title</a></h4>
 <p>$Content</p>
