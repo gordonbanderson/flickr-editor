@@ -30,7 +30,8 @@ class FlickrController extends Page_Controller implements PermissionProvider {
         'fixPhotoTitles',
         'ajaxSearchForPhoto',
         'updateEditedImagesToFlickr',
-        'dumpSetAsJson'
+        'dumpSetAsJson',
+        'primeFlickrSetFolderImages'
     );
 
 
@@ -38,7 +39,35 @@ class FlickrController extends Page_Controller implements PermissionProvider {
         return array(
             "FLICKR_EDIT" => "Able to import and edit flickr data"
         );
-    } 
+    }
+
+
+    function primeFlickrSetFolderImages() {
+        $folders = DataList::create('FlickrSetFolder')->where('MainFlickrPhotoID = 0');
+
+        foreach ($folders as $folder) {
+            error_log("++++ FIXING CHILDREN OF ".$folder->Title." ++++");
+            foreach ($folder->Children() as $folderOrSet) {
+                $cname = $folderOrSet->ClassName;
+                // we want to find a flickr set page we can use the image from
+                if ($cname == 'FlickrSetPage') {
+                    $flickrImage = $folderOrSet->getPortletImage();
+                    //error_log("FI:".$flickrImage>" ID=".$flickrImage->ID);
+                    if ($flickrImage->ID != 0) {
+                        $folder->MainFlickrPhotoID = $flickrImage->ID;
+                        $folder->write();
+                        error_log("Found image ".$flickrImage->ID.' for folder '.$folder->ID);
+                        error_log("TITLE:".$flickrImage->Title);
+                        continue;
+                    }
+                }
+
+                error_log("++++ /FIXING CHILDREN OF ".$folder->Title." ++++");
+
+                
+            }
+        }
+    }
 
 
     public function dumpSetAsJson() {
@@ -1284,6 +1313,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
         DB::query( $sql );
 
         //error_log(print_r($photos,1));
+
+        $this->fixSetMainImages();
+        $this->fixDateSetTaken();
+
 
         error_log( "Abort render" );
         die(); // abort rendering
