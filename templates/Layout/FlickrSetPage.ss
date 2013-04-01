@@ -1,3 +1,5 @@
+$EnsureMenuHidden
+<a href="#flickrSetNavigation" class="downThePageNavigation">&darr;&nbsp;Navigation</a>
 <h1>$Title</h1>
 $Description
 
@@ -40,4 +42,8 @@ $TakenAt.Nice
 
 </li><% end_control %>
 </ul>
+<div id="flickrSetNavigation">&nbsp;</dv>
+<% include FolderWithImagesNavigation %>
+<% include ParentFolderWithImagesNavigation %>
+
 <% include MainContentFooter %>
