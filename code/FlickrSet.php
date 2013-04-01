@@ -44,6 +44,10 @@ class FlickrSet extends DataObject {
   );
 
 
+  public static $default_sort = 'FirstPictureTakenAt DESC';
+
+
+
 
   function getCMSFields() {
     error_log("FLICKR SET GET CMS FIELDS");
@@ -75,8 +79,12 @@ class FlickrSet extends DataObject {
     $gridConfig2->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
     $gridConfig2->getComponentByType( 'GridFieldPaginator' )->setItemsPerPage( 100 );
 
-    $gridField2 = new GridField( "Flickr Buckets", "List of Buckets:", $this->FlickrBucketsByDate(), $gridConfig2 );
-    $fields->addFieldToTab( "Root.SavedBuckets", $gridField2 );
+    $bucketsByDate =  $this->FlickrBucketsByDate();
+    if ($bucketsByDate->count() > 0) {
+      $gridField2 = new GridField( "Flickr Buckets", "List of Buckets:", $bucketsByDate, $gridConfig2 );
+      $fields->addFieldToTab( "Root.SavedBuckets", $gridField2 );
+    } 
+    
 
 
     $forTemplate = new ArrayData( array(
@@ -133,14 +141,47 @@ class FlickrSet extends DataObject {
     innerJoin('FlickrPhoto', 'FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID')->
     sort('TakenAt');
     */
-    $result = $this->FlickrBuckets()->where('
-      FlickrBucket.ID in (select distinct FlickrBucketID from FlickrBucket 
-      INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
-      INNER JOIN FlickrPhoto ON FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID
-      WHERE (FlickrSetID = '.$this->ID.') order by TakenAt)');
+
+    $sqlbucketidsinorder = 'select distinct FlickrBucketID from (
+      select FlickrBucketID, FlickrPhoto.TakenAt from FlickrBucket 
+        INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
+        INNER JOIN FlickrPhoto ON FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID
+        WHERE (FlickrSetID = '.$this->ID.')
+        order by FlickrPhoto.TakenAt
+      ) as OrderedBuckets';
+
+    $bucketidsinorder = DB::query($sqlbucketidsinorder);
+
+    $ids = array();
+    foreach ($bucketidsinorder as $bucketidrecord) {
+      array_push($ids, $bucketidrecord['FlickrBucketID']);
+    };
+
+    $result = $this->FlickrBuckets();
+
+    if (sizeof($ids) > 0) {
+      $csv = implode(',', $ids);
+      $where = 'ID in ('.$csv.')'; //' order by FIELD (ID,'.$csv.')';
+      $result->where($where);
+    }
+    
+
+
+    // ordering by field breaks the CRM, so do it by hand
+    $idtobucket = array();
+    foreach ($result->getIterator() as $bucket) {
+      $idtobucket[$bucket->ID] = $bucket;
+    }
+
+    $result = array();
+    foreach ($ids as $bucketid) {
+      array_push($result, $idtobucket[$bucketid]);
+    }
+
+
 
     
-    return $result;
+    return new ArrayList($result);
   }
 
 
@@ -165,7 +206,7 @@ class FlickrSet extends DataObject {
     if ($photosWithLocation->count() == 0) {
       return ''; // don't render a map
     }
-    $map = $photosWithLocation->RenderMap();
+    $map = $photosWithLocation->getRenderableMap();
     // $map->setDelayLoadMapFunction( true );
     $map->setZoom( 10 );
     $map->setAdditionalCSSClasses( 'fullWidthMap' );
