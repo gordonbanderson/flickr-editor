@@ -2,7 +2,7 @@
 /**
  * Defines the FlickrSetFolder page type
  */
-class FlickrSetFolder extends Page {
+class FlickrSetFolder extends Page implements RenderableAsPortlet {
 
    
    static $allowed_children = array('FlickrSetPage', 'FlickrSetFolder');
@@ -11,14 +11,14 @@ class FlickrSetFolder extends Page {
     'PromoteToHomePage' => 'Boolean'
    );
 
-   static $has_one = array(
-      'CoverPhoto' => 'Image',
-   );
+    
+    static $has_one = array('MainFlickrPhoto' => 'FlickrPhoto');
+
 
 
    function getCMSFields() {
     $fields = parent::getCMSFields();
-    $fields->addFieldToTab("Root.CoverPhoto", new UploadField('CoverPhoto'));
+    $fields->addFieldToTab('Root.CoverPhoto', new FlickrPhotoSelectionField('MainFlickrPhotoID', 'Cover Photo', $this->MainFlickrPhoto()));
 
     
     $fields->renameField("Content", "Brief Description");
@@ -26,6 +26,41 @@ class FlickrSetFolder extends Page {
 
    return $fields;
   }
+
+
+
+    function getPortletTitle() {
+        return $this->Title;
+    }
+    
+
+    /**
+     * An accessor method for an image for a portlet
+     * @example
+     * <code>
+     *  return $this->NewsItemImage;
+     * </code>
+     *
+     * @return string
+     */
+    public function getPortletImage() {
+        return $this->MainFlickrPhoto();
+    }
+    
+    
+    /**
+     * An accessor for text associated with the portlet
+     * @example
+     * <code>
+     * return $this->Summary
+     * </code>
+     *
+     * @return string
+     */ 
+    public function getPortletCaption() {
+        return $this->Title;
+    }
+
   
 }
  
