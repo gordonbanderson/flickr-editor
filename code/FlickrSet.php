@@ -6,7 +6,7 @@ class FlickrSet extends DataObject {
 
 
   static $db = array(
-    'Title' => 'Varchar',
+    'Title' => 'Varchar(255)',
     'FlickrID' => 'Varchar',
     'Description' => 'HTMLText',
     'FirstPictureTakenAt' => 'Datetime',
