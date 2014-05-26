@@ -27,12 +27,23 @@ class FlickrController extends Page_Controller implements PermissionProvider {
         'ajaxSearchForPhoto',
         'fixArticles',
         'fixDateSetTaken',
+        'fixArticleDates',
         'fixPhotoTitles',
         'ajaxSearchForPhoto',
         'updateEditedImagesToFlickr',
         'dumpSetAsJson',
-        'primeFlickrSetFolderImages'
+        'primeFlickrSetFolderImages',
+        'moveXperiaPics'
     );
+
+    public function fixArticleDates() {
+        $articles = DataList::create('Article')->where('StartTime is null');
+        foreach ($articles->getIterator() as $article) {
+            $article->StartTime = $article->Created;
+            $article->write();
+            error_log("Updated: ".$article->StartTime." : ".$article->Title);
+        }
+    }
 
 
     public function providePermissions() {
@@ -93,10 +104,28 @@ class FlickrController extends Page_Controller implements PermissionProvider {
     }
 
 
+
+
+
+
+    /*
+
+    Dreamhost 5.1.56
+    Ubuntu 5.5.29
+    */
     public function updateEditedImagesToFlickr() {
         $flickrSetID = $this->request->param( 'ID' );
-        $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
-        $flickrSet->writeToFlickr();
+        echo "T1:".FlickrSet::get()->filter('FlickrID',$flickrSetID)->sql();
+        $flickrSet = FlickrSet::get()->filter(array('FlickrID' => $flickrSetID))->first();
+       
+        if ($flickrSet) {
+            //DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
+            error_log("Updating to flickr: ".$flickrSet->Title);
+            $flickrSet->writeToFlickr();
+        } else {
+            error_log("Unable to fnd flickr set with id *".$flickrSetID.'*');
+        }
+        
        
     }
 
@@ -606,6 +635,22 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 
 
 
+
+    public function moveXperiaPics() {
+        $moblogbucketsetid = $this->request->param('ID');
+        error_log('Searching for flickr set with id '.$moblogbucketsetid);
+      //  $moblogset = FlickrSet::get()->filter(array('FlickrID' => $moblogbucketsetid))->first();
+      //  error_log('MOBLOG SET:'.print_r($moblogset,1));
+        $photos = $this->f->photos_search(array("user_id" => "me", "per_page" => 500, 'extras' => 'description, license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o'));
+        foreach ($photos as $photo) {
+            error_log('PHOTO');
+            error_log(print_r($photo,1));
+        }
+       
+    }
+
+
+
     public function splitMoblog() {
 
         /*
@@ -1084,61 +1129,6 @@ Rows matched: 53  Changed: 53  Warnings: 0
             gc_collect_cycles();
 
 
-
-
-            // now get the exif data
-            error_log( "Loading EXIF data" );
-            $exifData = $this->f->photos_getExif( $flickrPhotoID );
-            // error_log(print_r($exifData,1));
-
-            // delete the old exif data
-            $sql = "DELETE from FlickrExif where FlickrPhotoID=".$flickrPhoto->ID;
-            error_log( $sql );
-            DB::query( $sql );
-
-
-            foreach ( $exifData['exif'] as $key => $exifInfo ) {
-                $exif = new FlickrExif();
-                $exif->TagSpace = $exifInfo['tagspace'];
-                $exif->TagSpaceID = $exifInfo['tagspaceid'];
-                $exif->Tag = $exifInfo['tag'];
-                $exif->Label = $exifInfo['label'];
-                $exif->Raw = $exifInfo['raw'];
-                $exif->FlickrPhotoID = $flickrPhoto->ID;
-                $exif->write();
-
-                if ( $exif->Tag == 'ImageUniqueID' ) {
-                    $flickrPhoto->ImageUniqueID = $exif->Raw;
-                } else
-                    if ( $exif->Tag == 'ISO' ) {
-                        $flickrPhoto->ISO = $exif->Raw;
-                    } else
-                    if ( $exif->Tag == 'ExposureTime' ) {
-                        $flickrPhoto->ShutterSpeed = $exif->Raw;
-                    } else
-                    if ( $exif->Tag == 'FocalLengthIn35mmFormat' ) {
-                        $raw35 = $exif->Raw;
-                        error_log( "RAW 35:".$raw35 );
-                        $fl35 = str_replace( ' mm', '', $raw35 );
-
-                        error_log( "POST MANGLING 1: ".$fl35 );
-
-                        $fl35 = (int) $fl35;
-
-                        error_log( "POST MANGLING 2: ".$fl35 );
-                        $flickrPhoto->FocalLength35mm = $fl35;
-                    } else
-                    if ( $exif->Tag == 'FNumber' ) {
-                        $flickrPhoto->Aperture = $exif->Raw;
-                    };
-
-                $exif = NULL;
-                gc_collect_cycles();
-
-
-            }
-
-
             $flickrPhoto->write();
             gc_collect_cycles();
 
@@ -1281,12 +1271,16 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
 
+                $result = $flickrPhoto->write();
 
-
+                error_log("WRITE? ".$result);
 
 
 
             }
+
+
+            
 
 
             // do we have a page, if not create one.  Then populate it with the photo
@@ -1304,6 +1298,19 @@ Rows matched: 53  Changed: 53  Warnings: 0
             error_log( "MEM T14:".memory_get_usage( true ) );
 
 
+        }
+
+
+
+        // now download exifs
+        error_log("START EDITING - NOW DOING EXIF");
+        foreach ( $photoset['photo'] as $key => $value ) {
+            $flickrPhotoID = $value['id'];
+            error_log("Adding EXIF for photo $flickrPhotoID");
+            $flickrPhoto = FlickrPhoto::get()->filter('FlickrID',$flickrPhotoID)->first();
+            error_log("FP:".$flickrPhotoID);
+            $flickrPhoto->loadExif();
+            $flickrPhoto->write();
         }
 
 
