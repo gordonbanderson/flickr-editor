@@ -135,13 +135,9 @@ class FlickrSet extends DataObject {
   }
 
   function FlickrBucketsByDate() {
-    /*
-    The following does not work as the TakenAt field is returned with the results, meaning things cannot be uniquified
-    $result = $this->FlickrBuckets()->innerJoin('FlickrPhoto_FlickrBuckets','FlickrBucketID = FlickrBucket.ID')->
-    innerJoin('FlickrPhoto', 'FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID')->
-    sort('TakenAt');
-    */
+   
 
+  // in 3.1 data list is immutable, hence the chaining
     $sqlbucketidsinorder = 'select distinct FlickrBucketID from (
       select FlickrBucketID, FlickrPhoto.TakenAt from FlickrBucket 
         INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
@@ -150,38 +146,19 @@ class FlickrSet extends DataObject {
         order by FlickrPhoto.TakenAt
       ) as OrderedBuckets';
 
-    $bucketidsinorder = DB::query($sqlbucketidsinorder);
+    $buckets = FlickrBucket::get()->filter(array('FlickrSetID' => $this->ID))->
+    innerJoin('FlickrPhoto_FlickrBuckets', 'FlickrBucketID = FlickrBucket.ID')->
+    innerJoin('FlickrPhoto', 'FlickrPhotoID = FlickrPhoto.ID')->
+    sort('TakenAt');
 
-    $ids = array();
-    foreach ($bucketidsinorder as $bucketidrecord) {
-      array_push($ids, $bucketidrecord['FlickrBucketID']);
-    };
 
-    $result = $this->FlickrBuckets();
-
-    if (sizeof($ids) > 0) {
-      $csv = implode(',', $ids);
-      $where = 'ID in ('.$csv.')'; //' order by FIELD (ID,'.$csv.')';
-      $result->where($where);
+    $result = new ArrayList();
+    foreach ($buckets->getIterator() as $bucket) {
+      $result->push($bucket);
     }
+    $result->removeDuplicates();
     
-
-
-    // ordering by field breaks the CRM, so do it by hand
-    $idtobucket = array();
-    foreach ($result->getIterator() as $bucket) {
-      $idtobucket[$bucket->ID] = $bucket;
-    }
-
-    $result = array();
-    foreach ($ids as $bucketid) {
-      array_push($result, $idtobucket[$bucketid]);
-    }
-
-
-
-    
-    return new ArrayList($result);
+    return $result;
   }
 
 
