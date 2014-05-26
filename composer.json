@@ -1,0 +1,21 @@
+{
+	"name": "weboftalent/flickr",
+	"description": "Import,manage and render your flickr photos. Command line and GUI tools.",
+	"type": "silverstripe-module",
+	"keywords": ["silverstripe", "flickr","photography"],
+	"authors": [
+		{
+			"name": "Gordon Anderson",
+			"email": "gordon.b.anderson@gmail.com",
+			"homepage": "https://github.com/gordonbanderson/wot-flickr",
+			"role": "Developer"
+		}
+	],
+    "support": {
+        "issues": "https://github.com/gordonbanderson/wot-flickr/issues"
+    },
+	"require":
+	{
+		"silverstripe/framework": "~3.1"
+	}
+}
