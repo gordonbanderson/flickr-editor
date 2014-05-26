@@ -6,14 +6,11 @@ class FlickrExif extends DataObject {
 
 
   static $db = array(
-  'TagSpace' => 'Varchar',
-  'Tag' => 'Varchar',
-  'Label' => 'Varchar',
-  'Raw' => 'Varchar',
-  'TagSpaceID' => 'Int'
-
-
-
+    'TagSpace' => 'Varchar',
+    'Tag' => 'Varchar',
+    'Label' => 'Varchar',
+    'Raw' => 'Varchar',
+    'TagSpaceID' => 'Int'
   );
 
 
