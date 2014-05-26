@@ -4,7 +4,7 @@ class FlickrBucket extends DataObject {
 
 
   static $db = array(
-    'Title' => 'Varchar',
+    'Title' => 'Varchar(255)',
     'Description' => 'Text',
     // use precision 15 and 10 decimal places for coordiantes
     'Lat' => 'Decimal(18,15)',
@@ -96,19 +96,12 @@ class FlickrBucket extends DataObject {
     }
 
 
-    error_log(print_r($fields,1));
-
-
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
     $gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
 
     // keep in the main tab to avoid wasting time tab switching
     $fields->addFieldToTab( "Root.Main", $gridField );
-
-
-
-
 
     return $fields;
   }
