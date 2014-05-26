@@ -15,6 +15,9 @@ class FlickrPhoto extends DataObject implements Mappable {
   );
 
 
+ 
+
+
   static $db = array(
     'Title' => 'Varchar(255)',
     'FlickrID' => 'Varchar',
@@ -240,15 +243,15 @@ class FlickrPhoto extends DataObject implements Mappable {
     return $this->Lon;
   }
 
-  public function getMapContent() {
+  public function getMappableMapContent() {
     return MapUtil::sanitize($this->renderWith('FlickrPhotoMapInfoWindow'));
   }
 
-  public function getMapCategory() {
+  public function getMappableMapCategory() {
     return 'photo';
   }
 
-  public function getMapPin() {
+  public function getMappableMapPin() {
     return false; //standard pin
   }
 
@@ -268,6 +271,62 @@ class FlickrPhoto extends DataObject implements Mappable {
 
   public function HasGeo() {
     return $this->Lat != 0 || $this->Lon != 0;
+  }
+
+
+  public function loadExif() {
+    error_log( "Loading EXIF data" );
+    $this->initialiseFlickr();
+
+    $exifData = $this->f->photos_getExif( $this->FlickrID );
+    // error_log(print_r($exifData,1));
+
+    // delete the old exif data
+    $sql = "DELETE from FlickrExif where FlickrPhotoID=".$this->ID;
+    error_log( $sql );
+    DB::query( $sql );
+
+
+    foreach ( $exifData['exif'] as $key => $exifInfo ) {
+        $exif = new FlickrExif();
+        $exif->TagSpace = $exifInfo['tagspace'];
+        $exif->TagSpaceID = $exifInfo['tagspaceid'];
+        $exif->Tag = $exifInfo['tag'];
+        $exif->Label = $exifInfo['label'];
+        $exif->Raw = $exifInfo['raw'];
+        $exif->FlickrPhotoID = $this->ID;
+        $exif->write();
+
+        if ( $exif->Tag == 'ImageUniqueID' ) {
+            $this->ImageUniqueID = $exif->Raw;
+        } else
+            if ( $exif->Tag == 'ISO' ) {
+                $this->ISO = $exif->Raw;
+            } else
+            if ( $exif->Tag == 'ExposureTime' ) {
+                $this->ShutterSpeed = $exif->Raw;
+            } else
+            if ( $exif->Tag == 'FocalLengthIn35mmFormat' ) {
+                $raw35 = $exif->Raw;
+                error_log( "RAW 35:".$raw35 );
+                $fl35 = str_replace( ' mm', '', $raw35 );
+
+                error_log( "POST MANGLING 1: ".$fl35 );
+
+                $fl35 = (int) $fl35;
+
+                error_log( "POST MANGLING 2: ".$fl35 );
+                $this->FocalLength35mm = $fl35;
+            } else
+            if ( $exif->Tag == 'FNumber' ) {
+                $this->Aperture = $exif->Raw;
+            };
+
+        $exif = NULL;
+        gc_collect_cycles();
+
+
+    }
   }
 
 
