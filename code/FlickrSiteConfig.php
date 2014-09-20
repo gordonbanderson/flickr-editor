@@ -2,13 +2,12 @@
   
 class FlickrSiteConfig extends DataExtension {
      
-    function extraStatics($class = null, $extension = null) {
-        return array(
-            'db' => array(
-                'ImageFooter' => 'Text',
-                'AddLocation' => 'Boolean'            )
-        );
-    }
+    
+    private static $db = array(
+        'ImageFooter' => 'Text',
+        'AddLocation' => 'Boolean'
+    );
+    
   
     function updateCMSFields(FieldList $fields) {
         $fields->addFieldToTab("Root.Flickr", new TextareaField("ImageFooter", 'This text will be appended to all image descriptions'));
@@ -18,4 +17,3 @@ class FlickrSiteConfig extends DataExtension {
      
     
 }
-?>
