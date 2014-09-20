@@ -277,23 +277,25 @@ class FlickrPhoto extends DataObject implements Mappable {
   public function loadExif() {
     error_log( "Loading EXIF data" );
     $this->initialiseFlickr();
-
+    error_log('Getting exif from flickr');
     $exifData = $this->f->photos_getExif( $this->FlickrID );
-    // error_log(print_r($exifData,1));
+    error_log('/getting exif from flickr');
+    //error_log(print_r($exifData,1));
 
     // delete the old exif data
     $sql = "DELETE from FlickrExif where FlickrPhotoID=".$this->ID;
     error_log( $sql );
     DB::query( $sql );
 
-
+    echo "Storing exif data";
     foreach ( $exifData['exif'] as $key => $exifInfo ) {
+      DB::query('begin;');
         $exif = new FlickrExif();
         $exif->TagSpace = $exifInfo['tagspace'];
         $exif->TagSpaceID = $exifInfo['tagspaceid'];
         $exif->Tag = $exifInfo['tag'];
         $exif->Label = $exifInfo['label'];
-        $exif->Raw = $exifInfo['raw'];
+        $exif->Raw = $exifInfo['raw']['_content'];
         $exif->FlickrPhotoID = $this->ID;
         $exif->write();
 
@@ -327,6 +329,8 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
     }
+    echo "/storing exif";
+    DB::query('commit;');
   }
 
 
