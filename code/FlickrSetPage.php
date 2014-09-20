@@ -89,7 +89,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
         error_log("Main image");
         $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
-        error_log("RES:".$result);
+        //error_log("RES:".$result);
         
         $result = DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
 
@@ -124,8 +124,8 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
         $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
-    $gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
-    $fields->addFieldToTab( "Root.Links", $gridField );
+    //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
+    //$fields->addFieldToTab( "Root.Links", $gridField );
    
    
         $fields->addFieldToTab( 'Root.FlickrSet', new TextField('TimeShiftHours', 'Time Shift') );
