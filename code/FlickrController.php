@@ -761,7 +761,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
         $page= 1;
-        static $only_new_photos = true;
+        static $only_new_photos = false;
 
 
 
@@ -819,10 +819,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         $this->FlickrSetId = $flickrSetID;
 
-
-
         $photos = $this->f->photosets_getPhotos( $flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description' );
-
         $photoset = $photos['photoset'];
 
         echo count( $photoset );
@@ -830,7 +827,6 @@ Rows matched: 53  Changed: 53  Warnings: 0
         foreach ( $photoset as $key => $value ) {
             error_log( "K-V: ".$key.' --> '.$value );
         }
-
 
 
         //var_dump($photoset);
@@ -845,13 +841,17 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 
 
+
         error_log( "Searching for flickr set with flickr ID *".$flickrSetID."*" );
 
         // reload from DB with date - note the use of quotes as flickr set id is a string
         $flickrSet = DataObject::get_one( 'FlickrSet', 'FlickrID=\''.$flickrSetID."'" );
         $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
         $flickrSet->KeepClean = true;
+        $flickrSet->Title = $photoset['title'];
         $flickrSet->write();
+
+        echo "Title set to : ".$flickrSet->Title;
 
 
         error_log( "AFTER RELOAD FS = ".$flickrSet." (".$flickrSet->ID.")" );
@@ -875,7 +875,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
         $flickrSetPage = DataObject::get_one( 'FlickrSetPage', 'FlickrSetForPageID='.$flickrSet->ID );
         if ( !$flickrSetPage ) {
             $flickrSetPage = new FlickrSetPage();
-            $flickrSetPage->Title = $flickrSet->Title;
+            $flickrSetPage->Title = $photoset['title'];
             $flickrSetPage->Description = $flickrSet->Description;
             //update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
 
@@ -884,6 +884,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
             // create a stage version also
 
         }
+        $flickrSetPage->Title = $photoset['title'];
 
         $flickrSetPage->ParentID = $parentNode->ID;
         $flickrSetPage->write();
@@ -892,6 +893,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         error_log("Updated FSP ".$flickrSetPage->ID);
         error_log("PARENT NOW ".$parentNode->ID);
+
 
         $flickrSetPageID = $flickrSetPage->ID;
         gc_enable();
@@ -1024,10 +1026,9 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $flickrPhoto->OriginalHeight = $value['height_o'];
             $flickrPhoto->OriginalWidth = $value['width_o'];
 
-            $flickrPhoto->Description = $value['description'];
+            $flickrPhoto->Description = 'test';// $value['description']['_content'];
 
-
-
+    
 
 
             $lat = number_format( $value['latitude'], 15 );
@@ -1048,9 +1049,9 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
             $singlePhotoInfo = $this->f->photos_getInfo( $flickrPhotoID );
 
-            // error_log(print_r($singlePhotoInfo, 1));
-            //die;
-            $flickrPhoto->Description = $singlePhotoInfo['photo']['description'];
+           // error_log(print_r($singlePhotoInfo, 1));
+           // die;
+            $flickrPhoto->Description = $singlePhotoInfo['photo']['description']['_content'];
             $flickrPhoto->TakenAt = $singlePhotoInfo['photo']['dates']['taken'];
             $flickrPhoto->Rotation = $singlePhotoInfo['photo']['rotation'];
 
@@ -1059,6 +1060,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
             }
 
             $flickrPhoto->write();
+
 
             if ($value['isprimary'] == 1) {
                 $flickrSet->MainImage = $flickrPhoto;
