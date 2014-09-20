@@ -190,12 +190,12 @@ class FlickrSet extends DataObject {
     $map->setShowInlineMapDivStyle( true );
     $map->setClusterer(true);
     foreach($this->MapLayers() as $layer) {
-      error_log("LINK".$layer->KmlFile()->getAbsoluteURL());
       $map->addKML($layer->KmlFile()->getAbsoluteURL());
     }
 
 
     //$map->addKML('http://assets.tripodtravel.co.nz/cycling/meuang-nont-to-bang-sue-loop.kml');
+    $map->setSize('100%','600px');
     return $map;
   }
 
