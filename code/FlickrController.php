@@ -1302,6 +1302,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         }
 
+         //update orientation
+        error_log( "Updating orientations" );
+        $sql = 'update FlickrPhoto set Orientation = 90 where ThumbnailHeight > ThumbnailWidth;';
+        DB::query( $sql );
 
 
         // now download exifs
@@ -1316,11 +1320,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
         }
 
 
-        //update orientation
-        error_log( "Updating orientations" );
-        $sql = 'update FlickrPhoto set Orientation = 90 where ThumbnailHeight > ThumbnailWidth;';
-        DB::query( $sql );
-
+       
         //error_log(print_r($photos,1));
 
         $this->fixSetMainImages();
