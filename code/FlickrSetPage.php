@@ -213,11 +213,4 @@ class FlickrSetPage_Controller extends Page_Controller {
     function HasGeo() {
         return $this->FlickrSetForPage()->HasGeo();
     }
-
-
-
-
-   
 }
-
-?>
