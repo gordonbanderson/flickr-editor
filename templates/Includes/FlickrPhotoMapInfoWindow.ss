@@ -1,5 +1,5 @@
 <div class="flickrMapInfoWindow">
 <h6>$Title</h6>
-<img src="$MediumURL"/>
+<img src="$ProtocolAgnosticMediumURL"/>
 $Description
 </div>
