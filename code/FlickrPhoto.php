@@ -117,6 +117,36 @@ class FlickrPhoto extends DataObject implements Mappable {
 
   );
 
+  // -- helper methods to ensure that URLs are of the form //path/to/image so that http and https work with console warnings
+  public function ProtocolAgnosticLargeURL() {
+    return $this->stripProtocol($this->LargeURL);
+  }
+
+  public function ProtocolAgnosticSmallURL() {
+    return $this->stripProtocol($this->SmallURL);
+  }
+
+
+  public function ProtocolAgnosticMediumURL() {
+    return $this->stripProtocol($this->MediumURL);
+  }
+
+  public function ProtocolAgnosticThumbnailURL() {
+    return $this->stripProtocol($this->ThumbnailURL);
+  }
+
+  public function ProtocolAgnosticOriginalURL() {
+    return $this->stripProtocol($this->OriginalURL);
+  }
+
+
+
+  private function stripProtocol($url) {
+    $url = str_replace('http:', '', $url);
+    $url = str_replace('https:', '', $url);
+    return $url;
+  }
+
 
 
   // thumbnail related
