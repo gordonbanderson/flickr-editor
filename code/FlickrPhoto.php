@@ -5,7 +5,7 @@ require_once "phpFlickr.php";
 /**
  * Only show a page with login when not logged in
  */
-class FlickrPhoto extends DataObject implements Mappable {
+class FlickrPhoto extends DataObject {
 
 
   static $searchable_fields = array(
@@ -15,7 +15,7 @@ class FlickrPhoto extends DataObject implements Mappable {
   );
 
 
- 
+
 
 
   static $db = array(
@@ -29,14 +29,7 @@ class FlickrPhoto extends DataObject implements Mappable {
     // flag to indicate requiring a flickr API update
     'IsDirty' => 'Boolean',
 
-    // use precision 15 and 10 decimal places for coordiantes
-    'Lat' => 'Decimal(18,15)',
-    'Lon' => 'Decimal(18,15)',
-    'Accuracy' => 'Int',
-
-
     'Orientation' => 'Int',
-    'ZoomLevel' => 'Int',
     'WoeID' => 'Int',
     'Accuracy' => 'Int',
     'FlickrPlaceID' => 'Varchar(255)',
@@ -231,14 +224,14 @@ class FlickrPhoto extends DataObject implements Mappable {
           new TextField( 'ZoomLevel', 'Zoom' )
         ),
           array( 'Address' )
-          ) 
+          )
        );
     }
 
     // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
     $fields->addFieldToTab( 'Root.Main',  new TextField( 'QuickTags', 'Enter tags here separated by commas') );
 
-   
+
 
     $gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
@@ -259,31 +252,11 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
   public function getThumbnail() {
-    return DBField::create_field( 'HTMLVarchar', 
+    return DBField::create_field( 'HTMLVarchar',
       '<img class="flickrThumbnail" data-flickr-medium-url="'.$this->MediumURL.'" src="'.$this->ThumbnailURL.'"  data-flickr-thumbnail-url="'.$this->ThumbnailURL.'"/>' );
   }
 
 
-
-  public function getMappableLatitude() {
-    return $this->Lat;
-  }
-
-  public function getMappableLongitude() {
-    return $this->Lon;
-  }
-
-  public function getMappableMapContent() {
-    return MapUtil::sanitize($this->renderWith('FlickrPhotoMapInfoWindow'));
-  }
-
-  public function getMappableMapCategory() {
-    return 'photo';
-  }
-
-  public function getMappableMapPin() {
-    return false; //standard pin
-  }
 
   private function initialiseFlickr() {
     if (!isset($this->f)) {
@@ -385,7 +358,7 @@ class FlickrPhoto extends DataObject implements Mappable {
     }
 
     error_log("Setting tags:".$tagString);
-    
+
     $this->f->photos_setTags($this->FlickrID, $tagString);
 
     if ($this->HasGeo()) {
@@ -403,5 +376,3 @@ class FlickrPhoto extends DataObject implements Mappable {
 
 
 }
-
-?>
