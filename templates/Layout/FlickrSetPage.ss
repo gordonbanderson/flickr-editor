@@ -3,7 +3,7 @@ $EnsureMenuHidden
 <h1>$Title</h1>
 $Description
 
-$Map
+$BasicMap
 
 <ul class="imageList">
 <% control FlickrPhotos %>
@@ -19,12 +19,12 @@ style="height:{$ThumbnailHeight}px; width:{$ThumbnailWidth}px; margin-left:{$Hor
  <span class="iso"><% if ISO %>ISO{$ISO}<% end_if %></span>
 
 <% if ShutterSpeed %>{$ShutterSpeed}s<% end_if %>
- </div>             
+ </div>
 
 
 
 
- 
+
 <div class="slideLargeCaption hide">
 <span class="exif">f$Aperture
 <% if ShutterSpeed %>{$ShutterSpeed}s<% end_if %>
