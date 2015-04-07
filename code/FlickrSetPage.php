@@ -1,7 +1,7 @@
 <?php
- 
+
 class FlickrSetPage extends Page implements RenderableAsPortlet {
- 
+
     static $has_one = array(
         'FlickrSetForPage' => 'FlickrSet'
     );
@@ -29,7 +29,7 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
     function getPortletTitle() {
         return $this->Title;
     }
-    
+
 
     /**
      * An accessor method for an image for a portlet
@@ -45,8 +45,8 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
 
         return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
     }
-    
-    
+
+
     /**
      * An accessor for text associated with the portlet
      * @example
@@ -55,13 +55,13 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
      * </code>
      *
      * @return string
-     */ 
+     */
     public function getPortletCaption() {
         return $this->Descripton;
     }
 
 
-    
+
 
 
     /*
@@ -74,7 +74,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
  'filterable_many_many' => '*',
     'extra_many_many' => array(
         'documents' => 'select (' . SphinxSearch::unsignedcrc('SiteTree') . '<<32) | PageID AS id, DocumentID AS Documents FROM Page_Documents')
-    
+
     */
 
 
@@ -90,14 +90,14 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
         $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
         //error_log("RES:".$result);
-        
+
         $result = DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
 
         return $result;
     }
 
 
-  
+
 
 
 
@@ -107,7 +107,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
         // this is what shows int he tab with the table in it
-         
+
         /*
         $tablefield = new HasOneComplexTableField(
             $this,
@@ -118,7 +118,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
             ),
             'getCMSFields_forPopup'
         );
-        
+
         $tablefield->setParentClass('FLickrSetPage');
         */
 
@@ -126,19 +126,19 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
     $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
     //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
     //$fields->addFieldToTab( "Root.Links", $gridField );
-   
-   
+
+
         $fields->addFieldToTab( 'Root.FlickrSet', new TextField('TimeShiftHours', 'Time Shift') );
         //fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
 
 
 
         error_log("T1");
-   
+
         //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
         /*
         $dropdown->setEmptyString('-- Please Select One --');
-        $fields->addFieldToTab('Root.ParentGallery', 
+        $fields->addFieldToTab('Root.ParentGallery',
             $dropdown
         );
         */
@@ -149,8 +149,8 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 
-    
-    
+
+
     function onBeforeWrite() {
         parent::onBeforeWrite();
 
@@ -168,25 +168,25 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
     }
 
 
-    function Map() {
-        return $this->FlickrSetForPage()->Map();
+    function BasicMap() {
+        return $this->FlickrSetForPage()->BasicMap();
     }
 
-   
+
 
     /*
-select * from 
+select * from
     */
 
- 
- 
+
+
 }
 class FlickrSetPage_Controller extends Page_Controller {
-    
+
 
 
     function FlickrPhotos() {
-        if (!isset($this->FlickrPics)) {            
+        if (!isset($this->FlickrPics)) {
             $images = $this->FlickrSetForPage()->FlickrPhotos();
             $this->FlickrPics = $images;
         }
