@@ -21,12 +21,15 @@ class FlickrPhotoShortCodeHandler {
         $customise['FlickrImage'] = $fp;
         //set the caption
 
-        if ($caption === null) {
-        	$caption = $arguments['caption'];
+
+        if (($caption === null) || ($caption === '')) {
+        	if (isset($arguments['caption'])) {
+        		$caption = $arguments['caption'];
+        	}
         }
 
-        $customise['Caption'] = $caption ? Convert::raw2xml( $caption ) : $fp->Title ;
 
+        $customise['Caption'] = $caption ? Convert::raw2xml( $caption ) : $fp->Title ;
         $customise['Position'] = !empty($arguments['position']) ? $arguments['position'] : 'center';
         $customise['Small'] = true;
         if ($customise['Position'] == 'center') {
@@ -45,4 +48,3 @@ class FlickrPhotoShortCodeHandler {
         return $template->process( new ArrayData( $customise ) );
     }
 }
-?>
