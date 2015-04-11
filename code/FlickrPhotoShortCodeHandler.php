@@ -20,6 +20,11 @@ class FlickrPhotoShortCodeHandler {
 
         $customise['FlickrImage'] = $fp;
         //set the caption
+
+        if ($caption === null) {
+        	$caption = $arguments['caption'];
+        }
+
         $customise['Caption'] = $caption ? Convert::raw2xml( $caption ) : $fp->Title ;
 
         $customise['Position'] = !empty($arguments['position']) ? $arguments['position'] : 'center';
