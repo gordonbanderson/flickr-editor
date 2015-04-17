@@ -35,7 +35,7 @@ class FlickrPhotoSelectionField extends HiddenField {
 
 		$this->addExtraClass('flickrPhotoSelectionField');
 
-		
+
 		parent::__construct($name, $title, $value, $form);
 	}
 
@@ -51,16 +51,16 @@ class FlickrPhotoSelectionField extends HiddenField {
 	function getMediumURL() {
 		return $this->mediumURL;
 	}
-	
+
 	/**
 	 * @param int $length
 	 */
 	function setMaxLength($length) {
 		$this->maxLength = $length;
-		
+
 		return $this;
 	}
-	
+
 	/**
 	 * @return int
 	 */
@@ -90,6 +90,6 @@ class FlickrPhotoSelectionField extends HiddenField {
 
 		return parent::FieldHolder();
 	}
-	
+
 }
 
