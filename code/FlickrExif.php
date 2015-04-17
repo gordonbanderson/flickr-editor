@@ -4,7 +4,6 @@
 */
 class FlickrExif extends DataObject {
 
-
 	static $db = array(
 		'TagSpace' => 'Varchar',
 		'Tag' => 'Varchar',
@@ -30,3 +29,4 @@ class FlickrExif extends DataObject {
 		$fields->push( new TextField( 'Description' ) );
 		return $fields;
 	}
+}
