@@ -30,9 +30,6 @@ class FlickrSetPageFolderAdmin extends ModelAdmin {
 		$flickrSetPages = DataList::create('FlickrSetPage')->where('ParentID = 0');//->sort('Title desc');
 		$flickrSetFolders = DataList::create('FlickrSetFolder')->sort('Title');
 
-
-
-
 		$html ='<h2>Flickr Set Folders</h2><div id="flickrFolders">';
 		foreach ($flickrSetFolders as $key => $folder) {
 			$html.='<div class="flickrSetFolderDroppable" data-id="'.$folder->ID.'">'.$folder->Title.'</div>';
@@ -59,4 +56,3 @@ class FlickrSetPageFolderAdmin extends ModelAdmin {
 		return '';
 	}
 }
-
