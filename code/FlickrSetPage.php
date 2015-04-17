@@ -2,69 +2,69 @@
 
 class FlickrSetPage extends Page implements RenderableAsPortlet {
 
-    static $has_one = array(
-        'FlickrSetForPage' => 'FlickrSet'
-    );
+	static $has_one = array(
+		'FlickrSetForPage' => 'FlickrSet'
+	);
 
 
-    static $db = array(
-        'TimeShiftHours' => 'Int',
-        'Description' => 'HTMLText',
-            // flag to indicate requiring a flickr API update
-        'IsDirty' => 'Boolean',
+	static $db = array(
+		'TimeShiftHours' => 'Int',
+		'Description' => 'HTMLText',
+			// flag to indicate requiring a flickr API update
+		'IsDirty' => 'Boolean',
 
-        //FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
-        'FirstPictureTakenAt' => 'Datetime'
-    );
-
-
-    static $sphinx = array(
-        "search_fields" => array("Title", "Description", "Content"),
-        "filter_fields" => array(),
-        "index_filter" => '"ShowInSearch" = 1',
-        "sort_fields" => array("Title")
-    );
+		//FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
+		'FirstPictureTakenAt' => 'Datetime'
+	);
 
 
-    function getPortletTitle() {
-        return $this->Title;
-    }
+	static $sphinx = array(
+		"search_fields" => array("Title", "Description", "Content"),
+		"filter_fields" => array(),
+		"index_filter" => '"ShowInSearch" = 1',
+		"sort_fields" => array("Title")
+	);
 
 
-    /**
-     * An accessor method for an image for a portlet
-     * @example
-     * <code>
-     *  return $this->NewsItemImage;
-     * </code>
-     *
-     * @return string
-     */
-    public function getPortletImage() {
-        error_log("FSP: PI=".$this->FlickrSetForPage()->PrimaryFlickrPhoto());
-
-        return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
-    }
+	function getPortletTitle() {
+		return $this->Title;
+	}
 
 
-    /**
-     * An accessor for text associated with the portlet
-     * @example
-     * <code>
-     * return $this->Summary
-     * </code>
-     *
-     * @return string
-     */
-    public function getPortletCaption() {
-        return $this->Descripton;
-    }
+	/**
+	 * An accessor method for an image for a portlet
+	 * @example
+	 * <code>
+	 *  return $this->NewsItemImage;
+	 * </code>
+	 *
+	 * @return string
+	 */
+	public function getPortletImage() {
+		error_log("FSP: PI=".$this->FlickrSetForPage()->PrimaryFlickrPhoto());
+
+		return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
+	}
 
 
+	/**
+	 * An accessor for text associated with the portlet
+	 * @example
+	 * <code>
+	 * return $this->Summary
+	 * </code>
+	 *
+	 * @return string
+	 */
+	public function getPortletCaption() {
+		return $this->Descripton;
+	}
 
 
 
-    /*
+
+
+	/*
 
 update FlickrSetPage set Description = FlickrSet.Description where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID;
 
@@ -72,78 +72,75 @@ update FlickrSetPage set Description = 'wibble';
 update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
 
  'filterable_many_many' => '*',
-    'extra_many_many' => array(
-        'documents' => 'select (' . SphinxSearch::unsignedcrc('SiteTree') . '<<32) | PageID AS id, DocumentID AS Documents FROM Page_Documents')
+	'extra_many_many' => array(
+		'documents' => 'select (' . SphinxSearch::unsignedcrc('SiteTree') . '<<32) | PageID AS id, DocumentID AS Documents FROM Page_Documents')
 
-    */
-
-
-     function ColumnLayout() {
-        return 'layout1col';
-    }
-
-    /* Get the main image of the set
-    FIXME: Use flickr option, and make more efficient
-    */
-    function MainImage() {
-        error_log("Main image");
-        $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
-        $result = DataObject::get_by_id('FlickrPhoto', $resultID);
-        //error_log("RES:".$result);
-
-        $result = DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
-
-        return $result;
-    }
+	*/
 
 
+	 function ColumnLayout() {
+		return 'layout1col';
+	}
+
+	/* Get the main image of the set
+	FIXME: Use flickr option, and make more efficient
+	*/
+	function MainImage() {
+		error_log("Main image");
+		$resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
+		$result = DataObject::get_by_id('FlickrPhoto', $resultID);
+		//error_log("RES:".$result);
+
+		$result = DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
+
+		return $result;
+	}
 
 
 
 
-    function getCMSFields() {
-        error_log("GET CMS FIELDS FLICKR SET PAGE");
-        $fields = parent::getCMSFields();
 
 
-        // this is what shows int he tab with the table in it
-
-        /*
-        $tablefield = new HasOneComplexTableField(
-            $this,
-            'FlickrSetForPage',
-            'FlickrSet',
-            array(
-                'Title' => 'Title'
-            ),
-            'getCMSFields_forPopup'
-        );
-
-        $tablefield->setParentClass('FLickrSetPage');
-        */
-
-        $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-    $gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
-    //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
-    //$fields->addFieldToTab( "Root.Links", $gridField );
+	function getCMSFields() {
+		error_log("GET CMS FIELDS FLICKR SET PAGE");
+		$fields = parent::getCMSFields();
 
 
-        $fields->addFieldToTab( 'Root.FlickrSet', new TextField('TimeShiftHours', 'Time Shift') );
-        //fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
+		// this is what shows int he tab with the table in it
+
+		/*
+		$tablefield = new HasOneComplexTableField(
+			$this,
+			'FlickrSetForPage',
+			'FlickrSet',
+			array(
+				'Title' => 'Title'
+			),
+			'getCMSFields_forPopup'
+		);
+
+		$tablefield->setParentClass('FLickrSetPage');
+		*/
+
+		$gridConfig = GridFieldConfig_RelationEditor::create()->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
+	$gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
+	//$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
+	//$fields->addFieldToTab( "Root.Links", $gridField );
 
 
+		$fields->addFieldToTab( 'Root.Main', new HTMLEditorField('Description', 'Description'), 'Content' );
+		//fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
 
-        error_log("T1");
 
-        //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
-        /*
-        $dropdown->setEmptyString('-- Please Select One --');
-        $fields->addFieldToTab('Root.ParentGallery',
-            $dropdown
-        );
-        */
-        return $fields;
-    }
+		//$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
+		/*
+		$dropdown->setEmptyString('-- Please Select One --');
+		$fields->addFieldToTab('Root.ParentGallery',
+			$dropdown
+		);
+		*/
+		return $fields;
+	}
 
 
 
@@ -151,66 +148,69 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 
-    function onBeforeWrite() {
-        parent::onBeforeWrite();
+	function onBeforeWrite() {
+		parent::onBeforeWrite();
 
-        //error_log(print_r($this->record,1));
-        $parentFolderID = $this->ParentFolderID;
-        if ($parentFolderID) {
-            $this->ParentID = $parentFolderID;
-        }
+		//error_log(print_r($this->record,1));
+		$parentFolderID = $this->ParentFolderID;
+		if ($parentFolderID) {
+			$this->ParentID = $parentFolderID;
+		}
 
-        // FIXME
-        $this->Dirty = true;
+		// FIXME
+		$this->Dirty = true;
 
-       error_log("ID:".$this->ID);
-       error_log("PARENT FOLDER ID:".$this->ParentID);
-    }
-
-
-    function BasicMap() {
-        return $this->FlickrSetForPage()->BasicMap();
-    }
+		 error_log("ID:".$this->ID);
+		 error_log("PARENT FOLDER ID:".$this->ParentID);
+	}
 
 
+	function BasicMap() {
+		return $this->FlickrSetForPage()->BasicMap();
+	}
 
-    /*
+
+
+	/*
 select * from
-    */
+	*/
 
 
 
 }
+
+
+
 class FlickrSetPage_Controller extends Page_Controller {
 
 
 
-    function FlickrPhotos() {
-        if (!isset($this->FlickrPics)) {
-            $images = $this->FlickrSetForPage()->FlickrPhotos();
-            $this->FlickrPics = $images;
-        }
+	function FlickrPhotos() {
+		if (!isset($this->FlickrPics)) {
+			$images = $this->FlickrSetForPage()->FlickrPhotos();
+			$this->FlickrPics = $images;
+		}
 
-        return $this->FlickrPics;
-    }
-
-
-
-    /*
-    I use this for highslide to replace the URLs in javascript if javascript is available, otherwise default to normal page URLs
-    @return Mapping of silverstripe ID to URL
-    */
-    function IdToUrlJson() {
-        $result = array();
-        foreach ($this->FlickrPhotos() as $fp) {
-            $result[$fp->ID] = $fp->LargeURL;
-        }
-
-        return json_encode($result);
-    }
+		return $this->FlickrPics;
+	}
 
 
-    function HasGeo() {
-        return $this->FlickrSetForPage()->HasGeo();
-    }
+
+	/*
+	I use this for highslide to replace the URLs in javascript if javascript is available, otherwise default to normal page URLs
+	@return Mapping of silverstripe ID to URL
+	*/
+	function IdToUrlJson() {
+		$result = array();
+		foreach ($this->FlickrPhotos() as $fp) {
+			$result[$fp->ID] = $fp->LargeURL;
+		}
+
+		return json_encode($result);
+	}
+
+
+	function HasGeo() {
+		return $this->FlickrSetForPage()->HasGeo();
+	}
 }
