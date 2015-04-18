@@ -12,7 +12,6 @@ class FlickrExif extends DataObject {
 		'TagSpaceID' => 'Int'
 	);
 
-
 	 static $belongs_many_many = array(
 		'FlickrPhotos' => 'FlickrPhoto'
 	 );
@@ -21,9 +20,7 @@ class FlickrExif extends DataObject {
 		'FlickrPhoto' => 'FlickrPhoto'
 	);
 
-
-
-	 function getCMSFields_forPopup() {
+	function getCMSFields_forPopup() {
 		$fields = new FieldSet();
 		$fields->push( new TextField( 'Title', 'Title' ) );
 		$fields->push( new TextField( 'Description' ) );
