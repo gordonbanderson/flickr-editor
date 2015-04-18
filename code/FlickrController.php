@@ -540,29 +540,37 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 
 
 	public function createBucket() {
+
 		$flickrPhotoIDs = $this->request->param( 'OtherID' );
 		$flickrSetID = Convert::raw2sql( $this->request->param( 'ID' ) );
 		$ajax_bucket_row = Convert::raw2sql( $_GET['bucket_row'] );
 		error_log( "BUCKET ROW:".$ajax_bucket_row );
+
+
 
 		error_log( "PARAMS:".print_r( $this->request->params(), 1 ) );
 
 		$sanitizedIDs = Convert::raw2sql( $flickrPhotoIDs );
 
 
-		$flickrPhotos = DataList::create( 'FlickrPhoto' )->where( 'ID in ('.$sanitizedIDs.')' );
-		$flickrSet = DataList::create( 'FlickrSet' )->where( 'ID='.$flickrSetID )->first();
-		error_log( "FLICKR SET:".$flickrSet );
-		error_log( "FLICKR SET ID:".$flickrSet->ID );
+		$flickrPhotos = FlickrPhoto::get()->where( 'ID in ('.$sanitizedIDs.')' );
+		$flickrSet = FlickrSet::get()->where( 'ID='.$flickrSetID )->first();
 		$bucket = new FlickrBucket();
+
 		$bucket->write();
 
 		$bucketPhotos = $bucket->FlickrPhotos();
 		foreach ( $flickrPhotos as $fp ) {
+			error_log('PIC:'.$fp->Lat);
 			$bucketPhotos->add( $fp );
 		}
 		$bucket->FlickrSetID = $flickrSet->ID;
+
 		$bucket->write();
+
+
+
+
 
 		error_log( "BUCKET ID:".$bucket->ID );
 
