@@ -1036,11 +1036,25 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			error_log( "LON:".$lon );
 
 
-			if ( $value['latitude'] ) {$flickrPhoto->Lat = $lat;}
-			if ( $value['longitude'] ) {$flickrPhoto->Lon = $lon;}
-			if ( $value['accuracy'] ) {$flickrPhoto->Accuracy = $value['accuracy'];}
-			if ( isset( $value['geo_is_public'] ) ) {$flickrPhoto->GeoIsPublic = $value['geo_is_public'];}
-			if ( isset( $value['woeid'] ) ) {$flickrPhoto->WoeID = $value['woeid'];}
+			if ( $value['latitude'] ) {
+				$flickrPhoto->Lat = $lat;
+				$flickrPhoto->ZoomLevel = 15;
+			}
+			if ( $value['longitude'] ) {
+				$flickrPhoto->Lon = $lon;
+			}
+
+			if ( $value['accuracy'] ) {
+				$flickrPhoto->Accuracy = $value['accuracy'];
+			}
+
+			if ( isset( $value['geo_is_public'] ) ) {
+				$flickrPhoto->GeoIsPublic = $value['geo_is_public'];
+			}
+
+			if ( isset( $value['woeid'] ) ) {
+				$flickrPhoto->WoeID = $value['woeid'];
+			}
 
 			error_log( "GETTING FLICKR PHOTO INFO" );
 
