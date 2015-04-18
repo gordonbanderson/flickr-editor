@@ -14,7 +14,7 @@ class FlickrFolder extends Page {
 
 	function getCMSFields() {
 		$fields = parent::getCMSFields();
-		$fields->addFieldToTab("Root.Content.CoverPhoto", new ImageField('CoverPhoto'));
+		$fields->addFieldToTab("Root.Content.CoverPhoto", new UploadField('CoverPhoto'));
 
 
 		$fields->renameField("Content", "Brief Description");
