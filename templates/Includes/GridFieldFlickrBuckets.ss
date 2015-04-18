@@ -31,12 +31,12 @@
 
 <tfoot><tr>
 	<td class="bottom-all" colspan="2">
-		
-		
+
+
 		<span class="pagination-records-number">
 			View
 			1 - 27
-			of 
+			of
 			27
 		</span>
 	</td>
@@ -51,11 +51,11 @@
 <h2>Image Store</h2>
 <table class="bucket" id="bucket_0">
 <tr>
-<% control FlickrPhotosNotInBucket %>
+<% loop FlickrPhotosNotInBucket %>
 <td id="flickrPhoto_$ID" data-time="$TakenAt" class="bucketPhoto">
 <img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" class="imgDrag" style="width:{$ThumbnailWidth}px;"/>
 </td>
 </tr>
-<% end_control %>
+<% end_loop %>
 </table>
 </div>
