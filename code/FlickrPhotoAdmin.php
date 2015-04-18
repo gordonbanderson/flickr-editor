@@ -1,4 +1,3 @@
-
 <?php
 
 class FlickrPhotoAdmin extends ModelAdmin {
