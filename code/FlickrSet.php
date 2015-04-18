@@ -19,6 +19,10 @@ class FlickrSet extends DataObject {
 		'ImageFooter' => 'Text'
 	);
 
+	private static $defaults = array(
+		'LockGeo' => true
+	);
+
 
 	static $many_many = array(
 		'FlickrPhotos' => 'FlickrPhoto'
