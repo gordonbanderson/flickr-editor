@@ -6,7 +6,7 @@ $Description
 $BasicMap
 
 <ul class="imageList">
-<% control FlickrPhotos %>
+<% loop FlickrPhotos %>
 <li class="slide orientation{$Orientation}">
 
 <div class="slideTitle">$TakenAt.Nice</div>
@@ -34,13 +34,13 @@ $TakenAt.Nice
 
 
 <div class="phototags">
-<% control FlickrTags %>
+<% loop FlickrTags %>
 <a href="/tags/photo/$Value">$RawValue</a>
-<% end_control %>
+<% end_loop %>
 </div>
 </div>
 
-</li><% end_control %>
+</li><% end_loop %>
 </ul>
 <div id="flickrSetNavigation">&nbsp;</dv>
 <% include FolderWithImagesNavigation %>
