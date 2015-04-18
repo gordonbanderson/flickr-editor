@@ -1,1 +1,1 @@
-<img class="centered" src="$FlickrPhoto.SmallURL" alt="$Title.XML" title="$Title.XML"/> 
+<img class="centered" src="$FlickrPhoto.LargeURL" alt="$Title.XML" title="$Title.XML" style="margin-left:auto; margin-right: auto;"/>
