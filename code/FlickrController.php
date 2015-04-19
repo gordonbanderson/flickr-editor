@@ -31,7 +31,8 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 		'updateEditedImagesToFlickr',
 		'dumpSetAsJson',
 		'primeFlickrSetFolderImages',
-		'moveXperiaPics'
+		'moveXperiaPics',
+		'changeFlickrSetMainImage'
 	);
 
 	public function fixArticleDates() {
@@ -653,6 +654,16 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 			error_log(print_r($photo,1));
 		}
 
+	}
+
+
+	public function changeFlickrSetMainImage() {
+		$flickrsetID = $this->request->param('ID');
+		$flickrphotoID = $this->request->param('OtherID');
+		error_log('Set,photo id = '.$flickrsetID.','.$flickrphotoID);
+		$flickrset = FlickrSet::get()->filter('ID', $flickrsetID)->first();
+		$flickrset->PrimaryFlickrPhotoID = $flickrphotoID;
+		$flickrset->write();
 	}
 
 
