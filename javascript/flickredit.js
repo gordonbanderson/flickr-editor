@@ -242,6 +242,30 @@ console.log('flickr edit');
 			}
 		});
 
+		$('#changeMainPictureButton').entwine({
+			onclick: function() {
+				var button = $(this);
+				var flickr_set_id = button.attr('data-flickr-set-id');
+				var fpid = button.attr('data-flickr-photo-id');
+
+				$.ajax({
+					url: "/flickr/changeFlickrSetMainImage/" + flickr_set_id + "/" + fpid,
+					type: 'POST',
+					dataType: 'json',
+					//context: document.body,
+					success: function(data) {
+						statusMessage('Main picture successfully updated');
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						// log the error to the console
+						console.log("The following error occured: " + textStatus, errorThrown);
+						statusMessage('An error occurred - '+ textStatus);
+					}
+				})
+			}
+		});
+
+
 		$('.createBucket').entwine({
 			onclick: function() {
 				var flickrPhotoIDS = new Array();
@@ -272,7 +296,7 @@ console.log('flickr edit');
 							console.log("Removing " + imageID);
 							$(imageID).remove();
 						});
-						//bucketRow.html('Bucket saved');						
+						//bucketRow.html('Bucket saved');
 						bucketRow.effect("highlight", {}, 1000, function() {
 							bucketRow.addClass('hide');
 						});
