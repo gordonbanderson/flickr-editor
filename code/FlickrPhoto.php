@@ -176,6 +176,22 @@ class FlickrPhoto extends DataObject {
 	function getCMSFields() {
 		Requirements::css( FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.js' );
 
+		$flickrSetID = Controller::curr()->request->param( 'ID' );
+		$params = Controller::curr()->request->params();
+		error_log(print_r($params,1));
+		error_log('FLICKR SET ID:'.print_r(Controller::curr()->model,1));
+		$url = $_GET['url'];
+		error_log(print_r($url,1));
+		$splits = explode('/FlickrSet/item/', $url);
+		$setid = null;
+		if (sizeof($splits) == 2) {
+			error_log($splits[1]);
+			$splits = explode('/', $splits[1]);
+			$setid = $splits[0];
+			error_log($setid);
+		}
+
+
 		$fields = new FieldList();
 
 
@@ -184,7 +200,8 @@ class FlickrPhoto extends DataObject {
 
 
 		$forTemplate = new ArrayData( array(
-				'FlickrPhoto' => $this
+				'FlickrPhoto' => $this,
+				'FlickrSetID' => $setid
 			) );
 		$imageHtml = $forTemplate->renderWith( 'FlickrImageEditing' );
 
