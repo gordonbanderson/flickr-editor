@@ -995,7 +995,12 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 			error_log( print_r( $value, 1 ) );
 
+			var_dump($value);
+
 			$flickrPhotoID = $value['id'];
+
+			// the author, e.g. gordonbanderson
+			$pathalias = $value['pathalias'];
 
 			// do we have a set object or not
 			$flickrPhoto = DataObject::get_one( 'FlickrPhoto', 'FlickrID='.$flickrPhotoID );
@@ -1045,6 +1050,14 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 			$flickrPhoto->Description = 'test';// $value['description']['_content'];
 
+			$author = FlickrAuthor::get()->filter('PathAlias', $pathalias)->first();
+			if (!$author) {
+				$author = new FlickrAuthor();
+				$author->PathAlias = $pathalias;
+				$author->write();
+			}
+
+			$flickrPhoto->PhotographerID = $author->ID;
 
 
 
