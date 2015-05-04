@@ -85,7 +85,8 @@ class FlickrPhoto extends DataObject {
 
 
 	static $has_one = array(
-		'LocalCopyOfImage' => 'Image'
+		'LocalCopyOfImage' => 'Image',
+		'Photographer' => 'FlickrAuthor'
 	);
 
 
