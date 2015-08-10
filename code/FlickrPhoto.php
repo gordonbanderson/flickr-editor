@@ -8,13 +8,6 @@ require_once "phpFlickr.php";
 class FlickrPhoto extends DataObject {
 
 
-	static $searchable_fields = array(
-		'Title',
-		'Description',
-		'FlickrID'
-	);
-
-
 	static $db = array(
 		'Title' => 'Varchar(255)',
 		'FlickrID' => 'Varchar',
@@ -286,51 +279,85 @@ class FlickrPhoto extends DataObject {
 		error_log('/getting exif from flickr');
 		//error_log(print_r($exifData,1));
 
-		// delete the old exif data
+		// delete any old exif data
 		$sql = "DELETE from FlickrExif where FlickrPhotoID=".$this->ID;
 		error_log( $sql );
 		DB::query( $sql );
 
-		echo "Storing exif data";
+		// conversion factor or fixed legnth depending on model of camera
+		$focallength = -1;
+		$fixFocalLength = 0;
+		$focalConversionFactor = 1;
+
+		echo "Storing exif data for ".$this->Title."\n";
 		foreach ( $exifData['exif'] as $key => $exifInfo ) {
 			DB::query('begin;');
-				$exif = new FlickrExif();
-				$exif->TagSpace = $exifInfo['tagspace'];
-				$exif->TagSpaceID = $exifInfo['tagspaceid'];
-				$exif->Tag = $exifInfo['tag'];
-				$exif->Label = $exifInfo['label'];
-				$exif->Raw = $exifInfo['raw']['_content'];
-				$exif->FlickrPhotoID = $this->ID;
-				$exif->write();
+			$exif = new FlickrExif();
+			$exif->TagSpace = $exifInfo['tagspace'];
+			$exif->TagSpaceID = $exifInfo['tagspaceid'];
+			$exif->Tag = $exifInfo['tag'];
+			$exif->Label = $exifInfo['label'];
+			$exif->Raw = $exifInfo['raw']['_content'];
+			$exif->FlickrPhotoID = $this->ID;
+			$exif->write();
 
-				if ( $exif->Tag == 'ImageUniqueID' ) {
-						$this->ImageUniqueID = $exif->Raw;
-				} else
-						if ( $exif->Tag == 'ISO' ) {
-								$this->ISO = $exif->Raw;
-						} else
-						if ( $exif->Tag == 'ExposureTime' ) {
-								$this->ShutterSpeed = $exif->Raw;
-						} else
-						if ( $exif->Tag == 'FocalLengthIn35mmFormat' ) {
-								$raw35 = $exif->Raw;
-								error_log( "RAW 35:".$raw35 );
-								$fl35 = str_replace( ' mm', '', $raw35 );
+			echo "- {$exif->Tag} = {$exif->Raw}\n";
 
-								error_log( "POST MANGLING 1: ".$fl35 );
+			if ( $exif->Tag == 'FocalLength' ) {
+				$raw = str_replace(' mm', '', $exif->Raw);
+				$focallength = $raw; // model focal length
+			}
+			else if ( $exif->Tag == 'ImageUniqueID' ) {
+					$this->ImageUniqueID = $exif->Raw;
+			} else
+					if ( $exif->Tag == 'ISO' ) {
+							$this->ISO = $exif->Raw;
+					} else
+					if ( $exif->Tag == 'ExposureTime' ) {
+							$this->ShutterSpeed = $exif->Raw;
+					} else
+					if ( $exif->Tag == 'FocalLengthIn35mmFormat' ) {
+							$raw35 = $exif->Raw;
+							$fl35 = str_replace( ' mm', '', $raw35 );
+							$fl35 = (int) $fl35;
+							$this->FocalLength35mm = $fl35;
+					} else
+					if ( $exif->Tag == 'FNumber' ) {
+							$this->Aperture = $exif->Raw;
+					}
+					// FIXME, make configurable
+					// Hardwire phone focal length
+					else if ($exif->Tag == 'Model') {
+						$name = $exif->Raw;
+						if ($name === 'C6602') {
+							$this->FocalLength35mm = 28;
+							$fixFocalLength = 28;
+						}
 
-								$fl35 = (int) $fl35;
+						if ($name === 'Canon IXUS 220 HS') {
+							$focalConversionFactor = 5.58139534884;
+						}
 
-								error_log( "POST MANGLING 2: ".$fl35 );
-								$this->FocalLength35mm = $fl35;
-						} else
-						if ( $exif->Tag == 'FNumber' ) {
-								$this->Aperture = $exif->Raw;
-						};
+						if ($name === 'Canon EOS 450D') {
+							$focalConversionFactor = 1.61428571429;
+						}
+					}
+					;
 
-				$exif = NULL;
-				gc_collect_cycles();
+			$exif = NULL;
+			gc_collect_cycles();
 		}
+
+		// try and fix the 35mm focal length
+		if ((int)($this->FocalLength35mm) === 0) {
+			if ($fixFocalLength) {
+				$this->FocalLength35mm = 28;
+			} else if ($focalConversionFactor !== 1) {
+				$f = $focalConversionFactor*$focallength;
+				$this->FocalLength35mm = round($f);
+			}
+		}
+
 		echo "/storing exif";
 		DB::query('commit;');
 	}
