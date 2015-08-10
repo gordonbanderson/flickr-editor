@@ -32,8 +32,71 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 		'dumpSetAsJson',
 		'primeFlickrSetFolderImages',
 		'moveXperiaPics',
-		'changeFlickrSetMainImage'
+		'changeFlickrSetMainImage',
+		'fixFocalLength35'
 	);
+
+
+/*
+
+if ($name === 'C6602') {
+							$this->FocalLength35mm = 28;
+							$fixFocalLength = 28;
+						}
+
+						if ($name === 'Canon IXUS 220 HS') {
+							$focalConversionFactor = 5.58139534884;
+						}
+ */
+	public function fixFocalLength35() {
+		$finished = false;
+
+		while (!$finished) {
+
+
+			$photos = FlickrPhoto::get()->filter(array('FocalLength35mm' =>0,'IsPublic' => 1))->limit(50);
+
+			if (count($photos) == 0) {
+				$finished = true;
+			}
+
+			foreach ($photos as $photo) {
+				echo $photo->Title."(".$photo->FlickrID.")\n";
+				$modelExif = $photo->Exifs()->filter('Tag', 'Model')->first();
+
+				//foreach ($photo->Exifs() as $exif) {
+				//	echo ' - '.$exif->Tag.' => '.$exif->Raw."\n";
+				//}
+
+				if (isset($modelExif)) {
+					$model = $modelExif->Raw;
+					$focalLengthExif = $photo->Exifs()->filter('Tag', 'FocalLength')->first();
+					$mm = (int) str_replace(' mm', '', $focalLengthExif->Raw);
+
+					if ($model === 'Canon IXUS 220 HS') {
+						$f35 = round($mm * 5.58139534884);
+						$photo->FocalLength35mm = $f35;
+					} else if ($model === 'C6602') {
+						$photo->FocalLength35mm = 28;
+					} else if ($model === 'Canon EOS 450D') {
+						$f35 = round($mm * 1.61428571429);
+						$photo->FocalLength35mm = $f35;
+					}
+
+					echo " - Focal length set to ".$photo->FocalLength35mm."\n";
+					$photo->write();
+				} else {
+					echo " - No exif data for image ".$photo->FlickrID."\n";
+
+					// mark private for now
+					$photo->IsPublic = false;
+					$photo->write();
+				}
+			}
+		}
+
+		die; // abort rendering
+	}
 
 	public function fixArticleDates() {
 		$articles = DataList::create('Article')->where('StartTime is null');
@@ -179,7 +242,7 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 		foreach($articles as $article) {
 			error_log("Fixing: ".$article->Title);
 			$content = $article->Content;
-			$sections = split('FLICKRPHOTO_', $content);
+			$sections = explode('FLICKRPHOTO_', $content);
 			$alteredContent = '';
 			foreach($sections as $section) {
 				//$splits2 = split(' ', $section);
@@ -775,54 +838,17 @@ Rows matched: 53  Changed: 53  Warnings: 0
 */
 
 	public function importSet() {
-
-
 		$page= 1;
 		static $only_new_photos = false;
 
-
-
-
-
-		// phpInfo();
-
-		/*
-		ini_set('xdebug.profiler_enable', 'On');
-		ini_set('xdebug.show_local_vars',1);
-		ini_set('xdebug.profiler_output_dir', '/tmp/xdebug');
-
-		ini_set('xdebug.profiler_enable_trigger', 1 );
-
-		ini_set('xdebug.profiler_enable', 'Off');
-
-		ini_set('xdebug.profiler_append', 'On');
-		ini_set('xdebug.profiler_output_name', "profile.log");
-*/
-
-
-		/*
-
-
-		$sets = $this->f->photosets_getList('45224965@N04');
-		echo "SETS:".$sets." is set?" .isset($sets);
-
-		if ($sets) {
-			echo "Sets set";
-		}
-		echo (print_r($sets,1));
-
-
-		foreach ($sets['photoset'] as $key => $value) {
-			echo "\nsapphire/sake flickr/importSet ".$value['id'];
-
-		}
-
-		die;
-*/
-
-
 		$canAccess = ( Director::isDev() || Director::is_cli() || Permission::check( "ADMIN" ) );
 		if ( !$canAccess ) return Security::permissionFailure( $this );
+		/*
+		// For testing
+		$flickrPhoto = FlickrPhoto::get()->filter('ID',100)->first();
+		$flickrPhoto->loadExif();
+		die;
+		*/
 
 		// Code for the register action here
 		error_log( "import set" );
@@ -839,25 +865,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 		$photos = $this->f->photosets_getPhotos( $flickrSetID, 'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description' );
 		$photoset = $photos['photoset'];
 
-		echo count( $photoset );
-
-		foreach ( $photoset as $key => $value ) {
-			error_log( "K-V: ".$key.' --> '.$value );
-		}
-
-
-		//var_dump($photoset);
-
-
-		// error_log("PHOTOSET:".print_r($photoset, 1));
-		// $this->photoDebug = print_r($photoset, 1);
-
-
-
 		$flickrSet = $this->getFlickrSet( $flickrSetID );
-
-
-
 
 		error_log( "Searching for flickr set with flickr ID *".$flickrSetID."*" );
 
