@@ -31,6 +31,8 @@ class FlickrPhoto extends DataObject {
 		'FocalLength35mm' => 'Int',
 		'ISO' => 'Int',
 
+		'AspectRatio' => 'Float',
+
 		'SmallURL' => 'Varchar(255)',
 		'SmallHeight' => 'Int',
 		'SmallWidth' => 'Int',
@@ -158,6 +160,10 @@ class FlickrPhoto extends DataObject {
 
 		$quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
 		$this->FlickrTags()->addMany($quickTags);
+		if ($this->LargeWidth > 0) {
+			$this->AspectRatio = ($this->LargeHeight) / ($this->LargeWidth);
+		}
+
 
 		if (!$this->KeepClean) {
 			$this->IsDirty = true;
