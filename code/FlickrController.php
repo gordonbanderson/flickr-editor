@@ -33,7 +33,8 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 		'primeFlickrSetFolderImages',
 		'moveXperiaPics',
 		'changeFlickrSetMainImage',
-		'fixFocalLength35'
+		'fixFocalLength35',
+		'fixDescriptions'
 	);
 
 
@@ -48,7 +49,40 @@ if ($name === 'C6602') {
 							$focalConversionFactor = 5.58139534884;
 						}
  */
+
+
+	public function fixDescriptions() {
+		$canAccess = ( Director::isDev() || Director::is_cli() || Permission::check( "ADMIN" ) );
+		if ( !$canAccess ) return Security::permissionFailure( $this );
+
+		$sets = FlickrSet::get()->Filter('Description', 'Array');
+		foreach ($sets->getIterator() as $set) {
+			echo $set->Title."\n";
+			$setInfo = $this->f->photosets_getInfo( $set->FlickrID );
+
+			print_r($setInfo);
+
+			$setTitle = $setInfo['title']['_content'];
+			$setDescription = $setInfo['description']['_content'];
+			$set->Title = $setTitle;
+			$set->Description = $setDescription;
+			$set->write();
+
+			$fsps = FlickrSetPage::get()->filter('FlickrSetForPageID', $set->ID);
+			foreach($fsps->getIterator() as $fsp) {
+				echo $fsp;
+				$fsp->Title = $setTitle;
+				$fsp->Description = $setDescription;
+				$fsp->write();
+				$fsp->publish( "Live", "Stage" );
+			}
+		}
+	}
+
 	public function fixFocalLength35() {
+		$canAccess = ( Director::isDev() || Director::is_cli() || Permission::check( "ADMIN" ) );
+		if ( !$canAccess ) return Security::permissionFailure( $this );
+
 		$finished = false;
 
 		while (!$finished) {
@@ -857,6 +891,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
 		error_log("PATH:".$path);
 		$parentNode = SiteTree::get_by_link($path);
 		error_log("PARENT NODE:".$parentNode);
+		if ($parentNode == null) {
+			echo "ERROR: Path ".$path." cannot be found in this site\n";
+			die;
+		}
 
 		//error_log("ID PARAM:".print_r($flickrSetID, 1));
 
@@ -886,15 +924,14 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			die;
 		}
 
-		error_log( "DATE:".print_r( $flickrSet->FirstPictureTakenAt, 1 ) );
 
-		$datetime = split( ' ', $flickrSet->FirstPictureTakenAt );
+
+		$datetime = explode( ' ', $flickrSet->FirstPictureTakenAt );
 		$datetime = $datetime[0];
 		error_log( "DT:".$datetime );
-		list( $year, $month, $day ) = split( '[/.-]', $datetime );
+
+		list( $year, $month, $day ) = explode( '-', $datetime );
 		echo "Month: $month; Day: $day; Year: $year<br />\n";
-
-
 
 		// now try and find a flickr set page
 		$flickrSetPage = DataObject::get_one( 'FlickrSetPage', 'FlickrSetForPageID='.$flickrSet->ID );
@@ -902,6 +939,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			$flickrSetPage = new FlickrSetPage();
 			$flickrSetPage->Title = $photoset['title'];
 			$flickrSetPage->Description = $flickrSet->Description;
+
 			//update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
 
 			$flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
@@ -1001,9 +1039,6 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			error_log( "\n\n\n====".$key."/".$numberOfPics.":".$value['title'] );
 			error_log( "MEMORY:".memory_get_usage( true ) );
 
-			error_log( print_r( $value, 1 ) );
-
-			var_dump($value);
 
 			$flickrPhotoID = $value['id'];
 
@@ -1400,8 +1435,8 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			$flickrSet = new FlickrSet();
 			$setInfo = $this->f->photosets_getInfo( $flickrSetID );
 
-			$setTitle = $setInfo['title'];
-			$setDescription = $setInfo['description'];
+			$setTitle = $setInfo['title']['_content'];
+			$setDescription = $setInfo['description']['_content'];
 			$flickrSet->Title = $setTitle;
 			$flickrSet->Description = $setDescription;
 			$flickrSet->FlickrID = $flickrSetID;
