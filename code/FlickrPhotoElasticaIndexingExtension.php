@@ -1,5 +1,5 @@
 <?php
-class FlickrPhotoElasticaExtension extends Extension {
+class FlickrPhotoElasticaIndexingExtension extends Extension implements ElasticaIndexingHelperInterface {
 
 	//private static $ctr = 0;
 
@@ -38,6 +38,7 @@ class FlickrPhotoElasticaExtension extends Extension {
             return $mapping;
         }
 
+
 		/**
 		 * Populate elastica with the location of the photograph
 		 * @param  \Elastica\Document $document Representation of an Elastic Search document
@@ -66,8 +67,6 @@ class FlickrPhotoElasticaExtension extends Extension {
 				$sortable = round($sortable,6);
 			}
 			$sortable = $sortable . '|' . $this->owner->ShutterSpeed;
-			echo "\n\n". $this->owner->ShutterSpeed.' => ' .$sortable;
-
 			$document->set('ShutterSpeed', $sortable);
 		    return $document;
 		}
