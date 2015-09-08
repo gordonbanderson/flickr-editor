@@ -165,12 +165,26 @@ class FlickrBucket extends DataObject
 			$fp->Description = $description;
 			error_log("DESCRIPTION:" . $description);
 
+			error_log('LOCK GEO:'.$lockgeo);
+
 			if (!$lockgeo) {
 				error_log("Setting photo lat to " . $this->Lat);
 				$fp->Lat = $this->Lat;
 				$fp->Lon = $this->Lon;
 				error_log("Updated flickr pic coords " . $fp->ID);
+
+				if ($this->Lat == null) {
+					$fp->Lat = 0;
+					error_log('Setting a zero lat');
+				}
+
+				if ($this->Lon == null) {
+					$fp->Lon = 0;
+					error_log('Setting a zero lon');
+				}
 			}
+
+
 
 			$fp->FlickrTags()->addMany($this->FlickrTags());
 
