@@ -16,9 +16,7 @@ class FlickrTag extends DataObject {
 
 
 	static $searchable_fields = array(
-		'Value',
-		'RawValue',
-		'FlickrID'
+		'RawValue'
 	);
 
 	static $summary_fields = array(
