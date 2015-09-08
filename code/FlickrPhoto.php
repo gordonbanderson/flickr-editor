@@ -88,7 +88,8 @@ class FlickrPhoto extends DataObject {
 	public static $summary_fields = array(
 		'Thumbnail' => 'Thumbnail',
 		'Title' => 'Title',
-		'TakenAt' => 'TakenAt'
+		'TakenAt' => 'TakenAt',
+		'HasGeoEng' => 'Geolocated?'
 	);
 
 
@@ -178,10 +179,7 @@ class FlickrPhoto extends DataObject {
 
 		$flickrSetID = Controller::curr()->request->param( 'ID' );
 		$params = Controller::curr()->request->params();
-		error_log(print_r($params,1));
-		error_log('FLICKR SET ID:'.print_r(Controller::curr()->model,1));
 		$url = $_GET['url'];
-		error_log(print_r($url,1));
 		$splits = explode('/FlickrSet/item/', $url);
 		$setid = null;
 		if (sizeof($splits) == 2) {
@@ -222,7 +220,7 @@ class FlickrPhoto extends DataObject {
 		}
 
 		if (!$lockgeo) {
-			 $fields->addFieldToTab( "Root.Location", new LatLongField( array(
+			 $fields->addFieldToTab( "Root.Location", $mapField = new LatLongField( array(
 					new TextField( 'Lat', 'Latitude' ),
 					new TextField( 'Lon', 'Longitude' ),
 					new TextField( 'ZoomLevel', 'Zoom' )
@@ -230,6 +228,25 @@ class FlickrPhoto extends DataObject {
 					array( 'Address' )
 					)
 			 );
+
+
+			$guidePoints = array();
+
+			foreach ($this->FlickrSets() as $set) {
+
+				foreach ($set->FlickrPhotos()->where('Lat != 0 and Lon != 0') as $fp) {
+					if (($fp->Lat != 0) && ($fp->Lon != 0)) {
+						array_push($guidePoints, array(
+							'latitude' => $fp->Lat,
+							'longitude' => $fp->Lon
+						));
+					}
+				}
+			}
+
+			if (count($guidePoints) > 0) {
+				$mapField->setGuidePoints($guidePoints);
+			}
 		}
 
 		// quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
@@ -274,6 +291,11 @@ class FlickrPhoto extends DataObject {
 
 	public function HasGeo() {
 		return $this->Lat != 0 || $this->Lon != 0;
+	}
+
+
+	public function HasGeoEng() {
+		return $this->HasGeo() ? 'Yes': 'No';
 	}
 
 
