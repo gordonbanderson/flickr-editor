@@ -93,12 +93,10 @@ class FlickrBucket extends DataObject
 					break;
 				}
 			}
-
 			if ($lockgeo) {
 				break;
 			}
 		}
-
 		return $lockgeo;
 	}
 
@@ -118,19 +116,14 @@ class FlickrBucket extends DataObject
 
 	public function onBeforeWrite() {
 		parent::onBeforeWrite();
-		error_log("OBW: ID = " . $this->ID);
-		error_log("QUICK TAGS:" . $this->QuickTags);
 		$quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
 		$this->FlickrTags()->addMany($quickTags);
 
 		if ($this->ID && ($this->FlickrPhotos()->count() > 0)) {
-			error_log("TESTING TITLE");
 			if ($this->Title == '') {
-				error_log("Blank title nFP=" . $this->FlickrPhotos()->count());
 				$this->Title = $this->FlickrPhotos()->first()->TakenAt . ' - ' . $this->FlickrPhotos()->last()->TakenAt;
 			}
 		} else {
-			error_log("SKIPPING TITLE TWEAK");
 			$this->Virginal = true;
 		}
 	}
@@ -151,46 +144,30 @@ class FlickrBucket extends DataObject
 
 		$lockgeo = $this->GeoLocked();
 
-		error_log("BUCKET GEOLOCKED? " . $this->GeoLocked);
-		error_log("COORS: " . $this->Lat . "," . $this->Lon);
 		foreach ($this->FlickrPhotos() as $fp) {
 			$fp->Title   = $this->Title;
 			$description = $this->Description;
 			//$description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
 			//$description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
-			error_log("TAKEN AT:" . $fp->TakenAt);
 			$year = substr('' . $fp->TakenAt, 0, 4);
-			error_log("YEAR:" . $year);
 			$description     = str_replace('$Year', $year, $description);
 			$fp->Description = $description;
-			error_log("DESCRIPTION:" . $description);
-
-			error_log('LOCK GEO:'.$lockgeo);
 
 			if (!$lockgeo) {
-				error_log("Setting photo lat to " . $this->Lat);
 				$fp->Lat = $this->Lat;
 				$fp->Lon = $this->Lon;
-				error_log("Updated flickr pic coords " . $fp->ID);
 
 				if ($this->Lat == null) {
 					$fp->Lat = 0;
-					error_log('Setting a zero lat');
 				}
 
 				if ($this->Lon == null) {
 					$fp->Lon = 0;
-					error_log('Setting a zero lon');
 				}
 			}
 
-
-
 			$fp->FlickrTags()->addMany($this->FlickrTags());
-
-			error_log("BUCKET TAGS:" . $this->FlickrTags()->count());
 			$fp->write();
-			error_log("AFTER WRITE FP TAGS:" . $fp->FlickrTags()->count());
 		}
 	}
 

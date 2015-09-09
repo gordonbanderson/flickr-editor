@@ -52,8 +52,6 @@ class FlickrSet extends DataObject {
 
 
 	function getCMSFields() {
-		error_log("FLICKR SET GET CMS FIELDS");
-
 		Requirements::javascript( FLICKR_EDIT_TOOLS_PATH . '/javascript/flickredit.js' );
 		Requirements::css( FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.css' );
 
@@ -66,7 +64,6 @@ class FlickrSet extends DataObject {
 		$fields->addFieldToTab( 'Root.Main', new TextAreaField( 'Description', 'Description' )  );
 		$fields->addFieldToTab( 'Root.Main',  new TextField( 'ImageFooter', 'Text to be added to each image in this album when saving') );
 		$fields->addFieldToTab( 'Root.Main', new CheckBoxField( 'LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features' )  );
-
 
 		$gridConfig = GridFieldConfig_RelationEditor::create();
 		// need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
@@ -127,7 +124,6 @@ class FlickrSet extends DataObject {
 	}
 
 	function FlickrPhotosNotInBucket() {
-		error_log("FLICKR PHOTOS NOT IN BUCKETS");
 		return $this->FlickrPhotos()->where('FlickrPhoto.ID not in (select FlickrPhotoID as ID from FlickrPhoto_FlickrBuckets)');
 	}
 
@@ -164,11 +160,7 @@ class FlickrSet extends DataObject {
 */
   public function HasGeo() {
 	$ct = $this->FlickrPhotos()->where('Lat != 0 OR Lon != 0')->count();
-	$result = ($ct > 0);
-	error_log($result);
-
-	return $result;
-
+	return $ct > 0;
   }
 
 
@@ -178,12 +170,10 @@ class FlickrSet extends DataObject {
 	public function BasicMap() {
 
 		$photosWithLocation = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0');
-		error_log('PHOTOS WITH LOCATION:'.$photosWithLocation->count());
 		if ($photosWithLocation->count() == 0) {
 		  return ''; // don't render a map
 		}
 
-		error_log('photos with location:'.$photosWithLocation->count());
 		//$photosWithLocation->setRenderMarkers(false);
 		$map = $photosWithLocation->getRenderableMap();
 
@@ -249,7 +239,6 @@ class FlickrSet extends DataObject {
 		$amount = $imagesToUpdate->count();
 
 		foreach ($imagesToUpdate as $fp) {
-		  	error_log("\n\n==".$ctr.'/'.$amount."==");
 		  	$fp->writeToFlickr($suffix);
 		  	$ctr++;
 		}

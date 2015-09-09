@@ -37,31 +37,24 @@ class FlickrTagsController extends Page_Controller {
 	Show photos for a given tag
 	*/
 	public function photo() {
-		error_log("TAG/PHOTO");
 		$tagValue = Director::URLParam('ID');
-		error_log("TAG VALUE:".$tagValue);
 		$this->Title = "Photos tagged '".$tagValue."'";
 		$tag = DataObject::get_one('Tag', "Value='".$tagValue."'");
-		error_log("TAG:".$tag);
 		$this->TagValue = $tagValue;
 		$this->Tag = $tag;
 
 		$result = array();
 		if ($tag) {
-			error_log("Getting photos");
 			$result = $tag->FlickrPhotos();
 			$this->FlickrPhotos = $tag->FlickrPhotos();
 
 		}
 
-		error_log("PHOTOS:".$result);
 		return array();
-
 	}
 
 	public function PhotoKey() {
 		$key ='tagphoto_'.$ID;
-		error_log("KEY:".$key);
 		return $key;
 	}
 
@@ -84,10 +77,6 @@ class FlickrTagsController extends Page_Controller {
 
 		$result = DB::query($sql);
 
-		//error_log(print_r($result->first(),1));
-
-
-
 		$tagCloud = singleton('Tag')->buildDataObjectSet($result);
 		foreach ($tagCloud as $tagV) {
 			// font size in pixels
@@ -95,8 +84,6 @@ class FlickrTagsController extends Page_Controller {
 		}
 
 		$this->TagCloud = $tagCloud;
-
-
 		return array();
 	}
 }

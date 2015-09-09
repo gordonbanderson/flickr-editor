@@ -23,8 +23,6 @@ class FlickrPhotoSelectionField extends HiddenField {
 
 		parent::setTemplate('FLickrPhotoSelectionField');
 
-		error_log("FLICKR PHOTO SELECTION FIELD");
-
 		$value = '';
 		if ($flickrPhoto) {
 			$value = $flickrPhoto->ID;
@@ -40,7 +38,6 @@ class FlickrPhotoSelectionField extends HiddenField {
 	}
 
 	function getFlickrTitle() {
-		error_log("FLICKR TITLE:".$this->flickrTitle);
 		return $this->flickrTitle;
 	}
 

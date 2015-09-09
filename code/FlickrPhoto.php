@@ -183,10 +183,8 @@ class FlickrPhoto extends DataObject {
 		$splits = explode('/FlickrSet/item/', $url);
 		$setid = null;
 		if (sizeof($splits) == 2) {
-			error_log($splits[1]);
 			$splits = explode('/', $splits[1]);
 			$setid = $splits[0];
-			error_log($setid);
 		}
 
 
@@ -212,7 +210,6 @@ class FlickrPhoto extends DataObject {
 		// only show a map for editing if no sets have geolock on them
 		$lockgeo = false;
 		foreach ($this->FlickrSets() as $set) {
-			error_log("++++ CHECKING SET ".$set." for lock geo, has ".$set->LockGeo);
 			if ($set->LockGeo == true) {
 				$lockgeo = true;
 				break;
@@ -263,7 +260,6 @@ class FlickrPhoto extends DataObject {
 
 
 	public function AdjustedTime() {
-		error_log( "ADJUSTED TIME:".$this->TimeShiftHours );
 		return 'FP ADJ TIME '.$this->TimeShiftHours;
 	}
 
@@ -276,7 +272,7 @@ class FlickrPhoto extends DataObject {
 
 	private function initialiseFlickr() {
 		if (!isset($this->f)) {
-							// get flickr details from config
+				// get flickr details from config
 				$key = Config::inst()->get( 'FlickrController', 'api_key' );
 				$secret = Config::inst()->get('FlickrController', 'secret' );
 				$access_token = Config::inst()->get( 'FlickrController', 'access_token' );
@@ -300,16 +296,11 @@ class FlickrPhoto extends DataObject {
 
 
 	public function loadExif() {
-		error_log( "Loading EXIF data" );
 		$this->initialiseFlickr();
-		error_log('Getting exif from flickr');
 		$exifData = $this->f->photos_getExif( $this->FlickrID );
-		error_log('/getting exif from flickr');
-		//error_log(print_r($exifData,1));
 
 		// delete any old exif data
 		$sql = "DELETE from FlickrExif where FlickrPhotoID=".$this->ID;
-		error_log( $sql );
 		DB::query( $sql );
 
 		// conversion factor or fixed legnth depending on model of camera
@@ -397,7 +388,6 @@ class FlickrPhoto extends DataObject {
 	*/
 	public function writeToFlickr($descriptionSuffix) {
 		$this->initialiseFlickr();
-		error_log("Updated flickr photo ".$this->FlickrID);
 
 		$fullDesc = $this->Description."\n\n".$descriptionSuffix;
 		$fullDesc = trim($fullDesc);
@@ -411,21 +401,14 @@ class FlickrPhoto extends DataObject {
 			$tagString .= '"'.$tag->Value.'" ';
 		}
 
-		error_log("Setting tags:".$tagString);
-
 		$this->f->photos_setTags($this->FlickrID, $tagString);
 
 		if ($this->HasGeo()) {
-			error_log("Updating map coordinates");
 			$this->f->photos_geo_setLocation ($this->FlickrID, $this->getMappableLatitude(), $this->getMappableLongitude());
 		}
 
 		$this->KeepClean = true;
 		$this->write();
-
-			//function photos_setMeta ($photo_id, $title, $description)
-			//                $this->f->photos_addTags( $image['id'], "moblog iphone3g" );
-
 	}
 
 

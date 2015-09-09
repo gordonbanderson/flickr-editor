@@ -12,10 +12,8 @@ class FlickrExportController extends Page_Controller {
 
 
 	 public function toJson() {
-		error_log("+++ SET TO JSON +++");
 		$flickrSetID = $this->request->param( 'ID' );
 		$flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
-		error_log("FLICKR SET:".$flickrSet->Title);
 		$images = array();
 		foreach ($flickrSet->FlickrPhotos() as $fp) {
 			$image = array();
@@ -32,9 +30,6 @@ class FlickrExportController extends Page_Controller {
 			array_push($images,$image);
 		}
 
-		error_log(json_encode($images));
-
 		file_put_contents("/tmp/output.json", stripslashes(json_encode($images)));
-
 	}
 }

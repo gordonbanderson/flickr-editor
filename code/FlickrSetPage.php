@@ -41,8 +41,6 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
 	 * @return string
 	 */
 	public function getPortletImage() {
-		error_log("FSP: PI=".$this->FlickrSetForPage()->PrimaryFlickrPhoto());
-
 		return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
 	}
 
@@ -86,14 +84,9 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 	FIXME: Use flickr option, and make more efficient
 	*/
 	function MainImage() {
-		error_log("Main image");
 		$resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
 		$result = DataObject::get_by_id('FlickrPhoto', $resultID);
-		//error_log("RES:".$result);
-
-		$result = DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
-
-		return $result;
+		return DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
 	}
 
 
@@ -102,7 +95,6 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 	function getCMSFields() {
-		error_log("GET CMS FIELDS FLICKR SET PAGE");
 		$fields = parent::getCMSFields();
 
 
@@ -151,7 +143,6 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 	function onBeforeWrite() {
 		parent::onBeforeWrite();
 
-		//error_log(print_r($this->record,1));
 		$parentFolderID = $this->ParentFolderID;
 		if ($parentFolderID) {
 			$this->ParentID = $parentFolderID;
@@ -159,22 +150,12 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 		// FIXME
 		$this->Dirty = true;
-
-		 error_log("ID:".$this->ID);
-		 error_log("PARENT FOLDER ID:".$this->ParentID);
 	}
 
 
 	function BasicMap() {
 		return $this->FlickrSetForPage()->BasicMap();
 	}
-
-
-
-	/*
-select * from
-	*/
-
 
 
 }
