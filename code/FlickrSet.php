@@ -239,6 +239,7 @@ class FlickrSet extends DataObject {
 		$amount = $imagesToUpdate->count();
 
 		foreach ($imagesToUpdate as $fp) {
+			error_log('UPDATING:'.$fp->Title);
 		  	$fp->writeToFlickr($suffix);
 		  	$ctr++;
 		}
