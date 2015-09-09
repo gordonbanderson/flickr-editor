@@ -186,12 +186,13 @@ if ($name === 'C6602') {
 
 	public function updateEditedImagesToFlickr() {
 		$flickrSetID = $this->request->param( 'ID' );
-		echo "T1:".FlickrSet::get()->filter('FlickrID',$flickrSetID)->sql();
 		$flickrSet = FlickrSet::get()->filter(array('FlickrID' => $flickrSetID))->first();
 
 		if ($flickrSet) {
 			//DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
 			$flickrSet->writeToFlickr();
+		} else {
+			error_log('Flickr set could not be found');
 		}
 	}
 
