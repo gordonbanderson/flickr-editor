@@ -255,6 +255,8 @@ class FlickrPhoto extends DataObject {
 		$fields->addFieldToTab( "Root.Main", $gridField );
 
 		$fields->addFieldToTab("Root.Main", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
+
+
 		return $fields;
 	}
 
