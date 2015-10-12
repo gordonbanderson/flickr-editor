@@ -25,8 +25,7 @@ class FlickrPhotoElasticaIndexingExtension extends Extension implements Elastica
 
         	$properties['Aperture'] = array(
         		// do not use float as the rounding makes facets impossible
-        		'type' => 'double',
-        		'index' => 'not_analyzed'
+        		'type' => 'double'
         	);
 
         	// by default casted as a string, we want a date 2015-07-25 18:15:33 y-M-d H:m:s
