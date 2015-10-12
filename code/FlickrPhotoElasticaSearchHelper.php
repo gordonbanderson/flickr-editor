@@ -2,7 +2,7 @@
 use Elastica\Aggregation\Terms;
 use Elastica\Query;
 use Elastica\Aggregation\TopHits;
-use Elastica\Aggregation\Range;
+use SilverStripe\Elastica\RangedAggregation;
 
 class FlickrPhotoElasticaSearchHelper implements ElasticaSearchHelperInterface {
 
@@ -120,9 +120,6 @@ class FlickrPhotoElasticaSearchHelper implements ElasticaSearchHelperInterface {
 
 		// set the order to be taken at in reverse if query is blank other than aggs
 		$params = $query->getParams();
-		if (!isset($params['query']['filtered']['query']['query_string'])) {
-			$query->setSort(array('TakenAt'=> 'desc'));
-		}
 
 		// add Aperture aggregate
 		$agg1 = new Terms("Aperture");
@@ -154,25 +151,20 @@ class FlickrPhotoElasticaSearchHelper implements ElasticaSearchHelperInterface {
 		$agg4->setOrder('_term', 'asc');
 		$query->addAggregation($agg4);
 
-		$aspectRangedAgg = \RangedAggregation::getByTitle('Aspect');
+		$aspectRangedAgg = RangedAggregation::getByTitle('Aspect');
         $query->addAggregation($aspectRangedAgg->getRangeAgg());
 
-		// leave this out for the moment as way too many terms being returned slowing things down
-		/**
-		$agg5 = new Terms("Tags");
-		$agg5->setField("FlickrTags.RawValue");
-		$agg5->setSize(10);
-		$agg5->setOrder('_term', 'asc');
-
-		$agg6 = new TopHits('Top Hits');
-		$agg6->setSize(20);
-		$agg5->addAggregation($agg6);
-
-		$query->addAggregation($agg5);
-		*/
 
 		// remove NearestTo from the request so it does not get used as a term filter
 		unset(Controller::curr()->request['NearestTo']);
+	}
+
+
+	/*
+	In the event of aggregates being used and no query provided, sort by this (<field> => <order>)
+	 */
+	public function getDefaultSort() {
+		return array('Title' => 'desc');
 	}
 
 
