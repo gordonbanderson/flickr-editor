@@ -7,6 +7,9 @@
  */
 
 
+use Symfony\Component\Yaml\Dumper;
+
+
 require_once "phpFlickr.php";
 
 class FlickrController extends Page_Controller implements PermissionProvider {
@@ -34,7 +37,8 @@ class FlickrController extends Page_Controller implements PermissionProvider {
 		'moveXperiaPics',
 		'changeFlickrSetMainImage',
 		'fixFocalLength35',
-		'fixDescriptions'
+		'fixDescriptions',
+		'importSearch'
 	);
 
 
@@ -728,6 +732,110 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 */
 
+	public function importSearch() {
+		$searchParams = array();
+
+		$query = $_GET['q'];
+		$searchParams['text'] = $query;
+		$searchParams['license'] = 7;
+		$searchParams['per_page'] = 100;
+		$searchParams['extras'] = 'description, license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o';
+		$searchParams['sort'] = 'relevane'; // 'interestingness-desc'; // also try relevance
+
+		$data = $this->f->photos_search($searchParams);
+
+		$dumper = new Dumper();
+		$fixtures = array();
+		$ctr = 1;
+
+		$apertures = array('2.8', '5.6', '11', '16', '22');
+		$shutterSpeeds = array('1/100', '1/30', '1/15', '1/2', '2', '6', '2/250');
+		$isos = array(64,100,200,400,800,1600,2000,3200);
+		$focalLengths = array(24,50,80,90,120,150,200);
+
+		foreach($data['photo'] as $photo) {
+			// the image URL becomes somthing like
+			// http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}.jpg
+			//
+			$photoid = str_pad("$ctr", 4, '0', STR_PAD_LEFT);
+/*
+FlickrPhoto:
+  photo0001:
+    Title: Bangkok
+    Description: Test photograph
+    FlickrID: 1234567
+    TakenAt: 24/4/2012 18:12
+    FirstViewed: 28/4/2012
+    Aperture: 8.0
+    ShutterSpeed: 1/100
+    FocalLength35mm: 140
+    ISO: 400
+    MediumURL: 'http://www.test.com/test.jpg',
+    MediumHeight: 400,
+    MediumWidth: 300
+
+    sed s/\{\ \_content\:\ // | sed s/\ \}//
+    sudo -u www-data framework/sake flickr/importSearch q='Bangkok Thailand' | sed s/\{\ \_content\:\ // | sed s/\ \}// > /home/gordon/work/git/weboftalent/moduletest/www/elastica/tests/lotsOfPhotos.yml
+
+ */
+			$currentFixture = array();
+			$currentFixture['FlickrID'] = intval($photo['id']);
+			$currentFixture['Title'] = $photo['title'];
+			$descBlob = $photo['description']['_content'];
+			$description = '';
+
+
+
+			$splits = preg_split ('/$\R?^/m', $descBlob);
+
+			foreach ($splits as $line) {
+				$description .= "<p>";
+				$description .= $line;
+				$description .= "</p>";
+			}
+
+			$currentFixture['Description'] = $description;
+			$currentFixture['Aperture'] = $apertures[array_rand($apertures)];
+			$currentFixture['ShutterSpeed'] = $shutterSpeeds[array_rand($shutterSpeeds)];
+			$currentFixture['FocalLength35mm'] = $focalLengths[array_rand($focalLengths)];
+			$currentFixture['ISO'] = $isos[array_rand($isos)];
+			$currentFixture['IndexingOff'] = true;
+
+
+/*
+	static $belongs_many_many = array(
+		'FlickrSets' => 'FlickrSet'
+	);
+
+	//1 to many
+	static $has_one = array(
+		'Photographer' => 'FlickrAuthor'
+	);
+
+	//many to many
+	static $many_many = array(
+		'FlickrTags' => 'FlickrTag'
+	);
+ */
+
+			// get owner photo['owner']
+
+			$fixtures['photo'.$photoid] = $currentFixture;
+
+
+			$ctr++;
+			$url = "https://www.flickr.com/photos/{$photo['owner']}/{$photo["id"]}/";
+		}
+		$fixtures = array('FlickrPhoto' => $fixtures);
+		$yaml = $dumper->dump($fixtures,3);
+		echo $yaml;
+		file_put_contents('/tmp/test.yml', $yaml);
+		$cmd = 'cat elastica/tests/lotsOfPhotos.yml | sed s/\{\ \_content\:\ // | sed s/\ \}//';//.
+					//' > /home/gordon/work/git/weboftalent/moduletest/www/elastica/tests/lotsOfPhotos.yml';
+		//exec($cmd);
+	}
+
+
 	public function importSet() {
 		$page= 1;
 		static $only_new_photos = false;
@@ -770,8 +878,6 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			echo( "ABORTING DUE TO NULL TITLE FOUND IN SET" );
 			die;
 		}
-
-
 
 		$datetime = explode( ' ', $flickrSet->FirstPictureTakenAt );
 		$datetime = $datetime[0];
@@ -871,7 +977,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
 			// if we are in the mode of only importing new then skip to the next iteration if this pic already exists
 			else if ( $only_new_photos ) {
 					continue;
-				}
+			}
 
 			$flickrPhoto->Title = $value['title'];
 
