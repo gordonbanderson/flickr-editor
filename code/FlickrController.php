@@ -875,7 +875,7 @@ FlickrPhoto:
 		echo "Title set to : ".$flickrSet->Title;
 
 		if ( $flickrSet->Title == null ) {
-			echo( "ABORTING DUE TO NULL TITLE FOUND IN SET" );
+			echo( "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?" );
 			die;
 		}
 
@@ -1202,7 +1202,6 @@ FlickrPhoto:
 		if ( !$flickrSet ) {
 			$flickrSet = new FlickrSet();
 			$setInfo = $this->f->photosets_getInfo( $flickrSetID );
-
 			$setTitle = $setInfo['title']['_content'];
 			$setDescription = $setInfo['description']['_content'];
 			$flickrSet->Title = $setTitle;
