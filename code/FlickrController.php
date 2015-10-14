@@ -958,9 +958,11 @@ FlickrPhoto:
 		$flickrSetPage = NULL;
 
 		$numberOfPics = count($photoset['photo']);
-
+		$ctr = 1;
 		foreach ( $photoset['photo'] as $key => $value ) {
 			gc_collect_cycles();
+
+			echo "Importing photo {$ctr}/${numberOfPics}\n";
 			$flickrPhotoID = $value['id'];
 
 			// the author, e.g. gordonbanderson
@@ -1167,6 +1169,7 @@ FlickrPhoto:
 				$result = $flickrPhoto->write();
 			}
 
+			$ctr++;
 
 			$flickrPhoto = NULL;
 		}
@@ -1177,11 +1180,14 @@ FlickrPhoto:
 
 
 		// now download exifs
+		$ctr = 0;
 		foreach ( $photoset['photo'] as $key => $value ) {
+			echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
 			$flickrPhotoID = $value['id'];
 			$flickrPhoto = FlickrPhoto::get()->filter('FlickrID',$flickrPhotoID)->first();
 			$flickrPhoto->loadExif();
 			$flickrPhoto->write();
+			$ctr++;
 		}
 
 		$this->fixSetMainImages();
