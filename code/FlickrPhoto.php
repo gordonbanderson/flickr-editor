@@ -26,7 +26,7 @@ class FlickrPhoto extends DataObject {
 		'Rotation' => 'Int',
 		'IsPublic' => 'Boolean',
 		'Aperture' => 'Float',
-		'ShutterSpeed' => 'VarChar',
+		'ShutterSpeed' => 'Varchar',
 		'ImageUniqueID' => 'Varchar',
 		'FocalLength35mm' => 'Int',
 		'ISO' => 'Int',
@@ -150,6 +150,17 @@ class FlickrPhoto extends DataObject {
 		//FIXME - is there a way to avoid a database call here?
 		$fp = DataObject::get_by_id( 'FlickrPhoto', $this->ID );
 		return ( $intendedHeight-$fp->ThumbnailHeight )/2;
+	}
+
+
+	public function Link() {
+		$link = "http://www.flickr.com/photos/{$this->Photographer()->PathAlias}/{$this->FlickrID}/";
+		return $link;
+	}
+
+
+	public function AbsoluteLink() {
+		return $this->Link();
 	}
 
 
