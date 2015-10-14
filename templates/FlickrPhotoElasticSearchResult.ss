@@ -12,7 +12,7 @@
 <% else %>
   $AbsoluteLink
 <% end_if %>
-- $TakenAt.Format(d/m/y)
+- $TakenAt.Format(d/m/Y)
 </div>
 </div>
 
