@@ -97,11 +97,11 @@ class FlickrControllerTest extends SapphireTest {
 		$this->markTestSkipped('TODO');
 	}
 
-	public function test//      photosets_addPhoto() {
+	public function test_photosets_addPhoto() {
 		$this->markTestSkipped('TODO');
 	}
 
-	public function test//      photos_addTags() {
+	public function test_photos_addTags() {
 		$this->markTestSkipped('TODO');
 	}
 
