@@ -17,7 +17,8 @@
 		"issues": "https://github.com/gordonbanderson/flickr-editor/issues"
 	},
 	"require": {
-		"silverstripe/framework": "~3.1"
+		"silverstripe/framework": "~3.1",
+		"weboftalent/mappable" : "~3.2"
 	},
 	"license": "BSD-3-Clause"
 }
