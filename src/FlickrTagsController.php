@@ -1,4 +1,9 @@
 <?php
+
+use SilverStripe\Control\Director;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
+use PageController;
 /**
  *  // _config.php
  *	Director::addRules(10, array(
@@ -8,7 +13,7 @@
 
 
 
-class FlickrTagsController extends Page_Controller {
+class FlickrTagsController extends PageController {
 
 
 	static $allowed_actions = array(

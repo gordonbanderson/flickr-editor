@@ -1,5 +1,25 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBDate;
+use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\Assets\Image;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\View\Requirements;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DB;
+
 require_once "phpFlickr.php";
 
 /**
@@ -13,18 +33,18 @@ class FlickrPhoto extends DataObject {
 		'FlickrID' => 'Varchar',
 		'Description' => 'HTMLText',
 		'TakenAt' => 'Datetime',
-		'FlickrLastUpdated' => 'Date',
-		'GeoIsPublic' => 'Boolean',
+		'FlickrLastUpdated' => DBDate::class,
+		'GeoIsPublic' => DBBoolean::class,
 
 		// flag to indicate requiring a flickr API update
-		'IsDirty' => 'Boolean',
+		'IsDirty' => DBBoolean::class,
 
 		'Orientation' => 'Int',
 		'WoeID' => 'Int',
 		'Accuracy' => 'Int',
 		'FlickrPlaceID' => 'Varchar(255)',
 		'Rotation' => 'Int',
-		'IsPublic' => 'Boolean',
+		'IsPublic' => DBBoolean::class,
 		'Aperture' => 'Float',
 		'ShutterSpeed' => 'Varchar',
 		'ImageUniqueID' => 'Varchar',
@@ -57,7 +77,7 @@ class FlickrPhoto extends DataObject {
 		'OriginalHeight' => 'Int',
 		'OriginalWidth' => 'Int',
 		'TimeShiftHours' => 'Int',
-		'PromoteToHomePage' => 'Boolean'
+		'PromoteToHomePage' => DBBoolean::class
 		//TODO - place id
 	);
 
@@ -80,7 +100,7 @@ class FlickrPhoto extends DataObject {
 
 
 	static $has_one = array(
-		'LocalCopyOfImage' => 'Image',
+		'LocalCopyOfImage' => Image::class,
 		'Photographer' => 'FlickrAuthor'
 	);
 
@@ -261,7 +281,7 @@ class FlickrPhoto extends DataObject {
 		$fields->addFieldToTab( 'Root.Main',  new TextField( 'QuickTags', 'Enter tags here separated by commas') );
 
 		$gridConfig = GridFieldConfig_RelationEditor::create();//->addComponent( new GridFieldSortableRows( 'Value' ) );
-		$gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Value','RawValue' ) );
+		$gridConfig->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields( array( 'Value','RawValue' ) );
 		$gridField = new GridField( "Tags", "List of Tags", $this->FlickrTags(), $gridConfig );
 		$fields->addFieldToTab( "Root.Main", $gridField );
 

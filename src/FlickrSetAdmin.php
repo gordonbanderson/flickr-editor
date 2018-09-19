@@ -1,5 +1,7 @@
 <?php
 
+use SilverStripe\Admin\ModelAdmin;
+
 class FlickrSetAdmin extends ModelAdmin {
 
 	public static $managed_models = array(   //since 2.3.2

@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\Core\Extension;
 class FlickrTagElasticaIndexingExtension extends Extension implements ElasticaIndexingHelperInterface {
 
 	//private static $ctr = 0;

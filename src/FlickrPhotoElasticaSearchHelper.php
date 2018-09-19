@@ -3,6 +3,8 @@ use Elastica\Aggregation\Terms;
 use Elastica\Query;
 use Elastica\Aggregation\TopHits;
 use SilverStripe\Elastica\RangedAggregation;
+use SilverStripe\Control\Controller;
+
 
 class FlickrPhotoElasticaSearchHelper implements ElasticaSearchHelperInterface {
 

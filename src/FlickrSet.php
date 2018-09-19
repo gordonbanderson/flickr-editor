@@ -1,4 +1,22 @@
 <?php
+
+use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\Assets\Folder;
+use SilverStripe\View\Requirements;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldPaginator;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\DataObject;
 /**
  * Only show a page with login when not logged in
  */
@@ -11,8 +29,8 @@ class FlickrSet extends DataObject {
 		'Description' => 'HTMLText',
 		'FirstPictureTakenAt' => 'Datetime',
 		// flag to indicate requiring a flickr API update
-		'IsDirty' => 'Boolean',
-		'LockGeo' => 'Boolean',
+		'IsDirty' => DBBoolean::class,
+		'LockGeo' => DBBoolean::class,
 		'BatchTags' => 'Varchar',
 		'BatchTitle' => 'Varchar',
 		'BatchDescription' => 'HTMLText',
@@ -31,7 +49,7 @@ class FlickrSet extends DataObject {
 
 	// this is the assets folder
 	static $has_one = array (
-		'AssetFolder' => 'Folder',
+		'AssetFolder' => Folder::class,
 		'PrimaryFlickrPhoto' => 'FlickrPhoto'
 	);
 
@@ -67,16 +85,16 @@ class FlickrSet extends DataObject {
 
 		$gridConfig = GridFieldConfig_RelationEditor::create();
 		// need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-		$gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
-		$gridConfig->getComponentByType( 'GridFieldPaginator' )->setItemsPerPage( 100 );
+		$gridConfig->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields( array( 'Title', 'Description' ) );
+		$gridConfig->getComponentByType( GridFieldPaginator::class )->setItemsPerPage( 100 );
 
 
 		$gridField = new GridField( "Flickr Photos", "List of Photos:", $this->FlickrPhotos(), $gridConfig );
 		$fields->addFieldToTab( "Root.FlickrPhotos", $gridField );
 
 		$gridConfig2 = GridFieldConfig_RelationEditor::create();
-		$gridConfig2->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'Title', 'Description' ) );
-		$gridConfig2->getComponentByType( 'GridFieldPaginator' )->setItemsPerPage( 100 );
+		$gridConfig2->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields( array( 'Title', 'Description' ) );
+		$gridConfig2->getComponentByType( GridFieldPaginator::class )->setItemsPerPage( 100 );
 
 		$bucketsByDate =  $this->FlickrBucketsByDate();
 		if ($bucketsByDate->count() > 0) {

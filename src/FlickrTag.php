@@ -1,4 +1,10 @@
 <?php
+
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
 /**
 * Only show a page with login when not logged in
 */

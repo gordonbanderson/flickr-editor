@@ -1,4 +1,6 @@
 <?php
+
+use SilverStripe\ORM\DataObject;
 	class FlickrAuthor extends DataObject {
 		private static $db = array(
 			'PathAlias' => 'Varchar',

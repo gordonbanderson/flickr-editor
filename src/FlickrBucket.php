@@ -1,5 +1,16 @@
 <?php
 
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Tab;
+use SilverStripe\Forms\TabSet;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\DataObject;
+
 class FlickrBucket extends DataObject
 {
 
@@ -68,7 +79,7 @@ class FlickrBucket extends DataObject
 
 
 		$gridConfig = GridFieldConfig_RelationEditor::create(); //->addComponent( new GridFieldSortableRows( 'Value' ) );
-		$gridConfig->getComponentByType('GridFieldAddExistingAutocompleter')->setSearchFields(array(
+		$gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array(
 			'Value',
 			'RawValue'
 		));

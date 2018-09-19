@@ -1,5 +1,13 @@
 <?php
 
+use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use PageController;
+
 class FlickrSetPage extends Page implements RenderableAsPortlet {
 
 	static $has_one = array(
@@ -11,7 +19,7 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
 		'TimeShiftHours' => 'Int',
 		'Description' => 'HTMLText',
 			// flag to indicate requiring a flickr API update
-		'IsDirty' => 'Boolean',
+		'IsDirty' => DBBoolean::class,
 
 		//FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
 		'FirstPictureTakenAt' => 'Datetime'
@@ -86,7 +94,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 	function MainImage() {
 		$resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
 		$result = DataObject::get_by_id('FlickrPhoto', $resultID);
-		return DataObject::get_by_id('Image', $result->LocalCopyOfImageID);
+		return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
 	}
 
 
@@ -115,7 +123,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 		*/
 
 		$gridConfig = GridFieldConfig_RelationEditor::create()->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-	$gridConfig->getComponentByType( 'GridFieldAddExistingAutocompleter' )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
+	$gridConfig->getComponentByType( GridFieldAddExistingAutocompleter::class )->setSearchFields( array( 'URL', 'Title', 'Description' ) );
 	//$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
 	//$fields->addFieldToTab( "Root.Links", $gridField );
 
@@ -162,7 +170,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 
 
 
-class FlickrSetPage_Controller extends Page_Controller {
+class FlickrSetPage_Controller extends PageController {
 
 
 

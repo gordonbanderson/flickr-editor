@@ -1,6 +1,9 @@
 <?php
 
-class FlickrExportController extends Page_Controller {
+use SilverStripe\ORM\DataList;
+use PageController;
+
+class FlickrExportController extends PageController {
 
 	static $allowed_actions = array(
 		'toJson'

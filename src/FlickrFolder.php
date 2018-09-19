@@ -1,4 +1,8 @@
 <?php
+
+use SilverStripe\Assets\Image;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use PageController;
 /**
  * Defines the GalleryFolder page type
  */
@@ -8,7 +12,7 @@ class FlickrFolder extends Page {
 	 static $allowed_children = array('FlickrSetPage', 'FlickrFolder');
 
 	 static $has_one = array(
-		'CoverPhoto' => 'Image',
+		'CoverPhoto' => Image::class,
 	 );
 
 
@@ -29,6 +33,6 @@ class FlickrFolder extends Page {
 
 }
 
-class FlickrFolder_Controller extends Page_Controller {
+class FlickrFolder_Controller extends PageController {
 
 }

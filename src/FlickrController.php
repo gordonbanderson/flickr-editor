@@ -8,11 +8,25 @@
 
 
 use Symfony\Component\Yaml\Dumper;
+use SilverStripe\Control\Director;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
+use SilverStripe\ORM\DataList;
+use SilverStripe\Core\Convert;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Assets\Folder;
+use SilverStripe\Assets\Image;
+use SilverStripe\ORM\DB;
+use PageController;
+use SilverStripe\Security\PermissionProvider;
+
 
 
 require_once "phpFlickr.php";
 
-class FlickrController extends Page_Controller implements PermissionProvider {
+class FlickrController extends PageController implements PermissionProvider {
 
 	static $allowed_actions = array(
 		'index',

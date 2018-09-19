@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\ORM\DataExtension;
+
 class FlickrSiteConfig extends DataExtension {
 
 	private static $db = array(

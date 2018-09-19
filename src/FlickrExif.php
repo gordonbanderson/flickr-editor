@@ -1,4 +1,7 @@
 <?php
+
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DataObject;
 /**
 * Only show a page with login when not logged in
 */

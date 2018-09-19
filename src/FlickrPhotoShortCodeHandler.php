@@ -1,5 +1,10 @@
 <?php
 
+use SilverStripe\ORM\DataList;
+use SilverStripe\Core\Convert;
+use SilverStripe\View\SSViewer;
+use SilverStripe\View\ArrayData;
+
 class FlickrPhotoShortCodeHandler {
 
 	// taken from http://www.ssbits.com/tutorials/2010/2-4-using-short-codes-to-embed-a-youtube-video/ and adapted for SS3

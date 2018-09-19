@@ -1,4 +1,7 @@
 <?php
+
+use SilverStripe\View\ArrayData;
+use SilverStripe\Forms\GridField\GridField_HTMLProvider;
 /**
  * GridFieldExifData displays read only exif data for a Flickr photograph
  *
