@@ -1,18 +1,17 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\ORM\DataList;
-use PageController;
 
-class FlickrExportController extends PageController {
+class FlickrExportController extends \PageController {
 
-	static $allowed_actions = array(
+	private static $allowed_actions = array(
 		'toJson'
 	);
 
 	public function index() {
 		return 'wibble';
 	}
-
 
 	 public function toJson() {
 		$flickrSetID = $this->request->param( 'ID' );

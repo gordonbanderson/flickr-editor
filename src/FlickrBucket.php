@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
@@ -18,13 +19,16 @@ class FlickrBucket extends DataObject
 	// use precision 15 and 10 decimal places for coordiantes
 		'Lat' => 'Decimal(18,15)', 'Lon' => 'Decimal(18,15)', 'Accuracy' => 'Int', 'ZoomLevel' => 'Int', 'TagsCSV' => 'Varchar');
 
-	private static $has_one = array('FlickrSet' => 'FlickrSet');
+	private static $has_one = array('FlickrSet' => FlickrSet::class);
 
     private  static $summary_fields = array('Title', 'ImageStrip' => 'ImageStrip');
 
-    private static $belongs_many_many = array('FlickrPhotos' => 'FlickrPhoto', 'FlickrTags' => 'FlickrTag');
+    private static $belongs_many_many = [
+        'FlickrPhotos' => FlickrPhoto::class,
+        'FlickrTags' => FlickrTag::class
+    ];
 
-    private static $many_many = array('FlickrTags' => 'FlickrTag');
+    private static $many_many = array('FlickrTags' => FlickrTag::class);
 
 
 	function getCMSFields() {

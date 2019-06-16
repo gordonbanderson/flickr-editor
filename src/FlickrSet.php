@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Folder;
@@ -23,7 +24,7 @@ use SilverStripe\ORM\DataObject;
 class FlickrSet extends DataObject {
 
 
-	static $db = array(
+	private static $db = array(
 		'Title' => 'Varchar(255)',
 		'FlickrID' => 'Varchar',
 		'Description' => 'HTMLText',
@@ -42,31 +43,31 @@ class FlickrSet extends DataObject {
 	);
 
 
-	static $many_many = array(
-		'FlickrPhotos' => 'FlickrPhoto'
+    private static $many_many = array(
+		'FlickrPhotos' => FlickrPhoto::class
 	);
 
 
 	// this is the assets folder
-	static $has_one = array (
+    private static $has_one = array (
 		'AssetFolder' => Folder::class,
-		'PrimaryFlickrPhoto' => 'FlickrPhoto'
+		'PrimaryFlickrPhoto' => FlickrPhoto::class
 	);
 
-	static $has_many = array(
-		'FlickrBuckets' => 'FlickrBucket'
+    private static $has_many = array(
+		'FlickrBuckets' => FlickrBucket::class
 	);
 
 
 	/// model admin
-	static $searchable_fields = array(
+    private static $searchable_fields = array(
 		'Title',
 		'Description',
 		'FlickrID'
 	);
 
 
-  public static $default_sort = 'FirstPictureTakenAt DESC';
+    private static $default_sort = 'FirstPictureTakenAt DESC';
 
 
 	function getCMSFields() {

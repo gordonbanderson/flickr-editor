@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\View\ArrayData;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;

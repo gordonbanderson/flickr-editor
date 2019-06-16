@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\ORM\DataObject;
@@ -6,16 +7,15 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use PageController;
 
-class FlickrSetPage extends Page implements RenderableAsPortlet {
+class FlickrSetPage extends \Page {
 
-	static $has_one = array(
+	private static $has_one = array(
 		'FlickrSetForPage' => 'FlickrSet'
 	);
 
 
-	static $db = array(
+    private static $db = array(
 		'TimeShiftHours' => 'Int',
 		'Description' => 'HTMLText',
 			// flag to indicate requiring a flickr API update
@@ -26,7 +26,7 @@ class FlickrSetPage extends Page implements RenderableAsPortlet {
 	);
 
 
-	static $sphinx = array(
+    private static $sphinx = array(
 		"search_fields" => array("Title", "Description", "Content"),
 		"filter_fields" => array(),
 		"index_filter" => '"ShowInSearch" = 1',
@@ -166,40 +166,4 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
 	}
 
 
-}
-
-
-
-class FlickrSetPage_Controller extends PageController {
-
-
-
-	function FlickrPhotos() {
-		if (!isset($this->FlickrPics)) {
-			$images = $this->FlickrSetForPage()->FlickrPhotos();
-			$this->FlickrPics = $images;
-		}
-
-		return $this->FlickrPics;
-	}
-
-
-
-	/*
-	I use this for highslide to replace the URLs in javascript if javascript is available, otherwise default to normal page URLs
-	@return Mapping of silverstripe ID to URL
-	*/
-	function IdToUrlJson() {
-		$result = array();
-		foreach ($this->FlickrPhotos() as $fp) {
-			$result[$fp->ID] = $fp->LargeURL;
-		}
-
-		return json_encode($result);
-	}
-
-
-	function HasGeo() {
-		return $this->FlickrSetForPage()->HasGeo();
-	}
 }

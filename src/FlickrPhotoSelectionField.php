@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\View\Requirements;
 use SilverStripe\Forms\HiddenField;

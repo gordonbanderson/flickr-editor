@@ -1,23 +1,23 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataList;
-use PageController;
 /**
  * Defines the FlickrSetFolder page type
  */
-class FlickrSetFolder extends Page implements RenderableAsPortlet {
+class FlickrSetFolder extends \Page {
 
 
-	 static $allowed_children = array('FlickrSetPage', 'FlickrSetFolder');
+    private static $allowed_children = array('FlickrSetPage', 'FlickrSetFolder');
 
-	 static $db = array(
+    private static $db = array(
 	'PromoteToHomePage' => DBBoolean::class
 	 );
 
 
-	static $has_one = array('MainFlickrPhoto' => 'FlickrPhoto');
+    private static $has_one = array('MainFlickrPhoto' => 'FlickrPhoto');
 
 
 
@@ -66,14 +66,4 @@ class FlickrSetFolder extends Page implements RenderableAsPortlet {
 	}
 
 
-}
-
-class FlickrSetFolder_Controller extends PageController {
-	public function FlickrSetsNewestFirst() {
-		return DataList::create('FlickrSetPage')->where('ParentID = '.$this->ID)->sort('FirstPictureTakenAt desc');
-	}
-
-	public function FlickrSetFoldersNewestFirst() {
-		return DataList::create('FlickrSetFolder')->where('ParentID = '.$this->ID)->sort('Created desc');
-	}
 }

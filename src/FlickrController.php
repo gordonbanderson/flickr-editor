@@ -1,10 +1,5 @@
 <?php
-/**
- *  // _config.php
- * Director::addRules(10, array(
- *  'emptycache' => 'EmptyCacheController',
- * ));
- */
+namespace Suilven\Flickr;
 
 
 use Symfony\Component\Yaml\Dumper;
@@ -25,7 +20,7 @@ use SilverStripe\Security\PermissionProvider;
 
 require_once "phpFlickr.php";
 
-class FlickrController extends PageController implements PermissionProvider {
+class FlickrController extends \PageController implements PermissionProvider {
 
     private static $allowed_actions = array(
 		'index',

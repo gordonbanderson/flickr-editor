@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
@@ -10,28 +11,28 @@ use SilverStripe\ORM\DataObject;
 */
 class FlickrTag extends DataObject {
 
-	static $db = array(
+    private static $db = array(
 		'Value' => 'Varchar',
 		'FlickrID' => 'Varchar',
 		'RawValue' => 'HTMLText'
 	);
 
-	static $display_fields = array(
+    private static $display_fields = array(
 		'RawValue'
 	);
 
 
-	static $searchable_fields = array(
+    private static $searchable_fields = array(
 		'RawValue'
 	);
 
-	static $summary_fields = array(
+    private static $summary_fields = array(
 		'Value',
 		'RawValue',
 		'FlickrID'
 	);
 
-	static $belongs_many_many = array(
+    private static $belongs_many_many = array(
 		'FlickrPhotos' => 'FlickrPhoto'
 	);
 

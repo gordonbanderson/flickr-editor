@@ -1,22 +1,16 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
-use PageController;
-/**
- *  // _config.php
- *	Director::addRules(10, array(
- *	'emptycache' => 'EmptyCacheController',
- *	));
- */
 
 
 
-class FlickrTagsController extends PageController {
+class FlickrTagsController extends \PageController {
 
 
-	static $allowed_actions = array(
+    private static $allowed_actions = array(
 		'index',
 		'photo',
 		'photos'

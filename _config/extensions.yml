@@ -1,7 +1,12 @@
 ---
 Name: flickr-extensions
-After: 'framework/*','cms/*'
+After: 'framework/*'
 ---
-FlickrPhoto:
+#FlickrPhoto:
+#  extensions:
+#    ['MapExtension']
+
+SilverStripe\SiteConfig\SiteConfig:
   extensions:
-    ['MapExtension']
+    [Suilven\Flickr\FlickrSiteConfig]
+

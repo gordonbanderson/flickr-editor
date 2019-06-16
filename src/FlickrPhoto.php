@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -28,7 +29,7 @@ require_once "phpFlickr.php";
 class FlickrPhoto extends DataObject {
 
 
-	static $db = array(
+	private static $db = array(
 		'Title' => 'Varchar(255)',
 		'FlickrID' => 'Varchar',
 		'Description' => 'HTMLText',
@@ -82,30 +83,30 @@ class FlickrPhoto extends DataObject {
 	);
 
 
-	static $belongs_many_many = array(
-		'FlickrSets' => 'FlickrSet'
+	private static $belongs_many_many = array(
+		'FlickrSets' => FlickrSet::class
 	);
 
 
 	// this one is what created the database FlickrPhoto_FlickrTagss
-	static $many_many = array(
-		'FlickrTags' => 'FlickrTag',
-		'FlickrBuckets' => 'FlickrBucket'
+    private static $many_many = array(
+		'FlickrTags' => FlickrTag::class,
+		'FlickrBuckets' => FlickrBucket::class
 	);
 
 
-	static $has_many = array(
-		'Exifs' => 'FlickrExif'
+    private static $has_many = array(
+		'Exifs' => FlickrExif::class
 	);
 
 
-	static $has_one = array(
+    private static $has_one = array(
 		'LocalCopyOfImage' => Image::class,
-		'Photographer' => 'FlickrAuthor'
+		'Photographer' => FlickrAuthor::class
 	);
 
 
-	public static $summary_fields = array(
+    private static $summary_fields = array(
 		'Thumbnail' => 'Thumbnail',
 		'Title' => 'Title',
 		'TakenAt' => 'TakenAt',
@@ -113,7 +114,7 @@ class FlickrPhoto extends DataObject {
 	);
 
 
-	static $sphinx = array(
+    private static $sphinx = array(
 		"search_fields" => array( "Title", "Description", 'FocalLength35mm', 'Aperture', 'ISO', 'ShutterSpeed' ),
 		"filter_fields" => array(),
 		"index_filter" => '"ID" != 0',

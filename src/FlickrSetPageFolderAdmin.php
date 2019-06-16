@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\View\Requirements;
 use SilverStripe\ORM\DataList;
@@ -11,12 +12,12 @@ use SilverStripe\Admin\ModelAdmin;
  * @license BSD http://silverstripe.org/bsd-license/
  */
 class FlickrSetPageFolderAdmin extends ModelAdmin {
-    static $url_segment = 'flickrsetpagefolders';
-	static $menu_title = 'Flickr Set Folders';
+    private static $url_segment = 'flickrsetpagefolders';
+    private static $menu_title = 'Flickr Set Folders';
 
-	static $managed_models = array('FlickrSetPage');
+    private static $managed_models = array('FlickrSetPage');
 
-	static $menu_icon = '/flickr/icons/folders.png';
+    private static $menu_icon = '/flickr/icons/folders.png';
 
 
 

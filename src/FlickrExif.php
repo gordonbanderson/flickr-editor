@@ -1,4 +1,5 @@
 <?php
+namespace Suilven\Flickr;
 
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;

@@ -1,24 +1,33 @@
 {
-	"name": "weboftalent/flickr",
-	"description": "Import,manage and render your flickr photos. Command line and GUI tools.",
-	"type": "silverstripe-module",
-	"keywords": [
-		"silverstripe",
-		"flickr",
-		"photography"
-	],
-	"authors": [{
-		"name": "Gordon Anderson",
-		"email": "gordon.b.anderson@gmail.com",
-		"homepage": "https://github.com/gordonbanderson/flickr-editor",
-		"role": "Developer"
-	}],
-	"support": {
-		"issues": "https://github.com/gordonbanderson/flickr-editor/issues"
+    "name": "weboftalent/flickr",
+    "description": "Import,manage and render your flickr photos. Command line and GUI tools.",
+    "type": "silverstripe-module",
+    "keywords": [
+        "silverstripe",
+        "flickr",
+        "photography"
+    ],
+    "authors": [
+        {
+            "name": "Gordon Anderson",
+            "email": "gordon.b.anderson@gmail.com",
+            "homepage": "https://github.com/gordonbanderson/flickr-editor",
+            "role": "Developer"
+        }
+    ],
+	"autoload": {
+		"psr-4": {
+			"Suilven\\Flickr\\": "src"
+		}
 	},
-	"require": {
-		"silverstripe/framework": "~3.1",
-		"weboftalent/mappable" : "~3.2"
-	},
-	"license": "BSD-3-Clause"
+    "support": {
+        "issues": "https://github.com/gordonbanderson/flickr-editor/issues"
+    },
+    "require": {
+        "weboftalent/mappable": "*",
+        "php": ">=5.6",
+        "silverstripe/recipe-core": "4.4.1"
+    },
+    "license": "BSD-3-Clause",
+    "require-dev": {}
 }
