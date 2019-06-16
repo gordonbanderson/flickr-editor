@@ -7,7 +7,7 @@ use SilverStripe\ORM\DataObject;
 */
 class FlickrExif extends DataObject {
 
-	static $db = array(
+    private static $db = array(
 		'TagSpace' => 'Varchar',
 		'Tag' => 'Varchar',
 		'Label' => 'Varchar',
@@ -15,11 +15,11 @@ class FlickrExif extends DataObject {
 		'TagSpaceID' => 'Int'
 	);
 
-	 static $belongs_many_many = array(
+    private static $belongs_many_many = array(
 		'FlickrPhotos' => 'FlickrPhoto'
 	 );
 
-	 static $has_one = array(
+    private static $has_one = array(
 		'FlickrPhoto' => 'FlickrPhoto'
 	);
 

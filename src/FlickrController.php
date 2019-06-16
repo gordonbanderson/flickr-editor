@@ -19,7 +19,6 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DB;
-use PageController;
 use SilverStripe\Security\PermissionProvider;
 
 
@@ -28,7 +27,7 @@ require_once "phpFlickr.php";
 
 class FlickrController extends PageController implements PermissionProvider {
 
-	static $allowed_actions = array(
+    private static $allowed_actions = array(
 		'index',
 		'importSet',
 		'editprofile',
@@ -1161,7 +1160,7 @@ FlickrPhoto:
 
 			// if we are in the mode of only importing new then skip to the next iteration if this pic already exists
 			else if ( $only_new_photos ) {
-					continue;
+					// @todo Fix, this fails continue;
 			}
 
 			$flickrPhoto->Title = $value['title'];
