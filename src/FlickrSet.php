@@ -24,7 +24,7 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrSet extends DataObject
 {
-    private static $db = array(
+    private static $db = [
         'Title' => 'Varchar(255)',
         'FlickrID' => 'Varchar',
         'Description' => 'HTMLText',
@@ -36,35 +36,35 @@ class FlickrSet extends DataObject
         'BatchTitle' => 'Varchar',
         'BatchDescription' => 'HTMLText',
         'ImageFooter' => 'Text'
-    );
+    ];
 
-    private static $defaults = array(
+    private static $defaults = [
         'LockGeo' => true
-    );
+    ];
 
 
-    private static $many_many = array(
+    private static $many_many = [
         'FlickrPhotos' => FlickrPhoto::class
-    );
+    ];
 
 
     // this is the assets folder
-    private static $has_one = array(
+    private static $has_one = [
         'AssetFolder' => Folder::class,
         'PrimaryFlickrPhoto' => FlickrPhoto::class
-    );
+    ];
 
-    private static $has_many = array(
+    private static $has_many = [
         'FlickrBuckets' => FlickrBucket::class
-    );
+    ];
 
 
     /// model admin
-    private static $searchable_fields = array(
+    private static $searchable_fields = [
         'Title',
         'Description',
         'FlickrID'
-    );
+    ];
 
 
     private static $default_sort = 'FirstPictureTakenAt DESC';
@@ -87,7 +87,7 @@ class FlickrSet extends DataObject
 
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array( 'Title', 'Description' ));
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'Title', 'Description' ]);
         $gridConfig->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
 
@@ -95,7 +95,7 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
-        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array( 'Title', 'Description' ));
+        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'Title', 'Description' ]);
         $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
         $bucketsByDate =  $this->FlickrBucketsByDate();
@@ -106,11 +106,11 @@ class FlickrSet extends DataObject
 
 
 
-        $forTemplate = new ArrayData(array(
+        $forTemplate = new ArrayData([
             'Title' => $this->Title,
             'ID' => $this->ID,
             'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
-        ));
+        ]);
         $html = $forTemplate->renderWith('GridFieldFlickrBuckets');
 
         $bucketTimeField = new NumericField('BucketTime');
@@ -161,7 +161,7 @@ class FlickrSet extends DataObject
 		order by FlickrPhoto.TakenAt
 	  ) as OrderedBuckets';
 
-        $buckets = FlickrBucket::get()->filter(array('FlickrSetID' => $this->ID))->
+        $buckets = FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
     innerJoin('FlickrPhoto_FlickrBuckets', 'FlickrBucketID = FlickrBucket.ID')->
     innerJoin('FlickrPhoto', 'FlickrPhotoID = FlickrPhoto.ID')->
     sort('TakenAt');
