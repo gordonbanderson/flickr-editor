@@ -1,10 +1,12 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\ORM\DataObject;
 
 class FlickrAuthor extends DataObject
 {
+    private static $table_name = 'FlickrAuthor';
+
     private static $db = array(
             'PathAlias' => 'Varchar',
             'DisplayName' => 'Varchar'

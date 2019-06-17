@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Folder;
@@ -18,12 +18,15 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Control\Controller;
 use SilverStripe\ORM\DataObject;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Only show a page with login when not logged in
  */
 class FlickrSet extends DataObject
 {
+    private static $table_name = 'FlickrSet';
+
     private static $db = [
         'Title' => 'Varchar(255)',
         'FlickrID' => 'Varchar',

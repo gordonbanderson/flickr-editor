@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Site;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\ORM\DataObject;
@@ -7,15 +7,18 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 
 class FlickrSetPage extends \Page
 {
-    private static $has_one = array(
-        'FlickrSetForPage' => 'FlickrSet'
-    );
+    private static $table_name = 'FlickrSetPage';
+
+    private static $has_one = [
+        'FlickrSetForPage' => FlickrSet::class
+    ];
 
 
-    private static $db = array(
+    private static $db = [
         'TimeShiftHours' => 'Int',
         'Description' => 'HTMLText',
             // flag to indicate requiring a flickr API update
@@ -23,16 +26,7 @@ class FlickrSetPage extends \Page
 
         //FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
         'FirstPictureTakenAt' => 'Datetime'
-    );
-
-
-    private static $sphinx = array(
-        "search_fields" => array("Title", "Description", "Content"),
-        "filter_fields" => array(),
-        "index_filter" => '"ShowInSearch" = 1',
-        "sort_fields" => array("Title")
-    );
-
+    ];
 
     public function getPortletTitle()
     {

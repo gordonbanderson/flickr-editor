@@ -1,24 +1,30 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Site;
 
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataList;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Defines the FlickrSetFolder page type
  */
 class FlickrSetFolder extends \Page
 {
-    private static $allowed_children = array('FlickrSetPage', 'FlickrSetFolder');
+    private static $table_name = 'FlickrSetFolder';
+
+    private static $allowed_children = [
+        FlickrSetPage::class,
+        FlickrSetFolder::class
+    ];
 
     private static $db = array(
     'PromoteToHomePage' => DBBoolean::class
      );
 
-
-    private static $has_one = array('MainFlickrPhoto' => 'FlickrPhoto');
-
+    private static $has_one = [
+        'MainFlickrPhoto' => FlickrPhoto::class
+    ];
 
 
     public function getCMSFields()

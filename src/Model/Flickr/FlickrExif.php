@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
@@ -9,6 +9,8 @@ use SilverStripe\ORM\DataObject;
 */
 class FlickrExif extends DataObject
 {
+    private static $table_name = 'FlickrExif';
+
     private static $db = array(
         'TagSpace' => 'Varchar',
         'Tag' => 'Varchar',

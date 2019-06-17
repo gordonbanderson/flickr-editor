@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
@@ -14,6 +14,8 @@ use SilverStripe\ORM\DataObject;
 
 class FlickrBucket extends DataObject
 {
+    private static $table_name = 'FlickrBucket';
+
     private static $db = array('Title' => 'Varchar(255)', 'Description' => 'Text',
     // use precision 15 and 10 decimal places for coordiantes
         'Lat' => 'Decimal(18,15)', 'Lon' => 'Decimal(18,15)', 'Accuracy' => 'Int', 'ZoomLevel' => 'Int', 'TagsCSV' => 'Varchar');

@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBBoolean;
@@ -20,14 +20,21 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
+use Suilven\Flickr\Model\Flickr\FlickrAuthor;
+use Suilven\Flickr\Model\Flickr\FlickrBucket;
+use Suilven\Flickr\Model\Flickr\FlickrExif;
+use Suilven\Flickr\Model\Flickr\FlickrTag;
 
-require_once "phpFlickr.php";
+// @todo does not work ...
+// require_once "../phpFlickr.php";
 
 /**
  * Only show a page with login when not logged in
  */
 class FlickrPhoto extends DataObject
 {
+    private static $table_name = 'FlickrPhoto';
+
     private static $db = array(
         'Title' => 'Varchar(255)',
         'FlickrID' => 'Varchar',

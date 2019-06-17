@@ -1,19 +1,25 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use Suilven\Flickr\FlickrSetPage;
 
 /**
  * Defines the GalleryFolder page type
  */
 class FlickrFolder extends \Page
 {
-    private static $allowed_children = array('FlickrSetPage', 'FlickrFolder');
+    private static $table_name = 'FlickrFolder';
 
-    private static $has_one = array(
+    private static $allowed_children = [
+        FlickrSetPage::class,
+        FlickrFolder::class
+    ];
+
+    private static $has_one = [
         'CoverPhoto' => Image::class,
-     );
+     ];
 
 
     public function getCMSFields()
