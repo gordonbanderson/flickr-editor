@@ -8,7 +8,7 @@
 
 use SilverStripe\View\Parsers\ShortcodeParser;
 
-ShortcodeParser::get('default')->register('FlickrPhoto',array('Suilven\Flickr\FlickrPhotoShortCodeHandler','parse_flickr'));
+ShortcodeParser::get('default')->register('FlickrPhoto',array('Suilven\Flickr\ShortCode\FlickrPhotoShortCodeHandler','parse_flickr'));
 
 //define global path to Components' root folder
 if(!defined('FLICKR_EDIT_TOOLS_PATH'))

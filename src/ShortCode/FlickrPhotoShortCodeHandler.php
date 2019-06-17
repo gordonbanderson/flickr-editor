@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\ShortCode;
 
 use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Convert;

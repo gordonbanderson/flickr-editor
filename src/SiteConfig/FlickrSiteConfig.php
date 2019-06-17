@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\SiteConfig;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;

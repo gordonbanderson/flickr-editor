@@ -8,5 +8,5 @@ After: 'framework/*'
 
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
-    [Suilven\Flickr\FlickrSiteConfig]
+    [Suilven\Flickr\SiteConfig\FlickrSiteConfig]
 

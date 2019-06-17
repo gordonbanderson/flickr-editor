@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Controller;
 
 class FlickrFolderController extends \PageController
 {

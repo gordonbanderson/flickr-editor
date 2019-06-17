@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Controller;
 
 use Symfony\Component\Yaml\Dumper;
 use SilverStripe\Control\Director;
@@ -15,7 +15,8 @@ use SilverStripe\Assets\Image;
 use SilverStripe\ORM\DB;
 use SilverStripe\Security\PermissionProvider;
 
-require_once "phpFlickr.php";
+// @todo FIX
+// require_once "phpFlickr.php";
 
 class FlickrController extends \PageController implements PermissionProvider
 {
@@ -49,12 +50,12 @@ class FlickrController extends \PageController implements PermissionProvider
 
 
     /*
-    
+
     if ($name === 'C6602') {
                                 $this->FocalLength35mm = 28;
                                 $fixFocalLength = 28;
                             }
-    
+
                             if ($name === 'Canon IXUS 220 HS') {
                                 $focalConversionFactor = 5.58139534884;
                             }
@@ -787,10 +788,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
                 MediumURL: 'http://www.test.com/test.jpg',
                 MediumHeight: 400,
                 MediumWidth: 300
-            
+
                 sed s/\{\ \_content\:\ // | sed s/\ \}//
                 sudo -u www-data framework/sake flickr/importSearch q='Bangkok Thailand' | sed s/\{\ \_content\:\ // | sed s/\ \}// > /home/gordon/work/git/weboftalent/moduletest/www/elastica/tests/lotsOfPhotos.yml
-            
+
              */
             $currentFixture = array();
             $currentFixture['FlickrID'] = intval($photo['id']);
@@ -820,12 +821,12 @@ Rows matched: 53  Changed: 53  Warnings: 0
                 static $belongs_many_many = array(
                     'FlickrSets' => 'FlickrSet'
                 );
-            
+
                 //1 to many
                 static $has_one = array(
                     'Photographer' => 'FlickrAuthor'
                 );
-            
+
                 //many to many
                 static $many_many = array(
                     'FlickrTags' => 'FlickrTag'

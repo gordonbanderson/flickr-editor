@@ -1,5 +1,5 @@
 <?php
-namespace Suilven\Flickr;
+namespace Suilven\Flickr\Controller;
 
 use SilverStripe\ORM\DataList;
 
