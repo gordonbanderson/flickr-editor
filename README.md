@@ -31,8 +31,15 @@ Module has been used by myself for some time but needs love, testing, code layou
 * Provides interface to edit Flickr photos in bulk, with maps in addition
 * Command line tool to update edited images via the Flickr API (after authentication)
 
+
+# Get Your Flickr ID
+https://www.webfx.com/tools/idgettr/
+
+# Get Oauth
+
+
 ##Requirements
-* SilverStripe 3.1 (not yet tested with 3.2)
+* SilverStripe 4
 
 ##TODO
 * Populate tests
