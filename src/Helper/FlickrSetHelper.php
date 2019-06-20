@@ -308,20 +308,30 @@ class FlickrSetHelper extends FlickrHelper
 
         // now download exifs
         $ctr = 0;
+        $exifHelper = new FlickrExifHelper();
+
+        error_log('++++ EXIF ++++');
+
+
         foreach ($photoset['photo'] as $key => $value) {
+            error_log('KV = ' . $key . ' --> ' . print_r($value,1));
             echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
             $flickrPhotoID = $value['id'];
 
+            error_log('ID' . $flickrSetPageID);
+
             /** @var FlickrPhoto $flickrPhoto */
             $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
-            $flickrPhoto->loadExif();
+            $exifHelper->loadExif($flickrPhoto);
             $flickrPhoto->write();
             $ctr++;
         }
 
+        $miscHelper = new FlickrMiscHelper();
+        $miscHelper->fixSetMainImages();
+        $miscHelper-fixDateSetTaken();
+
         $this->fixSetMainImages();
         $this->fixDateSetTaken();
-
-        die(); // abort rendering
     }
 }
