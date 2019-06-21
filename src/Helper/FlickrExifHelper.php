@@ -81,7 +81,7 @@ class FlickrExifHelper extends FlickrHelper
                     $focalConversionFactor = 1.61428571429;
                 }
             }
-            ;
+
 
             $exif = null;
             gc_collect_cycles();
@@ -90,12 +90,14 @@ class FlickrExifHelper extends FlickrHelper
         // try and fix the 35mm focal length
         if ((int)($flickrPhoto->FocalLength35mm) === 0) {
             if ($fixFocalLength) {
-                $flickrPhoto->FocalLength35mm = 28;
+                $flickrPhoto->FocalLength35mm = 28; // this is hardwired for phone
             } elseif ($focalConversionFactor !== 1) {
                 $f = $focalConversionFactor*$focallength;
                 $flickrPhoto->FocalLength35mm = round($f);
             }
         }
+
+        $flickrPhoto->write();
 
         echo "/storing exif";
         DB::query('commit;');
