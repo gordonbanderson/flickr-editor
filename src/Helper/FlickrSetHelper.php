@@ -329,9 +329,7 @@ class FlickrSetHelper extends FlickrHelper
 
         $miscHelper = new FlickrMiscHelper();
         $miscHelper->fixSetMainImages();
-        $miscHelper-fixDateSetTaken();
-
-        $this->fixSetMainImages();
-        $this->fixDateSetTaken();
+        // @todo this is borked
+        // $miscHelper->fixDateSetTaken();
     }
 }
