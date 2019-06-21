@@ -29,5 +29,11 @@
 		"samwilson/phpflickr": "^4"
     },
     "license": "BSD-3-Clause",
-    "require-dev": {}
+    "require-dev": {},
+	"extra": {
+		"expose": [
+			"css",
+			"icons"
+		]
+	}
 }
