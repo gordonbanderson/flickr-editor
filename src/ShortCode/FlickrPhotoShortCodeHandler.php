@@ -5,6 +5,7 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Convert;
 use SilverStripe\View\SSViewer;
 use SilverStripe\View\ArrayData;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 class FlickrPhotoShortCodeHandler
 {
@@ -20,7 +21,9 @@ class FlickrPhotoShortCodeHandler
 
         $customise = array();
         /*** SET DEFAULTS ***/
-        $fp = DataList::create('FlickrPhoto')->where('FlickrID='.$arguments['id'])->first();
+        $fp = DataList::create(FlickrPhoto::class)->filter(['FlickrID' => $arguments['id']])->first();
+
+        error_log('FP: ' . $fp->ID);
 
         if (!$fp) {
             return '';
@@ -50,7 +53,7 @@ class FlickrPhotoShortCodeHandler
         $customise = array_merge($customise, $arguments);
 
         //get our YouTube template
-        $template = new SSViewer('ShortCodeFlickrPhoto');
+        $template = new SSViewer('Includes/ShortCodeFlickrPhoto');
 
         //return the customised template
         return $template->process(new ArrayData($customise));
