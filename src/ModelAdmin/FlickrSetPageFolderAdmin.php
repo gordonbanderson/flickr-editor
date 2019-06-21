@@ -6,6 +6,7 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Admin\ModelAdmin;
+use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**
  * @author Marcus Nyeholt <marcus@silverstripe.com.au>
@@ -16,9 +17,9 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
     private static $url_segment = 'flickrsetpagefolders';
     private static $menu_title = 'Flickr Set Folders';
 
-    private static $managed_models = array('FlickrSetPage');
+    private static $managed_models = array(FlickrSetPage::class);
 
-    private static $menu_icon = '/flickr/icons/folders.png';
+    private static $menu_icon = 'weboftalent/flickr:icons/folders.png';
 
 
 
