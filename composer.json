@@ -34,7 +34,8 @@
 		"expose": [
 			"css",
 			"icons",
-			"javascript"
+			"javascript",
+			"thirdparty"
 		]
 	}
 }
