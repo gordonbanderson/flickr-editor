@@ -1,8 +1,6 @@
 .gallery figure {
-	border: solid #777 2px;
 	display: inline;
 	width: 140px;
 	height: 140px;
-	background: yellow;
 }
 
