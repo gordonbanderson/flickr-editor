@@ -170,7 +170,7 @@ class FlickrPhoto extends DataObject
     public function HorizontalMargin($intendedWidth)
     {
         //FIXME - is there a way to avoid a database call here?
-        $fp = DataObject::get_by_id('FlickrPhoto', $this->ID);
+        $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
         return ($intendedWidth-$fp->ThumbnailWidth)/2;
     }
 
@@ -184,7 +184,7 @@ class FlickrPhoto extends DataObject
     public function VerticalMargin($intendedHeight)
     {
         //FIXME - is there a way to avoid a database call here?
-        $fp = DataObject::get_by_id('FlickrPhoto', $this->ID);
+        $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
         return ($intendedHeight-$fp->ThumbnailHeight)/2;
     }
 
