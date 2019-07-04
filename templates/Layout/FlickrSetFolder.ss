@@ -17,8 +17,8 @@ $Description
 <% loop FlickrSetsNewestFirst %>
 <li class="media">
 <a class="pull-left listingThumbnail" href="$Link">
-<% with FlickrSetForPage %>
-<% with PrimaryFlickrPhoto %><img class="media-object" src="$ThumbnailURL"><% end_with %><% end_with %></a>
+<% with $FlickrSetForPage %>
+<% with $PrimaryFlickrPhoto %><img class="media-object" src="$ThumbnailURL"><% end_with %><% end_with %></a>
 <div class="media-body">
 <h4 class="media-heading"><a href="$Link">$Title</a></h4>
 <p>$Description</p>
