@@ -18,7 +18,6 @@ class FlickrSetPage extends \Page
         'FlickrSetForPage' => FlickrSet::class
     ];
 
-
     private static $db = [
         'TimeShiftHours' => 'Int',
         'Description' => 'HTMLText',
