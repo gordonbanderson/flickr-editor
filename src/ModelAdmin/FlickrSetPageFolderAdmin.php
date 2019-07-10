@@ -33,8 +33,8 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
     {
         $form = parent::EditForm($request);
 
-        Requirements::javascript(FLICKR_EDIT_TOOLS_PATH . '/javascript/flickredit.js');
-        Requirements::css(FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.css');
+        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
+        Requirements::css( 'weboftalent/flickr:css/flickredit.css');
 
 
         $flickrSetPages = DataList::create('FlickrSetPage')->where('ParentID = 0');//->sort('Title desc');
