@@ -1,10 +1,12 @@
 <?php
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
@@ -17,20 +19,28 @@ class FlickrBucket extends DataObject
 {
     private static $table_name = 'FlickrBucket';
 
-    private static $db = array('Title' => 'Varchar(255)', 'Description' => 'Text',
-    // use precision 15 and 10 decimal places for coordiantes
-        'Lat' => 'Decimal(18,15)', 'Lon' => 'Decimal(18,15)', 'Accuracy' => 'Int', 'ZoomLevel' => 'Int', 'TagsCSV' => 'Varchar');
+    private static $db = [
+        'Title' => 'Varchar(255)',
+        'Description' => 'Text',
 
-    private static $has_one = array('FlickrSet' => FlickrSet::class);
+        // use precision 15 and 10 decimal places for coordinates
+        'Lat' => 'Decimal(18,15)',
+        'Lon' => 'Decimal(18,15)',
 
-    private static $summary_fields = array('Title', 'ImageStrip' => 'ImageStrip');
+        'Accuracy' => 'Int',
+        'ZoomLevel' => 'Int',
+        'TagsCSV' => 'Varchar'];
+
+    private static $has_one = ['FlickrSet' => FlickrSet::class];
+
+    private static $summary_fields = ['Title', 'ImageStrip' => 'ImageStrip'];
 
     private static $belongs_many_many = [
         'FlickrPhotos' => FlickrPhoto::class,
         'FlickrTags' => FlickrTag::class
     ];
 
-    private static $many_many = array('FlickrTags' => FlickrTag::class);
+    private static $many_many = ['FlickrTags' => FlickrTag::class];
 
 
     public function getCMSFields()
@@ -45,7 +55,7 @@ class FlickrBucket extends DataObject
 
         $fields->addFieldToTab('Root.Main', $lf);
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Bucket Title'));
-        $fields->addFieldToTab('Root.Main', new TextAreaField('Description', 'Bucket Description'));
+        $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Bucket Description'));
 
         // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
         $fields->addFieldToTab('Root.Main', new TextField('QuickTags', 'Quick tags - enter tags here separated by commas'));
@@ -56,21 +66,21 @@ class FlickrBucket extends DataObject
         $lockgeo = $this->GeoLocked();
 
         if (!$lockgeo) {
-            $mapField = new LatLongField(array(
+            $mapField = new LatLongField([
                 new TextField('Lat', 'Latitude'),
                 new TextField('Lon', 'Longitude'),
                 new TextField('ZoomLevel', 'Zoom')
-            ), array(
+            ], [
                 'Address'
-            ));
+            ]);
 
-            $guidePoints = array();
+            $guidePoints = [];
             foreach ($this->FlickrSet()->FlickrPhotos()->where('Lat != 0 and Lon != 0') as $fp) {
                 if (($fp->Lat != 0) && ($fp->Lon != 0)) {
-                    array_push($guidePoints, array(
+                    array_push($guidePoints, [
                         'latitude' => $fp->Lat,
                         'longitude' => $fp->Lon
-                    ));
+                    ]);
                 }
             }
 
@@ -86,10 +96,10 @@ class FlickrBucket extends DataObject
 
 
         $gridConfig = GridFieldConfig_RelationEditor::create(); //->addComponent( new GridFieldSortableRows( 'Value' ) );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array(
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([
             'Value',
             'RawValue'
-        ));
+        ]);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
 
         // keep in the main tab to avoid wasting time tab switching
@@ -165,12 +175,12 @@ class FlickrBucket extends DataObject
         $lockgeo = $this->GeoLocked();
 
         foreach ($this->FlickrPhotos() as $fp) {
-            $fp->Title   = $this->Title;
+            $fp->Title = $this->Title;
             $description = $this->Description;
             //$description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
             //$description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
             $year = substr('' . $fp->TakenAt, 0, 4);
-            $description     = str_replace('$Year', $year, $description);
+            $description = str_replace('$Year', $year, $description);
             $fp->Description = $description;
 
             if (!$lockgeo) {
