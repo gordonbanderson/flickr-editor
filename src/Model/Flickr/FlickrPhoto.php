@@ -1,6 +1,7 @@
 <?php
 namespace Suilven\Flickr\Model\Flickr;
 
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Image;
@@ -20,6 +21,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
+use Suilven\Flickr\Helper\FlickrTagHelper;
 use Suilven\Flickr\Helper\FlickrUpdateMetaHelper;
 use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrBucket;
@@ -210,7 +212,9 @@ class FlickrPhoto extends DataObject
     {
         parent::onBeforeWrite();
 
-        $quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
+        $tagHelper = new FlickrTagHelper();
+        $quickTags = $tagHelper->createOrFindTags($this->QuickTags);
+
         $this->FlickrTags()->addMany($quickTags);
         if ($this->LargeWidth > 0) {
             $this->AspectRatio = ($this->LargeHeight) / ($this->LargeWidth);
@@ -230,14 +234,7 @@ class FlickrPhoto extends DataObject
         Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
 
         $flickrSetID = Controller::curr()->request->param('ID');
-        $params = Controller::curr()->request->params();
-        $url = $_GET['url'];
-        $splits = explode('/FlickrSet/item/', $url);
-        $setid = null;
-        if (sizeof($splits) == 2) {
-            $splits = explode('/', $splits[1]);
-            $setid = $splits[0];
-        }
+
 
 
         $fields = new FieldList();
@@ -249,15 +246,15 @@ class FlickrPhoto extends DataObject
 
         $forTemplate = new ArrayData(array(
                 'FlickrPhoto' => $this,
-                'FlickrSetID' => $setid
+                'FlickrSetID' => $flickrSetID // not sure if this is Flickr ID or SS ID
             ));
-        $imageHtml = $forTemplate->renderWith('FlickrImageEditing');
+        $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing');
 
 
         $lfImage = new LiteralField('FlickrImage', $imageHtml);
         $fields->addFieldToTab('Root.Main', $lfImage);
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
-        $fields->addFieldToTab('Root.Main', new TextAreaField('Description', 'Description'));
+        $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
 
         // only show a map for editing if no sets have geolock on them
         $lockgeo = false;

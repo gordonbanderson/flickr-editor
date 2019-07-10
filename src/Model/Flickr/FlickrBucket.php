@@ -11,6 +11,7 @@ use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\DataObject;
+use Suilven\Flickr\Helper\FlickrTagHelper;
 
 class FlickrBucket extends DataObject
 {
@@ -134,7 +135,8 @@ class FlickrBucket extends DataObject
     public function onBeforeWrite()
     {
         parent::onBeforeWrite();
-        $quickTags = FlickrTag::CreateOrFindTags($this->QuickTags);
+        $tagHelper = new FlickrTagHelper();
+        $quickTags = $tagHelper->createOrFindTags($this->QuickTags);
         $this->FlickrTags()->addMany($quickTags);
 
         if ($this->ID && ($this->FlickrPhotos()->count() > 0)) {
