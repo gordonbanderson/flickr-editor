@@ -51,7 +51,7 @@
 <h2>Image Store</h2>
 <table class="bucket" id="bucket_0">
 <tr>
-<% loop FlickrPhotosNotInBucket %>
+<% loop $FlickrPhotosNotInBucket %>
 <td id="flickrPhoto_$ID" data-time="$TakenAt" class="bucketPhoto">
 <img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" class="imgDrag" style="width:{$ThumbnailWidth}px;"/>
 </td>
