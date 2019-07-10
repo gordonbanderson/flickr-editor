@@ -115,8 +115,8 @@ class FlickrPhoto extends DataObject
     private static $summary_fields = array(
         'Thumbnail' => 'Thumbnail',
         'Title' => 'Title',
-        'TakenAt' => 'TakenAt',
-        'HasGeoEng' => 'Geolocated?'
+ //       'TakenAt' => 'TakenAt',
+ //       'HasGeoEng' => 'Geolocated?'
     );
 
 
@@ -215,7 +215,6 @@ class FlickrPhoto extends DataObject
             $this->AspectRatio = ($this->LargeHeight) / ($this->LargeWidth);
         }
 
-
         if (!$this->KeepClean) {
             $this->IsDirty = true;
         } else {
@@ -226,7 +225,8 @@ class FlickrPhoto extends DataObject
 
     public function getCMSFields()
     {
-        Requirements::css(FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.js');
+        Requirements::css('weboftalent/flickr:css/flickredit.css');
+        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
 
         $flickrSetID = Controller::curr()->request->param('ID');
         $params = Controller::curr()->request->params();
