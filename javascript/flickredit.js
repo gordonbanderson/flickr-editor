@@ -91,7 +91,7 @@ console.log('flickr edit');
 
 				$('#batchUpdatePhotographs').val('Please wait, updating photographs...');
 
-				statusMessage('Batch updating photographs in this set');
+				//statusMessage('Batch updating photographs in this set');
 
 				$.ajax({
 					url: "/flickr/batchUpdateSet/" + flickr_set_id,
@@ -105,7 +105,7 @@ console.log('flickr edit');
 						$('#batchUpdatePhotographs').val('Batch Update');
 						var numberOfImages = $(data.number_of_images_updated);
 
-						statusMessage('Batch update completed ' + numberOfImages + ' updated');
+						//statusMessage('Batch update completed ' + numberOfImages + ' updated');
 
 
 
@@ -200,7 +200,7 @@ console.log('flickr edit');
 					for(var j = 0; j <= buckets[i].length - 1; j++) {
 						html = html + buckets[i][j].html();
 					};
-					html = html + '</td><td><span class="btn-icon-add createBucket">Create</span></td>';
+					html = html + '</td><td><span class="btn-icon-add btn btn-primary font-icon-folder-add  createBucket">Create</span></td>';
 					currentBucketDOM.append(html);
 
 				};
@@ -254,12 +254,12 @@ console.log('flickr edit');
 					dataType: 'json',
 					//context: document.body,
 					success: function(data) {
-						statusMessage('Main picture successfully updated');
+						//statusMessage('Main picture successfully updated');
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
 						// log the error to the console
 						console.log("The following error occured: " + textStatus, errorThrown);
-						statusMessage('An error occurred - '+ textStatus);
+						//statusMessage('An error occurred - '+ textStatus);
 					}
 				})
 			}
