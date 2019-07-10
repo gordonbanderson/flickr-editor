@@ -155,7 +155,9 @@ class FlickrSet extends DataObject
     public function FlickrPhotosNotInBucket()
     {
         // @todo FIX: Use ORM
-        return $this->FlickrPhotos()->where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from "FlickrPhoto_FlickrBuckets")');
+        return $this->FlickrPhotos()->
+        where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from "FlickrPhoto_FlickrBuckets")')
+            ->sort('TakenAt');
     }
 
 
@@ -177,7 +179,7 @@ class FlickrSet extends DataObject
     innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')->
     sort('TakenAt');
 
-/*
+
         $result = new ArrayList();
         foreach ($buckets->getIterator() as $bucket) {
             $result->push($bucket);
@@ -185,8 +187,7 @@ class FlickrSet extends DataObject
         $result->removeDuplicates();
 
         return $result;
-*/
-        return $buckets;
+
     }
 
 
