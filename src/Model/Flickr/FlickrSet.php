@@ -1,6 +1,8 @@
 <?php
 namespace Suilven\Flickr\Model\Flickr;
 
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Folder;
 use SilverStripe\View\Requirements;
@@ -63,7 +65,7 @@ class FlickrSet extends DataObject
 
 
     /// model admin
-    private static $searchable_fields = [
+    private static $summary_fields = [
         'Title',
         'Description',
         'FlickrID'
@@ -75,8 +77,8 @@ class FlickrSet extends DataObject
 
     public function getCMSFields()
     {
-        Requirements::javascript(FLICKR_EDIT_TOOLS_PATH . '/javascript/flickredit.js');
-        Requirements::css(FLICKR_EDIT_TOOLS_PATH . '/css/flickredit.css');
+        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
+        Requirements::css('weboftalent/flickr:css/flickredit.css');
 
         $fields = new FieldList();
 
@@ -84,9 +86,9 @@ class FlickrSet extends DataObject
         $mainTab->setTitle(_t('SiteTree.TABMAIN', "Main"));
 
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
-        $fields->addFieldToTab('Root.Main', new TextAreaField('Description', 'Description'));
+        $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
         $fields->addFieldToTab('Root.Main', new TextField('ImageFooter', 'Text to be added to each image in this album when saving'));
-        $fields->addFieldToTab('Root.Main', new CheckBoxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
+        $fields->addFieldToTab('Root.Main', new CheckboxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
 
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
@@ -95,6 +97,10 @@ class FlickrSet extends DataObject
 
 
         $gridField = new GridField("Flickr Photos", "List of Photos:", $this->FlickrPhotos(), $gridConfig);
+
+//        echo $this->FlickrPhotos()->count();
+//        die;
+
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
@@ -114,7 +120,7 @@ class FlickrSet extends DataObject
             'ID' => $this->ID,
             'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
         ]);
-        $html = $forTemplate->renderWith('GridFieldFlickrBuckets');
+        $html = $forTemplate->renderWith('Includes/GridFieldFlickrBuckets');
 
         $bucketTimeField = new NumericField('BucketTime');
         // $fields->addFieldToTab( 'Root.Buckets', $bucketTimeField );
@@ -149,13 +155,15 @@ class FlickrSet extends DataObject
 
     public function FlickrPhotosNotInBucket()
     {
-        return $this->FlickrPhotos()->where('FlickrPhoto.ID not in (select FlickrPhotoID as ID from FlickrPhoto_FlickrBuckets)');
+        // @todo FIX: Use ORM
+        return $this->FlickrPhotos()->where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from "FlickrPhoto_FlickrBuckets")');
     }
 
 
     public function FlickrBucketsByDate()
     {
         // in 3.1 data list is immutable, hence the chaining
+        /*
         $sqlbucketidsinorder = 'select distinct FlickrBucketID from (
 	  select FlickrBucketID, FlickrPhoto.TakenAt from FlickrBucket
 		INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
@@ -163,13 +171,14 @@ class FlickrSet extends DataObject
 		WHERE (FlickrSetID = '.$this->ID.')
 		order by FlickrPhoto.TakenAt
 	  ) as OrderedBuckets';
+        */
 
         $buckets = FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
-    innerJoin('FlickrPhoto_FlickrBuckets', 'FlickrBucketID = FlickrBucket.ID')->
-    innerJoin('FlickrPhoto', 'FlickrPhotoID = FlickrPhoto.ID')->
+    innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
+    innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')->
     sort('TakenAt');
 
-
+/*
         $result = new ArrayList();
         foreach ($buckets->getIterator() as $bucket) {
             $result->push($bucket);
@@ -177,6 +186,8 @@ class FlickrSet extends DataObject
         $result->removeDuplicates();
 
         return $result;
+*/
+        return $buckets;
     }
 
 
