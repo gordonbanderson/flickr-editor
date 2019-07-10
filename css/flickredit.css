@@ -15,8 +15,9 @@ tr.bucket tr {
 	background: pink;
 }
 
+/* This is broken as it seems dependent on the width of the table */
 #bucketTimeProgressBar {
-	width: 700px;
+	width: 100%;
 }
 
 .hoverLarge {
@@ -44,7 +45,7 @@ tr.bucket td img, .imageStrip img {
 	border-left: solid #CCC 1px;
 	border-top: solid #CCC 1px;
 	border-bottom: solid #333 1px;
-	border-right: solid #333 1px;	
+	border-right: solid #333 1px;
 }
 
 .imageStrip img {
