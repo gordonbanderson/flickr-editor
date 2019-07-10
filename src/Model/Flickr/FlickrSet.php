@@ -110,7 +110,7 @@ class FlickrSet extends DataObject
 
         $bucketsByDate =  $this->FlickrBucketsByDate();
         if ($bucketsByDate->count() > 0) {
-            $gridField2 = new GridField("Flickr Buckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
+            $gridField2 = new GridField("FlickrBuckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
         }
 
