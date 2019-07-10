@@ -1,7 +1,11 @@
 ---
 Name: flickrtestroutes
+After:
+  - '#rootroutes'
+  - '#coreroutes'
 ---
-Director:
+
+SilverStripe\Control\Director:
   rules:
-    'flickrexport': 'FlickrExportController'
-    'flickr': 'FlickrController'
+    'flickrexport': 'Suilven\Flickr\Controller\FlickrExportController'
+    'flickr': 'Suilven\Flickr\Controller\FlickrController'
