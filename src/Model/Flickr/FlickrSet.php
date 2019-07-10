@@ -97,7 +97,7 @@ class FlickrSet extends DataObject
         $gridConfig->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
 
-        $gridField = new GridField("Flickr Photos", "List of Photos:", $this->FlickrPhotos(), $gridConfig);
+        $gridField = new GridField("FlickrPhotos", "List of Photos:", $this->FlickrPhotos(), $gridConfig);
 
 //        echo $this->FlickrPhotos()->count();
 //        die;
