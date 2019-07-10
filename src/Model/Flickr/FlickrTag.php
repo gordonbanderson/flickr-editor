@@ -39,6 +39,9 @@ class FlickrTag extends DataObject
         'FlickrPhotos' => 'FlickrPhoto'
     );
 
+    private static $many_many = array('FlickrBuckets' => FlickrBucket::class);
+
+
 
     public function NormaliseCount($c)
     {
