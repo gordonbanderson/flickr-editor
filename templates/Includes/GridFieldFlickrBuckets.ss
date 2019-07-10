@@ -37,7 +37,7 @@
 			View
 			1 - 27
 			of
-			27
+			27 @todo FIX
 		</span>
 	</td>
 </tr></tfoot>
