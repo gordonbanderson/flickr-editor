@@ -1,6 +1,9 @@
 <?php
 namespace Suilven\Flickr\Controller;
 
+use Suilven\Flickr\Helper\FlickrBatchHelper;
+use Suilven\Flickr\Helper\FlickrBucketHelper;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Symfony\Component\Yaml\Dumper;
 use SilverStripe\Control\Director;
 use SilverStripe\Security\Permission;
@@ -297,41 +300,9 @@ class FlickrController extends \PageController implements PermissionProvider
         $batchDescription = Convert::raw2sql($_POST['BatchDescription']);
         $batchTags = str_getcsv(Convert::raw2sql($_POST['BatchTags']));
 
-        $flickrSet = DataList::create('FlickrSet')->where('ID = '.$flickrSetID)->first();
-        $flickrPhotos = $flickrSet->FlickrPhotos();
-
-        // $batchDescription = $batchDescription ."\n\n".$flickrSet->ImageFooter;
-        // $batchDescription = $batchDescription ."\n\n".$this->SiteConfig()->ImageFooter;
-
-        $tags = array();
-        foreach ($batchTags as $batchTag) {
-            $batchTag = trim($batchTag);
-            $lowerCaseTag = strtolower($batchTag);
-            $possibleTags = DataList::create('FlickrTag')->where("Value='".$lowerCaseTag."'");
-
-            if ($possibleTags->count() == 0) {
-                $tag = new FlickrTag();
-                $tag->Value = $lowerCaseTag;
-                $tag->RawValue = $batchTag;
-                $tag->write();
-            } else {
-                $tag = $possibleTags->first();
-            }
-
-            array_push($tags, $tag->ID);
-            //$tag = DataList::create('FlickrExif')->where('WIP');
-        }
-
-        foreach ($flickrPhotos as $fp) {
-            $fp->Title=$batchTitle;
-            $fp->Description = $batchDescription;
-            $fp->FlickrTags()->addMany($tags);
-            $fp->write();
-        }
-
-        $result = array(
-            'number_of_images_updated' => $flickrPhotos->count()
-        );
+        $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
+        $helper = new FlickrBatchHelper();
+        $result = $helper->batchUpdateSet($flickrSet, $batchTitle, $batchDescription, $batchTags);
 
         return json_encode($result);
     }
@@ -478,26 +449,17 @@ class FlickrController extends \PageController implements PermissionProvider
     public function createBucket()
     {
         $flickrPhotoIDs = $this->request->param('OtherID');
+        $flickrPhotoIDs = Convert::raw2sql($flickrPhotoIDs);
         $flickrSetID = Convert::raw2sql($this->request->param('ID'));
-        $ajax_bucket_row = Convert::raw2sql($_GET['bucket_row']);
-        $sanitizedIDs = Convert::raw2sql($flickrPhotoIDs);
-        $flickrPhotos = FlickrPhoto::get()->where('ID in ('.$sanitizedIDs.')');
-        $flickrSet = FlickrSet::get()->where('ID='.$flickrSetID)->first();
-        $bucket = new FlickrBucket();
-        $bucket->write();
 
-        $bucketPhotos = $bucket->FlickrPhotos();
-        foreach ($flickrPhotos as $fp) {
-            $bucketPhotos->add($fp);
-        }
-        $bucket->FlickrSetID = $flickrSet->ID;
-        $bucket->write();
+        $ajax_bucket_row = Convert::raw2sql($_GET['bucket_row']);
+        $bucketHelper = new FlickrBucketHelper();
+        $bucket = $bucketHelper->createBucket($flickrSetID, $flickrPhotoIDs);
 
         $result = array(
             'bucket_id' => $bucket->ID,
-            'flickr_set_id' => $flickrSet->ID,
+            'flickr_set_id' => $flickrSetID,
             'ajax_bucket_row' => $ajax_bucket_row
-
         );
 
         echo json_encode($result);
@@ -517,6 +479,8 @@ class FlickrController extends \PageController implements PermissionProvider
             //Security::permissionFailure();
         }
 
+        /*
+         OBSOLETE, move to helper classes
 
         // get flickr details from config
         $key = Config::inst()->get($this->class, 'api_key');
@@ -527,6 +491,7 @@ class FlickrController extends \PageController implements PermissionProvider
 
         //Fleakr.auth_token    = ''
         $this->f->setToken($access_token);
+        */
 
 
         // Requirements, etc. here
