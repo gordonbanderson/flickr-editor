@@ -44,6 +44,12 @@ class FlickrHelper
         return new PhotosApi($phpFlickr);
     }
 
+    public function getPhotosAPIHelper()
+    {
+        $phpFlickr = $this->getPhpFlickr();
+        return new PhotosApi($phpFlickr);
+    }
+
     public function getPhotoSetsHelper()
     {
         $phpFlickr = $this->getPhpFlickr();

@@ -211,9 +211,9 @@ class FlickrController extends \PageController implements PermissionProvider
     {
         $flickrSetID = $this->request->param('ID');
         $flickrSet = FlickrSet::get()->filter(array('FlickrID' => $flickrSetID))->first();
+        $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
 
         if ($flickrSet) {
-            //DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
             $flickrSet->writeToFlickr();
         } else {
             error_log('Flickr set could not be found');

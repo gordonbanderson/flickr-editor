@@ -20,6 +20,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
+use Suilven\Flickr\Helper\FlickrUpdateMetaHelper;
 use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrExif;
@@ -366,27 +367,7 @@ class FlickrPhoto extends DataObject
     */
     public function writeToFlickr($descriptionSuffix)
     {
-        $this->initialiseFlickr();
-
-        $fullDesc = $this->Description."\n\n".$descriptionSuffix;
-        $fullDesc = trim($fullDesc);
-
-        $year = substr($this->TakenAt, 0, 4);
-        $fullDesc = str_replace('$Year', $year, $fullDesc);
-        $this->f->photos_setMeta($this->FlickrID, $this->Title, $fullDesc);
-
-        $tagString = '';
-        foreach ($this->FlickrTags() as $tag) {
-            $tagString .= '"'.$tag->Value.'" ';
-        }
-
-        $this->f->photos_setTags($this->FlickrID, $tagString);
-
-        if ($this->HasGeo()) {
-            $this->f->photos_geo_setLocation($this->FlickrID, $this->getMappableLatitude(), $this->getMappableLongitude());
-        }
-
-        $this->KeepClean = true;
-        $this->write();
+        $helper = new FlickrUpdateMetaHelper();
+        $helper->writePhotoToFlickr($this, $descriptionSuffix);
     }
 }

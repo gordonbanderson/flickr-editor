@@ -5,6 +5,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Folder;
+use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\Requirements;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
@@ -112,8 +113,6 @@ class FlickrSet extends DataObject
             $gridField2 = new GridField("Flickr Buckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
         }
-
-
 
         $forTemplate = new ArrayData([
             'Title' => $this->Title,
@@ -272,13 +271,15 @@ class FlickrSet extends DataObject
 
     public function writeToFlickr()
     {
-        $suffix = $this->ImageFooter ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
-        $imagesToUpdate = $this->FlickrPhotos()->where('IsDirty = 1');
+        $siteConfig = SiteConfig::current_site_config();
+        $suffix = $this->ImageFooter ."\n\n".$siteConfig->ImageFooter;
+        $imagesToUpdate = $this->FlickrPhotos()->filter(['IsDirty' => 1]);
         $ctr = 1;
         $amount = $imagesToUpdate->count();
 
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $fp */
         foreach ($imagesToUpdate as $fp) {
-            error_log('UPDATING:'.$fp->Title);
+            error_log($ctr . '/' . $amount .' [' . $fp->FlickrID . ']  - UPDATING:'.$fp->Title);
             $fp->writeToFlickr($suffix);
             $ctr++;
         }
