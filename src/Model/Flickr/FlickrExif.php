@@ -20,11 +20,11 @@ class FlickrExif extends DataObject
     );
 
     private static $belongs_many_many = array(
-        'FlickrPhotos' => 'FlickrPhoto'
+        'FlickrPhotos' => FlickrPhoto::class
      );
 
     private static $has_one = array(
-        'FlickrPhoto' => 'FlickrPhoto'
+        'FlickrPhoto' => FlickrPhoto::class
     );
 
     public function getCMSFields_forPopup()
