@@ -37,6 +37,17 @@ https://www.webfx.com/tools/idgettr/
 
 # Get Oauth
 
+# Add a FlickrSetFolder
+
+# Import a Set
+```bash
+vendor/bin/sake dev/tasks/import-flickr-set id=72157709345351706 path='photos'
+```
+
+# Update Flickr Metadata from SilverStripe Edits
+```bash
+vendor/bin/sake dev/tasks/update-flickr-set-metadata id=72157709345351706
+```
 
 ##Requirements
 * SilverStripe 4
