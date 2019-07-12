@@ -233,9 +233,11 @@ class FlickrPhoto extends DataObject
         Requirements::css('weboftalent/flickr:css/flickredit.css');
         Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
 
+        // this worked in SS3, but not SS4
+        // @todo Figure out how to get the ID of set, other than URL hacking
         $flickrSetID = Controller::curr()->request->param('ID');
 
-
+        $fields = parent::getCMSFields();
 
         $fields = new FieldList();
 
@@ -246,7 +248,7 @@ class FlickrPhoto extends DataObject
 
         $forTemplate = new ArrayData(array(
                 'FlickrPhoto' => $this,
-                'FlickrSetID' => $flickrSetID // not sure if this is Flickr ID or SS ID
+                'FlickrSetID' => $flickrSetID //SS ID
             ));
         $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing');
 
@@ -327,7 +329,7 @@ class FlickrPhoto extends DataObject
     }
 
 
-    private function initialiseFlickr()
+    private function initialiseFlickrOBSOLE()
     {
         if (!isset($this->f)) {
             // get flickr details from config
