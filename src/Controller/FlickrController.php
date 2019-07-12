@@ -520,20 +520,15 @@ class FlickrController extends \PageController implements PermissionProvider
     }
 
 
-
-
-    public function moveXperiaPics()
-    {
-        $moblogbucketsetid = $this->request->param('ID');
-        //  $moblogset = FlickrSet::get()->filter(array('FlickrID' => $moblogbucketsetid))->first();
-        $photos = $this->f->photos_search(array("user_id" => "me", "per_page" => 500, 'extras' => 'description, license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o'));
-    }
-
-
+    /**
+     * @throws \SilverStripe\ORM\ValidationException
+     */
     public function changeFlickrSetMainImage()
     {
+        // these are broken at the FlickrPhoto getCMSFields stage
         $flickrsetID = $this->request->param('ID');
         $flickrphotoID = $this->request->param('OtherID');
+
         $flickrset = FlickrSet::get()->filter('ID', $flickrsetID)->first();
         $flickrset->PrimaryFlickrPhotoID = $flickrphotoID;
         $flickrset->write();
