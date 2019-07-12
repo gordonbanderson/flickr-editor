@@ -3,6 +3,16 @@
 	margin-right: auto;
 }
 
+tr.bucket {
+	border-top: solid #AAA 2px;
+
+}
+
+tr.bucket img {
+	padding-top: 10px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
 
 tr.bucket td {
 	/*
