@@ -5,10 +5,10 @@
 <div class="field">
 
 <button data-flickr-photo-id="{$FlickrPhoto.ID}" data-flickr-set-id="$FlickrSetID"
-class="action ss-ui-action-constructive ss-ui-button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-primary"
-id="changeMainPictureButton" data-icon="accept" role="button" aria-disabled="false"><span class="ui-button-icon-primary ui-icon"></span><span class="ui-button-text">
+class="btn action btn-primary font-icon-camera mt-1 mb-4"
+id="changeMainPictureButton" data-icon="accept" role="button" aria-disabled="false">
 		Make this the main image
-	</span></button>
+</button>
 </div>
 
 <% end_if %>
