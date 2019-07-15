@@ -25,7 +25,7 @@
     },
     "require": {
         "php": ">=5.6",
-        "silverstripe/recipe-core": "4.4.1",
+        "silverstripe/recipe-core": "^4",
 		"samwilson/phpflickr": "^4"
     },
     "license": "BSD-3-Clause",
