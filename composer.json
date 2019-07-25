@@ -7,6 +7,12 @@
         "flickr",
         "photography"
     ],
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:gordonbanderson/php-spriter.git"
+		}
+	],
     "authors": [
         {
             "name": "Gordon Anderson",
@@ -26,7 +32,8 @@
     "require": {
         "php": ">=5.6",
         "silverstripe/recipe-core": "^4",
-		"samwilson/phpflickr": "^4"
+		"samwilson/phpflickr": "^4",
+		"suilven/php-spriter": "dev-composerify"
     },
     "license": "BSD-3-Clause",
     "require-dev": {},
