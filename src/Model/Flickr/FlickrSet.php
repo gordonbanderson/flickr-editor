@@ -41,7 +41,8 @@ class FlickrSet extends DataObject
         'BatchTags' => 'Varchar',
         'BatchTitle' => 'Varchar',
         'BatchDescription' => 'HTMLText',
-        'ImageFooter' => 'Text'
+        'ImageFooter' => 'Text',
+        'SpriteCSS' => 'Text'
     ];
 
     private static $defaults = [
