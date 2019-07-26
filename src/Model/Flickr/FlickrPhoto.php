@@ -356,6 +356,18 @@ class FlickrPhoto extends DataObject
         return $this->HasGeo() ? 'Yes': 'No';
     }
 
+    /**
+     * Convert URLs of the form https://live.staticflickr.com/65535/48204433551_63a99226e7_t.jpg to
+     * 48204433551_63a99226e7_t, as this used for sprite CSS purposes
+     */
+    public function CSSSpriteFileName()
+    {
+        $splits = explode('/', $this->SmallURL);
+        $filename = end($splits);
+        $filename = str_replace('.jpg', '', $filename);
+        return $filename;
+    }
+
 
 
 
