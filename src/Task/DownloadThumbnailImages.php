@@ -49,7 +49,7 @@ class DownloadThumbnailImages extends BuildTask
     private function downloadSet($flickrSet, $targetDir)
     {
         foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {
-            $thumbnailURL = $flickrPhoto->ThumbnailURL;
+            $thumbnailURL = $flickrPhoto->SmallURL;
             $ch = curl_init($thumbnailURL);
 
             $filename = basename($thumbnailURL);
@@ -83,7 +83,8 @@ class DownloadThumbnailImages extends BuildTask
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
         $this->mkdir_if_required('public/flickr');
-        $targetDir = 'public/flickr/' . $flickrSetID;
+        $this->mkdir_if_required('public/flickr/thumbs');
+        $targetDir = 'public/flickr/thumbs/' . $flickrSetID;
         $this->mkdir_if_required($targetDir);
 
         $this->downloadSet($flickrSet, $targetDir);
