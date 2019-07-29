@@ -63,22 +63,65 @@ class FlickrPhoto extends DataObject
 
         'AspectRatio' => 'Float',
 
+        // 240 on longest side
         'SmallURL' => 'Varchar(255)',
         'SmallHeight' => 'Int',
         'SmallWidth' => 'Int',
 
+
+
+        // 320 on longest side
+        'SmallURL320' => 'Varchar(255)',
+        'SmallHeight320' => 'Int',
+        'SmallWidth320' => 'Int',
+
+        // 500 on longest side
+        'SmallURL500' => 'Varchar(255)',
+        'SmallHeight500' => 'Int',
+        'SmallWidth500' => 'Int',
+
+
+        // 500 on longest side
         'MediumURL' => 'Varchar(255)',
         'MediumHeight' => 'Int',
         'MediumWidth' => 'Int',
 
+        // 640 on longest side
+        'MediumURL640' => 'Varchar(255)',
+        'MediumHeight640' => 'Int',
+        'MediumWidth640' => 'Int',
+
+        // 800 on longest side
+        'MediumURL800' => 'Varchar(255)',
+        'MediumHeight800' => 'Int',
+        'MediumWidth800' => 'Int',
+
+        // 75x75
         'SquareURL' => 'Varchar(255)',
         'SquareHeight' => 'Int',
         'SquareWidth' => 'Int',
 
+        // 150x150
+        'SquareURL150' => 'Varchar(255)',
+        'SquareHeight150' => 'Int',
+        'SquareWidth150' => 'Int',
+
+        // 1024 on longest side
         'LargeURL' => 'Varchar(255)',
         'LargeHeight' => 'Int',
         'LargeWidth' => 'Int',
 
+        // 1600 on longest side
+        'LargeURL1600' => 'Varchar(255)',
+        'LargeHeight1600' => 'Int',
+        'LargeWidth1600' => 'Int',
+
+        // 2048 on longest side
+        'LargeURL2048' => 'Varchar(255)',
+        'LargeHeight2048' => 'Int',
+        'LargeWidth2048' => 'Int',
+
+        // 100 on longest side
         'ThumbnailURL' => 'Varchar(255)',
         'ThumbnailHeight' => 'Int',
         'ThumbnailWidth' => 'Int',
@@ -90,6 +133,22 @@ class FlickrPhoto extends DataObject
         'PromoteToHomePage' => DBBoolean::class
         //TODO - place id
     );
+
+
+    /*
+ * s	small square 75x75
+q	large square 150x150
+t	thumbnail, 100 on longest side
+m	small, 240 on longest side
+n	small, 320 on longest side
+-	medium, 500 on longest side
+z	medium 640, 640 on longest side
+c	medium 800, 800 on longest side†
+b	large, 1024 on longest side*
+h	large 1600, 1600 on longest side†
+k	large 2048, 2048 on longest side†
+o	original image, either a jpg, gif or png, depending on source format
+ */
 
 
     private static $belongs_many_many = array(
