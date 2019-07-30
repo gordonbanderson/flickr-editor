@@ -49,6 +49,15 @@ vendor/bin/sake dev/tasks/import-flickr-set id=72157709345351706 path='photos'
 vendor/bin/sake dev/tasks/update-flickr-set-metadata id=72157709345351706
 ```
 
+ 210  vendor/bin/sake dev/tasks/import-flickr-set id=72157709827062467 path='photos'
+  211  vendor/bin/sake dev/tasks
+  212  vendor/bin/sake dev/tasks/download-flickr-set-thumbs id=72157709827062467
+  213  vendor/bin/sake dev/tasks
+  214  vendor/bin/sake dev/tasks/create-flickr-set-sprite  id=72157709827062467
+
+pngquant --force --ext .png  public/flickr/sprites/72157709827062467/icon-sprite@2x.png 
+
+
 ##Requirements
 * SilverStripe 4
 
