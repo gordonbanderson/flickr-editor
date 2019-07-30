@@ -130,7 +130,8 @@ class FlickrPhoto extends DataObject
         'OriginalHeight' => 'Int',
         'OriginalWidth' => 'Int',
         'TimeShiftHours' => 'Int',
-        'PromoteToHomePage' => DBBoolean::class
+        'PromoteToHomePage' => DBBoolean::class,
+        'Imported' => 'Boolean'
         //TODO - place id
     );
 

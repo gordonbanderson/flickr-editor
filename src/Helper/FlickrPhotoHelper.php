@@ -31,6 +31,11 @@ class FlickrPhotoHelper extends FlickrHelper
             $flickrPhoto = new FlickrPhoto();
         }
 
+        if ($flickrPhoto->Imported) {
+            error_log('Skipping import, already done');
+            return false;
+        }
+
         // if we are in the mode of only importing new then skip to the next iteration if this pic already exists
         elseif ($only_new_photos) {
             // @todo Fix, this fails continue;
@@ -168,6 +173,8 @@ class FlickrPhotoHelper extends FlickrHelper
         if (isset($singlePhotoInfo['visibility'])) {
             $flickrPhoto->IsPublic = $singlePhotoInfo['visibility']['ispublic'];
         }
+
+        $flickrPhoto->Imported = true;
 
         $flickrPhoto->write();
 

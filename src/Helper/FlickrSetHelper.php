@@ -230,6 +230,11 @@ class FlickrSetHelper extends FlickrHelper
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
+                if (!$flickrPhoto) {
+                    $ctr++;
+                    continue;
+                }
+
                 if ($value['isprimary'] == 1) {
                     $flickrSet->MainImage = $flickrPhoto;
                 }
@@ -237,7 +242,6 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrPhoto->write();
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
 
-                // $flickrPhoto->write();
 
                 if (!$flickrPhoto->LocalCopyOfImage) {
 
