@@ -27,7 +27,7 @@ use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 
-class DownloadThumbnailImages extends BuildTask
+class DownloadImagesTask extends BuildTask
 {
 
     protected $title = 'Download thumbnail images of a Flickr Set';
@@ -46,13 +46,32 @@ class DownloadThumbnailImages extends BuildTask
         }
     }
 
-    private function downloadSet($flickrSet, $targetDir)
+    private function downloadSet($flickrSet, $targetDir, $size)
     {
         foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {
-            $thumbnailURL = $flickrPhoto->SmallURL;
-            $ch = curl_init($thumbnailURL);
+            $imageURL = $flickrPhoto->SmallURL;
+            switch($size) {
+                case 'original':
+                    $imageURL = $flickrPhoto->OriginalURL;
+                    break;
+                case 'small':
+                    $imageURL = $flickrPhoto->SmallURL;
+                    break;
+                case 'medium':
+                    $imageURL = $flickrPhoto->MediumURL;
+                    break;
+                case 'large':
+                    $imageURL = $flickrPhoto->LargeURL;
+                    break;
+                case 'large1600':
+                    $imageURL = $flickrPhoto->Large1600;
+                    break;
+                default:
+                    // url already defaulted
+            }
+            $ch = curl_init($imageURL);
 
-            $filename = basename($thumbnailURL);
+            $filename = basename($imageURL);
             $complete_save_loc = trim($targetDir) .'/' . trim($filename);
             $complete_save_loc = str_replace(' ', '', $complete_save_loc);
 
@@ -77,17 +96,19 @@ class DownloadThumbnailImages extends BuildTask
             return Security::permissionFailure($this);
         }
 
+        $size = 'medium';
+
         $flickrSetID = $_GET['id'];
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
         $this->mkdir_if_required('public/flickr');
-        $this->mkdir_if_required('public/flickr/thumbs');
-        $targetDir = 'public/flickr/thumbs/' . $flickrSetID;
+        $this->mkdir_if_required('public/flickr/images');
+        $targetDir = 'public/flickr/images/' . $flickrSetID;
         $this->mkdir_if_required($targetDir);
 
-        $this->downloadSet($flickrSet, $targetDir);
+        $this->downloadSet($flickrSet, $targetDir, $size);
 
     }
 
