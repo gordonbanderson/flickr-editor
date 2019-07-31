@@ -27,6 +27,7 @@ use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrExif;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
+use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 // @todo does not work ...
 // require_once "../phpFlickr.php";
@@ -426,6 +427,12 @@ o	original image, either a jpg, gif or png, depending on source format
         $filename = end($splits);
         $filename = str_replace('.jpg', '', $filename);
         return $filename;
+    }
+
+    public function SpriteNumber($position) {
+        error_log('POSITION: ' . $position);
+        $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
+        return floor($position/$imagesPerSprite);
     }
 
 
