@@ -1,4 +1,8 @@
-FlickrController:
-  #Set this to true if you wish to download the flickr images to your assets directory.
-  #Alternatively set this to false if you are using the Flickr URLs (in which case a local copy is not necessary)
-  download_images: false
+---
+Name: flickr
+---
+Suilven\Flickr\Model\Site\FlickrSetPage:
+  # With large number of gallery images, say 2000, the flickr sprite images get extremely large,
+  # even after being processed with pngquant.  As such they are split up into groups using the
+  # value below
+  images_per_sprite: 200
