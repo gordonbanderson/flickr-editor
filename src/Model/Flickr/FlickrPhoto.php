@@ -77,12 +77,6 @@ class FlickrPhoto extends DataObject
         'SmallWidth320' => 'Int',
 
         // 500 on longest side
-        'SmallURL500' => 'Varchar(255)',
-        'SmallHeight500' => 'Int',
-        'SmallWidth500' => 'Int',
-
-
-        // 500 on longest side
         'MediumURL' => 'Varchar(255)',
         'MediumHeight' => 'Int',
         'MediumWidth' => 'Int',
@@ -132,7 +126,9 @@ class FlickrPhoto extends DataObject
         'OriginalWidth' => 'Int',
         'TimeShiftHours' => 'Int',
         'PromoteToHomePage' => DBBoolean::class,
-        'Imported' => 'Boolean'
+        'Imported' => 'Boolean',
+
+        'DigitalZoomRatio' => 'Float'
         //TODO - place id
     );
 
