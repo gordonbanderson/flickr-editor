@@ -6,6 +6,7 @@ use OAuth\OAuth1\Token\StdOAuth1Token;
 use Samwilson\PhpFlickr\PhotosetsApi;
 use Samwilson\PhpFlickr\PhpFlickr;
 use SilverStripe\Core\Environment;
+use SilverStripe\Core\Extensible;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
@@ -14,14 +15,13 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrPhotoHelper extends FlickrHelper
 {
-    public function createFromFlickrArray($value, $only_new_photos = false)
-    {
-        gc_collect_cycles();
 
-        $flickrPhotoID = $value['id'];
+    public function createFromFlickrArray($photoInfo, $only_new_photos = false)
+    {
+        $flickrPhotoID = $photoInfo['id'];
 
         // the author, e.g. gordonbanderson
-        $pathalias = $value['pathalias'];
+        $pathalias = $photoInfo['pathalias'];
 
         // do we have a set object or not
         $flickrPhoto = FlickrPhoto::get()->filter(['FlickrID' => $flickrPhotoID])->first();
@@ -41,89 +41,89 @@ class FlickrPhotoHelper extends FlickrHelper
             // @todo Fix, this fails continue;
         }
 
-        $flickrPhoto->Title = $value['title'];
+        $flickrPhoto->Title = $photoInfo['title'];
 
         $flickrPhoto->FlickrID = $flickrPhotoID;
         $flickrPhoto->KeepClean = true;
 
         //240 on longest side
-        $flickrPhoto->MediumURL = $value['url_s'];
-        $flickrPhoto->MediumHeight = $value['height_s'];
-        $flickrPhoto->MediumWidth = $value['width_s'];
+        $flickrPhoto->SmallURL = $photoInfo['url_s'];
+        $flickrPhoto->SmallHeight = $photoInfo['height_s'];
+        $flickrPhoto->SmallWidth = $photoInfo['width_s'];
 
-        // 320 on longest side
+        // 320 on longest sidehttps://live.staticflickr.com/65535/48426658216_7435981a4a_m.jpg
         // Checked - GBA
-        $flickrPhoto->MediumURL320 = $value['url_n'];
-        $flickrPhoto->MediumHeight320 = $value['height_n'];
-        $flickrPhoto->MediumWidth320 = $value['width_n'];
+        $flickrPhoto->SmallURL320 = $photoInfo['url_n'];
+        $flickrPhoto->SmallHeight320 = $photoInfo['height_n'];
+        $flickrPhoto->SmallWidth320 = $photoInfo['width_n'];
 
         // 500 on longest side
         // Checked - GBA
-        $flickrPhoto->MediumURL500 = $value['url_m'];
-        $flickrPhoto->MediumHeight500 = $value['height_m'];
-        $flickrPhoto->MediumWidth500 = $value['width_m'];
+        $flickrPhoto->MediumURL = $photoInfo['url_m'];
+        $flickrPhoto->MediumHeight = $photoInfo['height_m'];
+        $flickrPhoto->MediumWidth = $photoInfo['width_m'];
 
         // 640 on longest side
         // Checked - GBA
-        $flickrPhoto->MediumURL640 = $value['url_z'];
-        $flickrPhoto->MediumHeight640 = $value['height_z'];
-        $flickrPhoto->MediumWidth640 = $value['width_z'];
+        $flickrPhoto->MediumURL640 = $photoInfo['url_z'];
+        $flickrPhoto->MediumHeight640 = $photoInfo['height_z'];
+        $flickrPhoto->MediumWidth640 = $photoInfo['width_z'];
 
         // 800 on longest side
         // Checked - GBA
-        $flickrPhoto->MediumURL800 = $value['url_c'];
-        $flickrPhoto->MediumHeight800 = $value['height_c'];
-        $flickrPhoto->MediumWidth800 = $value['width_c'];
+        $flickrPhoto->MediumURL800 = $photoInfo['url_c'];
+        $flickrPhoto->MediumHeight800 = $photoInfo['height_c'];
+        $flickrPhoto->MediumWidth800 = $photoInfo['width_c'];
 
         // Checked - GBA
-        $flickrPhoto->SquareURL = $value['url_sq'];
-        $flickrPhoto->SquareHeight = $value['height_sq'];
-        $flickrPhoto->SquareWidth = $value['width_sq'];
+        $flickrPhoto->SquareURL = $photoInfo['url_sq'];
+        $flickrPhoto->SquareHeight = $photoInfo['height_sq'];
+        $flickrPhoto->SquareWidth = $photoInfo['width_sq'];
 
         // Checked - GBA
-        $flickrPhoto->SquareURL150 = $value['url_q'];
-        $flickrPhoto->SquareHeight150 = $value['height_q'];
-        $flickrPhoto->SquareWidth150 = $value['width_q'];
+        $flickrPhoto->SquareURL150 = $photoInfo['url_q'];
+        $flickrPhoto->SquareHeight150 = $photoInfo['height_q'];
+        $flickrPhoto->SquareWidth150 = $photoInfo['width_q'];
 
 
         // Checked - GBA
-        $flickrPhoto->ThumbnailURL = $value['url_t'];
-        $flickrPhoto->ThumbnailHeight = $value['height_t'];
-        $flickrPhoto->ThumbnailWidth = $value['width_t'];
+        $flickrPhoto->ThumbnailURL = $photoInfo['url_t'];
+        $flickrPhoto->ThumbnailHeight = $photoInfo['height_t'];
+        $flickrPhoto->ThumbnailWidth = $photoInfo['width_t'];
 
         // Checked - GBA
-        $flickrPhoto->SmallURL = $value['url_s'];
-        $flickrPhoto->SmallHeight = $value['height_s'];
-        $flickrPhoto->SmallWidth = $value['width_s'];
+        $flickrPhoto->SmallURL = $photoInfo['url_s'];
+        $flickrPhoto->SmallHeight = $photoInfo['height_s'];
+        $flickrPhoto->SmallWidth = $photoInfo['width_s'];
 
         // If the image is too small, large size will not be set
 
         // Checked - GBA
-        if (isset($value['url_l'])) {
-            $flickrPhoto->LargeURL = $value['url_l'];
-            $flickrPhoto->LargeHeight = $value['height_l'];
-            $flickrPhoto->LargeWidth = $value['width_l'];
+        if (isset($photoInfo['url_l'])) {
+            $flickrPhoto->LargeURL = $photoInfo['url_l'];
+            $flickrPhoto->LargeHeight = $photoInfo['height_l'];
+            $flickrPhoto->LargeWidth = $photoInfo['width_l'];
         }
 
         // checked - GBA
-        if (isset($value['url_z'])) {
-            $flickrPhoto->LargeURL1600 = $value['url_h'];
-            $flickrPhoto->LargeHeight1600 = $value['height_h'];
-            $flickrPhoto->LargeWidth1600 = $value['width_h'];
+        if (isset($photoInfo['url_h'])) {
+            $flickrPhoto->LargeURL1600 = $photoInfo['url_h'];
+            $flickrPhoto->LargeHeight1600 = $photoInfo['height_h'];
+            $flickrPhoto->LargeWidth1600 = $photoInfo['width_h'];
         }
 
         // checked - GBA
-        if (isset($value['url_z'])) {
-            $flickrPhoto->LargeURL2048 = $value['url_z'];
-            $flickrPhoto->LargeHeight2048 = $value['height_z'];
-            $flickrPhoto->LargeWidth2048 = $value['width_z'];
+        if (isset($photoInfo['url_k'])) {
+            $flickrPhoto->LargeURL2048 = $photoInfo['url_k'];
+            $flickrPhoto->LargeHeight2048 = $photoInfo['height_k'];
+            $flickrPhoto->LargeWidth2048 = $photoInfo['width_k'];
         }
 
 
         // checked - GBA
-        $flickrPhoto->OriginalURL = $value['url_o'];
-        $flickrPhoto->OriginalHeight = $value['height_o'];
-        $flickrPhoto->OriginalWidth = $value['width_o'];
+        $flickrPhoto->OriginalURL = $photoInfo['url_o'];
+        $flickrPhoto->OriginalHeight = $photoInfo['height_o'];
+        $flickrPhoto->OriginalWidth = $photoInfo['width_o'];
 
         $flickrPhoto->Description = 'test';// $value['description']['_content'];
 
@@ -136,28 +136,28 @@ class FlickrPhotoHelper extends FlickrHelper
 
         $flickrPhoto->PhotographerID = $author->ID;
 
-        $lat = number_format($value['latitude'], 15);
-        $lon = number_format($value['longitude'], 15);
+        $lat = number_format($photoInfo['latitude'], 15);
+        $lon = number_format($photoInfo['longitude'], 15);
 
 
-        if ($value['latitude']) {
+        if ($photoInfo['latitude']) {
             $flickrPhoto->Lat = $lat;
             $flickrPhoto->ZoomLevel = 15;
         }
-        if ($value['longitude']) {
+        if ($photoInfo['longitude']) {
             $flickrPhoto->Lon = $lon;
         }
 
-        if ($value['accuracy']) {
-            $flickrPhoto->Accuracy = $value['accuracy'];
+        if ($photoInfo['accuracy']) {
+            $flickrPhoto->Accuracy = $photoInfo['accuracy'];
         }
 
-        if (isset($value['geo_is_public'])) {
-            $flickrPhoto->GeoIsPublic = $value['geo_is_public'];
+        if (isset($photoInfo['geo_is_public'])) {
+            $flickrPhoto->GeoIsPublic = $photoInfo['geo_is_public'];
         }
 
-        if (isset($value['woeid'])) {
-            $flickrPhoto->WoeID = $value['woeid'];
+        if (isset($photoInfo['woeid'])) {
+            $flickrPhoto->WoeID = $photoInfo['woeid'];
         }
 
         $photosHelper = $this->getPhotosHelper();
@@ -165,7 +165,6 @@ class FlickrPhotoHelper extends FlickrHelper
 
 
         $flickrPhoto->Description = $singlePhotoInfo['description'];
-        error_log(print_r($singlePhotoInfo, 1));
 
         $flickrPhoto->TakenAt = $singlePhotoInfo['dates']['taken'];
         $flickrPhoto->Rotation = $singlePhotoInfo['rotation'];
@@ -177,6 +176,7 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->Imported = true;
 
         $flickrPhoto->write();
+
 
         error_log(
             'Written photo object'
@@ -204,8 +204,6 @@ class FlickrPhotoHelper extends FlickrHelper
 
             $tag = null;
             $ftags = null;
-
-            gc_collect_cycles();
         }
 
         return $flickrPhoto;
