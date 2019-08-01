@@ -34,7 +34,8 @@
         "silverstripe/recipe-core": "^4",
 		"samwilson/phpflickr": "^4",
 		"suilven/php-spriter": "dev-composerify",
-		"matthiasmullie/minify": "^1"
+		"matthiasmullie/minify": "^1",
+		"intervention/image": "^2"
     },
     "license": "BSD-3-Clause",
     "require-dev": {},
