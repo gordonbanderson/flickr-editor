@@ -6,6 +6,7 @@ use OAuth\OAuth1\Token\StdOAuth1Token;
 use Samwilson\PhpFlickr\PhotosetsApi;
 use Samwilson\PhpFlickr\PhpFlickr;
 use SilverStripe\Core\Environment;
+use SilverStripe\Core\Extensible;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrExif;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
@@ -13,6 +14,8 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 class FlickrExifHelper extends FlickrHelper
 {
+    use Extensible;
+
     /**
      * @param FlickrPhoto $flickrPhoto
      * @throws \SilverStripe\ORM\ValidationException
@@ -31,9 +34,9 @@ class FlickrExifHelper extends FlickrHelper
         $fixFocalLength = 0;
         $focalConversionFactor = 1;
 
-        DB::query('begin;');
 
-        echo "Storing exif data for ".$flickrPhoto->Title."\n";
+        echo "Using exif data for ".$flickrPhoto->Title."\n";
+        $exifs = [];
         foreach ($exifData['exif'] as $key => $exifInfo) {
             $exif = new FlickrExif();
             $exif->TagSpace = $exifInfo['tagspace'];
@@ -42,64 +45,43 @@ class FlickrExifHelper extends FlickrHelper
             $exif->Label = $exifInfo['label'];
             $exif->Raw = $exifInfo['raw'];
             $exif->FlickrPhotoID = $flickrPhoto->ID;
-            $exif->write();
 
-            echo "- {$exif->Tag} = {$exif->Raw}\n";
+            $exifs[$exif->Tag] = $exif;
+            //$exif->write();
 
-            if ($exif->Tag == 'FocalLength') {
-                $raw = str_replace(' mm', '', $exif->Raw);
-                $focallength = $raw; // model focal length
-            } elseif ($exif->Tag == 'ImageUniqueID') {
-                $flickrPhoto->ImageUniqueID = $exif->Raw;
-            } elseif ($exif->Tag == 'ISO') {
-                $flickrPhoto->ISO = $exif->Raw;
-            } elseif ($exif->Tag == 'ExposureTime') {
-                $flickrPhoto->ShutterSpeed = $exif->Raw;
-            } elseif ($exif->Tag == 'FocalLengthIn35mmFormat') {
-                $raw35 = $exif->Raw;
-                $fl35 = str_replace(' mm', '', $raw35);
-                $fl35 = (int) $fl35;
-                $flickrPhoto->FocalLength35mm = $fl35;
-            } elseif ($exif->Tag == 'FNumber') {
-                $flickrPhoto->Aperture = $exif->Raw;
-            }
-            // @todo, make configurable
-            // @todo Is this neccesary?
-            // Hardwire phone focal length
-            elseif ($exif->Tag == 'Model') {
-                $name = $exif->Raw;
-                if ($name === 'C6602') {
-                    $flickrPhoto->FocalLength35mm = 28;
-                    $fixFocalLength = 28;
-                }
-
-                if ($name === 'Canon IXUS 220 HS') {
-                    $focalConversionFactor = 5.58139534884;
-                }
-
-                if ($name === 'Canon EOS 450D') {
-                    $focalConversionFactor = 1.61428571429;
-                }
-            }
-
-
-            $exif = null;
-            gc_collect_cycles();
+            switch($exif->Tag) {
+                case 'FocalLength':
+                    $raw = str_replace(' mm', '', $exif->Raw);
+                    $focallength = $raw; // model focal length
+                    break;
+                case 'ImageUniqueID':
+                    $flickrPhoto->ImageUniqueID = $exif->Raw;
+                    break;
+                case 'ISO':
+                    $flickrPhoto->ISO = $exif->Raw;
+                    break;
+                case 'ExposureTime':
+                    $flickrPhoto->ShutterSpeed = $exif->Raw;
+                    break;
+                case 'FocalLengthIn35mmFormat':
+                    $raw35 = $exif->Raw;
+                    $fl35 = str_replace(' mm', '', $raw35);
+                    $fl35 = (int) $fl35;
+                    $flickrPhoto->FocalLength35mm = $fl35;
+                    break;
+                case 'Aperture':
+                    $flickrPhoto->Aperture = $exif->Raw;
+                    break;
+                default:
+                    break; // do nothing
+            };
         }
 
-        // try and fix the 35mm focal length
-        if ((int)($flickrPhoto->FocalLength35mm) === 0) {
-            if ($fixFocalLength) {
-                $flickrPhoto->FocalLength35mm = 28; // this is hardwired for phone
-            } elseif ($focalConversionFactor !== 1) {
-                $f = $focalConversionFactor*$focallength;
-                $flickrPhoto->FocalLength35mm = round($f);
-            }
-        }
+        $this->extend('augmentPhotographWithExif', $flickrPhoto, $exifs);
+
 
         $flickrPhoto->write();
 
         echo "/storing exif";
-        DB::query('commit;');
     }
 }
