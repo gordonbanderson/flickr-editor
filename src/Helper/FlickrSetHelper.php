@@ -33,18 +33,13 @@ class FlickrSetHelper extends FlickrHelper
             'FlickrID' => $flickrSetID
         ])->first();
 
-        error_log('T1');
 
         // if a set exists update data, otherwise create
         if (!$flickrSet) {
-            error_log('T2');
 
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             $setInfo = $setsHelper->getInfo($flickrSetID, null);
-
-            error_log(print_r($setInfo, 1));
-
 
             $setTitle = $setInfo['title'];
             $setDescription = $setInfo['description'];
@@ -334,7 +329,6 @@ class FlickrSetHelper extends FlickrHelper
 
 
             foreach ($photoset['photo'] as $key => $value) {
-                error_log('KV = ' . $key . ' --> ' . print_r($value,1));
                 echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
                 $flickrPhotoID = $value['id'];
 
