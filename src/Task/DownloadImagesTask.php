@@ -48,6 +48,7 @@ class DownloadImagesTask extends BuildTask
 
     private function downloadSet($flickrSet, $targetDir, $size)
     {
+        error_log('SIZE: ' . $size);
         foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {
             $imageURL = $flickrPhoto->SmallURL;
             switch($size) {
@@ -69,6 +70,7 @@ class DownloadImagesTask extends BuildTask
                 default:
                     // url already defaulted
             }
+            error_log('Downloading ' . $imageURL);
             $ch = curl_init($imageURL);
 
             $filename = basename($imageURL);
@@ -96,7 +98,7 @@ class DownloadImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = 'medium';
+        $size = 'small';
 
         $flickrSetID = $_GET['id'];
 
