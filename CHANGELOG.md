@@ -6,6 +6,8 @@
 
 **Closed issues:**
 
+- Add Extension Points For Exif Data Processing [\#3](https://github.com/gordonbanderson/flickr-editor/issues/3)
+- Whitelist EXIF Import Data [\#2](https://github.com/gordonbanderson/flickr-editor/issues/2)
 - Large Sets Only Have 500 Pics Imported [\#1](https://github.com/gordonbanderson/flickr-editor/issues/1)
 
 ## [1.0.0](https://github.com/gordonbanderson/flickr-editor/tree/1.0.0) (2016-01-19)
