@@ -69,8 +69,6 @@ class FlickrPhoto extends DataObject
         'SmallHeight' => 'Int',
         'SmallWidth' => 'Int',
 
-
-
         // 320 on longest side
         'SmallURL320' => 'Varchar(255)',
         'SmallHeight320' => 'Int',
@@ -128,7 +126,13 @@ class FlickrPhoto extends DataObject
         'PromoteToHomePage' => DBBoolean::class,
         'Imported' => 'Boolean',
 
-        'DigitalZoomRatio' => 'Float'
+        'DigitalZoomRatio' => 'Float',
+
+        // With 24 frames per second on my Sony RX10 M4, it appears there is a bug when ordering
+        // images even though they have been uploaded in the correct order.  Hoping this will fix it
+        'UploadUnixTimeStamp' => 'Int'
+
+
         //TODO - place id
     );
 
@@ -373,6 +377,7 @@ o	original image, either a jpg, gif or png, depending on source format
 
     public function AdjustedTime()
     {
+        // @todo Is this required?
         return 'FP ADJ TIME '.$this->TimeShiftHours;
     }
 
@@ -381,7 +386,9 @@ o	original image, either a jpg, gif or png, depending on source format
     {
         return DBField::create_field(
             'HTMLVarchar',
-            '<img class="flickrThumbnail" data-flickr-medium-url="'.$this->MediumURL.'" src="'.$this->ThumbnailURL.'"  data-flickr-thumbnail-url="'.$this->ThumbnailURL.'"/>'
+            '<img class="flickrThumbnail" data-flickr-medium-url="' . $this->MediumURL .
+            '" src="' . $this->ThumbnailURL . '"  data-flickr-thumbnail-url="' .
+            $this->ThumbnailURL . '"/>'
         );
     }
 
@@ -399,6 +406,16 @@ o	original image, either a jpg, gif or png, depending on source format
             //Fleakr.auth_token    = ''
             $this->f->setToken($access_token);
         }
+    }
+
+    public function EffectiveFocalLength35mm()
+    {
+        $fl = $this->FocalLength35mm;
+        if ($this->DigitalZoomRatio) {
+            $fl = round($fl * $this->DigitalZoomRatio);
+        }
+
+        return $fl;
     }
 
 
