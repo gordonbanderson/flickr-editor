@@ -41,6 +41,10 @@ class FlickrPhotoHelper extends FlickrHelper
             // @todo Fix, this fails continue;
         }
 
+        // ordering images when the timestamps are identical is an issue.  If using a script to upload
+        // images in order, this field can be used for ordering purposes
+        $flickrPhoto->UploadUnixTimeStamp = $photoInfo['dateupload'];
+
         $flickrPhoto->Title = $photoInfo['title'];
 
         $flickrPhoto->FlickrID = $flickrPhotoID;
