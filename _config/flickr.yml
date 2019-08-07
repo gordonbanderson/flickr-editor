@@ -1,6 +1,12 @@
 ---
 Name: flickr
 ---
+Suilven\Flickr\Helper\FlickrSetHelper:
+  # The number of images to import at a time.  The maximum is 500 at the Flickr API level.  Use a
+  # smaller value if connection issues to avoid repeating 500 images
+  import_per_page: 500
+
+
 Suilven\Flickr\Model\Site\FlickrSetPage:
   # With large number of gallery images, say 2000, the flickr sprite images get extremely large,
   # even after being processed with pngquant.  As such they are split up into groups using the
