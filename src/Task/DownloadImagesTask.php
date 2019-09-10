@@ -98,7 +98,7 @@ class DownloadImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = 'small';
+        $size = $_GET['size'] ? $_GET['size'] : 'small';
 
         $flickrSetID = $_GET['id'];
 
