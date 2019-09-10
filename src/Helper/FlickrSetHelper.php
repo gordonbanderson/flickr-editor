@@ -324,8 +324,17 @@ class FlickrSetHelper extends FlickrHelper
 
                 /** @var FlickrPhoto $flickrPhoto */
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
-                $exifHelper->loadExif($flickrPhoto);
-                $flickrPhoto->write();
+                error_log('SS: ' . $flickrPhoto->ShutterSpeed );
+                error_log('APERTURE: ' . $flickrPhoto->Aperture);
+
+                if (!$flickrPhoto->ShutterSpeed) {
+                    $exifHelper->loadExif($flickrPhoto);
+                    $flickrPhoto->write();
+                } else {
+                    error_log('ALREADY IMPORTED');
+                }
+
+
                 $ctr++;
             }
         }
