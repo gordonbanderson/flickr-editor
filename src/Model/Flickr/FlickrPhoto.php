@@ -130,7 +130,11 @@ class FlickrPhoto extends DataObject
 
         // With 24 frames per second on my Sony RX10 M4, it appears there is a bug when ordering
         // images even though they have been uploaded in the correct order.  Hoping this will fix it
-        'UploadUnixTimeStamp' => 'Int'
+        'UploadUnixTimeStamp' => 'Int',
+
+        // A hash that relates to the visual nature of the image, an attempt to automate the
+        // identificationi of sequences of images
+        'PerceptiveHash' => 'Varchar(64)'
 
 
         //TODO - place id
