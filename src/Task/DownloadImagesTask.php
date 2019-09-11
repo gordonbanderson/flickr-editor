@@ -65,7 +65,10 @@ class DownloadImagesTask extends BuildTask
                     $imageURL = $flickrPhoto->LargeURL;
                     break;
                 case 'large1600':
-                    $imageURL = $flickrPhoto->Large1600;
+                    $imageURL = $flickrPhoto->LargeURL1600;
+                    break;
+                case 'large2048':
+                    $imageURL = $flickrPhoto->LargeURL2048;
                     break;
                 default:
                     // url already defaulted
