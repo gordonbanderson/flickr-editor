@@ -112,6 +112,8 @@ class CalculatePerceptiveHashes extends BuildTask
     public function findSequences($flickrSet, $srcDir, $targetDir)
     {
         $hashes = [];
+        error_log($flickrSet->Title);
+
         foreach ($flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp') as $flickrPhoto) {
             $pair = [
                 'ID' => $flickrPhoto->ID,
@@ -119,9 +121,14 @@ class CalculatePerceptiveHashes extends BuildTask
 
                 // this matters, as it depends on what size was downloaded
                 // @todo, refactor
-                'URL' => $flickrPhoto->LargeURL
+                'URL' => $flickrPhoto->LargeURL2048,
+
+                'SmallURL' => $flickrPhoto->SmallURL,
+                'Rotated' => $flickrPhoto->Orientation == 90
             ];
             $hashes[] = $pair;
+
+            print_r($pair);
         }
 
         $tolerance = 34;
@@ -132,7 +139,10 @@ class CalculatePerceptiveHashes extends BuildTask
         for ($i = 1; $i < count($hashes) - 1; $i++) {
             // if the bucket is empty, start with the current image
             if (empty($currentBucket)) {
-                $currentBucket[] = $hashes[$i]['URL'];
+                $currentBucket[] = [
+                    'url' => $hashes[$i]['URL'],
+                    'rotated' => $hashes[$i]['Rotated']
+                ];
             }
             $hash0 = $hashes[$i]['pHash'];
             $hash1 = $hashes[$i + 1]['pHash'];
@@ -141,7 +151,10 @@ class CalculatePerceptiveHashes extends BuildTask
 
             // if we are within tolerance, add to the bucket
             if ($distance < $tolerance) {
-                $currentBucket[] = $hashes[$i+1]['URL'];
+                $currentBucket[] = [
+                    'url' => $hashes[$i]['URL'],
+                    'rotated' => $hashes[$i]['Rotated']
+                ];
             } else {
                 // we need to save the current bucket if it's long enough
                 if(sizeof($currentBucket) < $minLength) {
@@ -163,9 +176,9 @@ class CalculatePerceptiveHashes extends BuildTask
             error_log('BUCKET');
             $bucket = $buckets[$j];
             for ($i=0; $i<sizeof($bucket); $i++) {
-                $html .= "\n<img src='". $bucket[$i]."'/>";
+                $html .= "\n<img src='". $bucket[$i]['url']."'/>";
 
-                $filename = basename($bucket[$i]);
+                $filename = basename($bucket[$i]['url']);
                 $from = trim($srcDir) .'/' . trim($filename);
 
                 $paddedCtr = str_pad($ctr, 8, '0', STR_PAD_LEFT);
