@@ -132,7 +132,7 @@ class CalculatePerceptiveHashes extends BuildTask
         }
 
         $tolerance = 34;
-        $minLength = 5;
+        $minLength = 10;
 
         $currentBucket = [];
         $buckets = [];
@@ -185,6 +185,15 @@ class CalculatePerceptiveHashes extends BuildTask
                 $to  = trim($targetDir) .'/' . $paddedCtr . '.JPG';
                 error_log($from . ' --> ' . $to);
                 copy($from, $to);
+                $rotated = $bucket[$i]['rotated'];
+                error_log('>>>> ROTATED: ' . $rotated);
+                if ($rotated) {
+                    $dimensions = '2048x1365';
+                    $cmd = ('/usr/bin/convert ' . $to .' -gravity center -background black -extent ' . $dimensions .' ' . $to);
+                    error_log('CMD:' . $cmd);
+                    exec($cmd);
+                }
+
                 $ctr++;
             }
 
