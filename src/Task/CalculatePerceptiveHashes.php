@@ -168,6 +168,14 @@ class CalculatePerceptiveHashes extends BuildTask
             error_log('H:' . $id . '    ' . $this->hammingDist($hash0, $hash1) . '     ' . $hashes[$i+1]['URL']);
         }
 
+        // add the last bucket if it's long enough
+        if(sizeof($currentBucket) < $minLength) {
+            error_log('Bucket created but is too short');
+        } else {
+            error_log('Adding bucket');
+            $buckets[] = $currentBucket;
+        }
+
         $html = '';
 
         $ctr = 0;
