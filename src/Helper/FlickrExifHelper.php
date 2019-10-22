@@ -25,6 +25,7 @@ class FlickrExifHelper extends FlickrHelper
         $phpFlickr = $this->getPhpFlickr();
         $exifData = $phpFlickr->photos_getExif($flickrPhoto->FlickrID);
 
+
         // delete any old exif data
         $sql = 'DELETE from "FlickrExif" where "FlickrPhotoID"='.$flickrPhoto->ID;
         DB::query($sql);
@@ -49,6 +50,7 @@ class FlickrExifHelper extends FlickrHelper
             $exifs[$exif->Tag] = $exif;
             //$exif->write();
 
+
             switch($exif->Tag) {
                 case 'FocalLength':
                     $raw = str_replace(' mm', '', $exif->Raw);
@@ -72,6 +74,11 @@ class FlickrExifHelper extends FlickrHelper
                 case 'Aperture':
                     $flickrPhoto->Aperture = $exif->Raw;
                     break;
+                    // Flickr appeared to have changed the tag to FNumber
+                case 'FNumber':
+                    $flickrPhoto->Aperture = $exif->Raw;
+                    break;
+
                 default:
                     break; // do nothing
             };
