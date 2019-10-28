@@ -89,6 +89,8 @@ class CalculatePerceptiveHashes extends BuildTask
 
             error_log('CSL: ' . $complete_hash_file_path);
 
+            // @todo This fails if public/flickr/images/FLICKR_SET_ID is missing
+            error_log('TARGET DIR: ' . $targetDir);
             $fp = fopen($complete_hash_file_path, 'wb');
 
             curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -97,6 +99,9 @@ class CalculatePerceptiveHashes extends BuildTask
             curl_close($ch);
             fclose($fp);
 
+            // @todo Make this configurable
+            // tool is avail from https://github.com/commonsmachinery/blockhash-python4, just clone it
+            // also required is python-pil
             $hashCMD = '/var/www/blockhash-python/blockhash.py ' . $complete_hash_file_path;
             $o = exec($hashCMD, $output);
             $splits = explode(' ', $o);
