@@ -63,28 +63,11 @@ class FlickrSetPage extends \Page
         return $this->Descripton;
     }
 
-
-
-
-
-    /*
-
-update FlickrSetPage set Description = FlickrSet.Description where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID;
-
-update FlickrSetPage set Description = 'wibble';
-update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
-
- 'filterable_many_many' => '*',
-    'extra_many_many' => array(
-        'documents' => 'select (' . SphinxSearch::unsignedcrc('SiteTree') . '<<32) | PageID AS id, DocumentID AS Documents FROM Page_Documents')
-
-    */
-
-
     public function ColumnLayout()
     {
         return 'layout1col';
     }
+
 
     /* Get the main image of the set
     FIXME: Use flickr option, and make more efficient
@@ -95,10 +78,6 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
         return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
     }
-
-
-
-
 
 
     public function getCMSFields()
@@ -141,11 +120,6 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
         */
         return $fields;
     }
-
-
-
-
-
 
 
     public function onBeforeWrite()
