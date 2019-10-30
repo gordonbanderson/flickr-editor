@@ -30,9 +30,51 @@ class FacetedPhotoSearchExtension extends Extension
      * @param $tokenFacets - the facets for this token
      * @return array - massaged title and facets
      */
-    public function postProcessFacetResults( $token, &$tokenFacets) {
-        print_r($tokenFacets);
-        //return $tokenFacets;
+    public function postProcessFacetResults( $token, $tokenFacets) {
+        $result = [];
+
+        foreach ($tokenFacets as $facet) {
+            $value = $facet['Value'];
+
+            switch($token)
+            {
+                case 'Aperture':
+                    //$value = $facet['Value'];
+
+                    $value = str_replace('.0', '', $value);
+                    //$aperture = str_replace('000000', '', $aperture);
+                    $value = str_replace('00000', '', $value);
+
+                    if (empty($value)) {
+                        $facet['Value'] = 'Unknown';
+                    } else {
+                        $facet['Value'] = 'f' . $value;
+                    }
+
+                    break;
+                case 'Shutter Speed':
+                    if (empty($value)) {
+                        $facet['Value'] = 'Unknown';
+
+                    }
+
+                case 'ISO':
+                    if (empty($value)) {
+                        $facet['Value'] = 'Unknown';
+
+                    }
+                default:
+                    // do nothing
+                    break;
+            }
+            array_push($result, $facet);
+        }
+
+
+
+
+
+        return $result;
     }
 
 }
