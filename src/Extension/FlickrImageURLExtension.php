@@ -10,6 +10,8 @@ class FlickrImageURLExtension extends Extension
     {
         /** @var FlickrPhoto $flickrImage */
         $flickrImage = FlickrPhoto::get()->filter(['FlickrID' => $flickrID])->first();
-        return $flickrImage->ProtocolAgnosticLargeURL();
+
+        // @todo configurable size
+        return $flickrImage->LargeURL;
     }
 }
