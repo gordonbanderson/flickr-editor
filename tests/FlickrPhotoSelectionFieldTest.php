@@ -1,6 +1,6 @@
 <?php
 
-class FlickrPhotoSelectionFieldTest extends SapphireTest {
+class FlickrPhotoSelectionFieldTest extends \SilverStripe\Dev\SapphireTest {
 	public function test__construct() {
 		$this->markTestSkipped('TODO');
 	}
@@ -33,8 +33,5 @@ class FlickrPhotoSelectionFieldTest extends SapphireTest {
 		$this->markTestSkipped('TODO');
 	}
 
-	public function test$properties = array() {
-		$this->markTestSkipped('TODO');
-	}
 
 }

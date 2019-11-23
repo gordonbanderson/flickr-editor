@@ -1,8 +1,7 @@
 <?php
 
-class FlickrSiteConfigTest extends SapphireTest {
+class FlickrSiteConfigTest extends \SilverStripe\Dev\SapphireTest {
 	public function testUpdateCMSFields() {
 		$this->markTestSkipped('TODO');
 	}
-
 }

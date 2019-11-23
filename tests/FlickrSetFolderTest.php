@@ -1,6 +1,6 @@
 <?php
 
-class FlickrSetFolderTest extends SapphireTest {
+class FlickrSetFolderTest extends \SilverStripe\Dev\SapphireTest {
 	public function testGetCMSFields() {
 		$this->markTestSkipped('TODO');
 	}

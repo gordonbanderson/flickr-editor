@@ -1,4 +1,4 @@
 <?php
 
-class FlickrAuthorTest extends SapphireTest {
+class FlickrAuthorTest extends \SilverStripe\Dev\SapphireTest {
 }

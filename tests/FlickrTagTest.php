@@ -1,6 +1,6 @@
 <?php
 
-class FlickrTagTest extends SapphireTest {
+class FlickrTagTest extends \SilverStripe\Dev\SapphireTest {
 	public function testNormaliseCount() {
 		$this->markTestSkipped('TODO');
 	}
@@ -16,5 +16,4 @@ class FlickrTagTest extends SapphireTest {
 	public function testCreateOrFindTags() {
 		$this->markTestSkipped('TODO');
 	}
-
 }

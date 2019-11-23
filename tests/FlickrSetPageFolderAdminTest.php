@@ -1,6 +1,6 @@
 <?php
 
-class FlickrSetPageFolderAdminTest extends SapphireTest {
+class FlickrSetPageFolderAdminTest extends \SilverStripe\Dev\SapphireTest {
 	public function testEditForm() {
 		$this->markTestSkipped('TODO');
 	}

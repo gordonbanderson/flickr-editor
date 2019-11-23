@@ -1,6 +1,6 @@
 <?php
 
-class FlickrSetPageTest extends SapphireTest {
+class FlickrSetPageTest extends \SilverStripe\Dev\SapphireTest {
 	public function testGetPortletTitle() {
 		$this->markTestSkipped('TODO');
 	}

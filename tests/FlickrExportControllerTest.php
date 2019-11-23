@@ -1,6 +1,6 @@
 <?php
 
-class FlickrExportControllerTest extends SapphireTest {
+class FlickrExportControllerTest extends \SilverStripe\Dev\SapphireTest {
 	public function testIndex() {
 		$this->markTestSkipped('TODO');
 	}

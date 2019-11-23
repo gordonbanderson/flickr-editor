@@ -1,6 +1,6 @@
 <?php
 
-class FlickrControllerTest extends SapphireTest {
+class FlickrControllerTest extends \SilverStripe\Dev\SapphireTest {
 	public function testFixDescriptions() {
 		$this->markTestSkipped('TODO');
 	}

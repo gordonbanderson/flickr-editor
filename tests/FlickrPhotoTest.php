@@ -1,6 +1,6 @@
 <?php
 
-class FlickrPhotoTest extends SapphireTest {
+class FlickrPhotoTest extends \SilverStripe\Dev\SapphireTest {
 	public function testProtocolAgnosticLargeURL() {
 		$this->markTestSkipped('TODO');
 	}

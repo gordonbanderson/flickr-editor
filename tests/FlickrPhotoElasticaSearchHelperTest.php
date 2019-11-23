@@ -1,6 +1,6 @@
 <?php
 
-class FlickrPhotoElasticaSearchHelperTest extends SapphireTest {
+class FlickrPhotoElasticaSearchHelperTest extends \SilverStripe\Dev\SapphireTest {
 	public function test__construct() {
 		$this->markTestSkipped('TODO');
 	}

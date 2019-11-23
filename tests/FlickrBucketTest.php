@@ -1,6 +1,6 @@
 <?php
 
-class FlickrBucketTest extends SapphireTest {
+class FlickrBucketTest extends \SilverStripe\Dev\SapphireTest {
 	public function testGetCMSFields() {
 		$this->markTestSkipped('TODO');
 	}

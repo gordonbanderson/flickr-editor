@@ -1,6 +1,6 @@
 <?php
 
-class FlickrTagsControllerTest extends SapphireTest {
+class FlickrTagsControllerTest extends \SilverStripe\Dev\SapphireTest {
 	public function testColumnLayout() {
 		$this->markTestSkipped('TODO');
 	}

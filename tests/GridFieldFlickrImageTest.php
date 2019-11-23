@@ -1,6 +1,6 @@
 <?php
 
-class GridFieldFlickrImageTest extends SapphireTest {
+class GridFieldFlickrImageTest extends \SilverStripe\Dev\SapphireTest {
 	public function testGetHTMLFragments() {
 		$this->markTestSkipped('TODO');
 	}
