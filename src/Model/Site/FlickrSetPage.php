@@ -28,6 +28,11 @@ class FlickrSetPage extends \Page
         'FirstPictureTakenAt' => 'Datetime'
     ];
 
+    public function getFlickrImageCollectionForPage()
+    {
+        return $this->FlickrSetForPage();
+    }
+
     public function getPortletTitle()
     {
         return $this->Title;
