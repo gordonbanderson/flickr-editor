@@ -12,7 +12,7 @@
 $Description
 
 <div class="gallery" itemscope itemtype="http://schema.org/ImageGallery">
- <% loop $FlickrSetForPage.FlickrPhotos.Sort(TakenAt)  %>
+ <% loop $FlickrImageCollectionForPage.FlickrPhotos.Sort(TakenAt)  %>
  <figure itemprop="associatedMedia" itemscope itemtype="http://schema.org/ImageObject" class="slide orientation{$Orientation}">
   <a id="photo_$ID" href="$LargeURL" title="$Title" data-size="{$LargeWidth}x{$LargeHeight}">
    <img src="$ThumbnailURL" itemprop="thumbnail" height="$ThumbnailHeight" width="$ThumbnailWidth" alt="$Title"
