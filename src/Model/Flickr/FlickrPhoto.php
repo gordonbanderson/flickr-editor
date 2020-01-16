@@ -447,7 +447,6 @@ o	original image, either a jpg, gif or png, depending on source format
     }
 
     public function SpriteNumber($position) {
-        error_log('POSITION: ' . $position);
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
         return floor($position/$imagesPerSprite);
     }

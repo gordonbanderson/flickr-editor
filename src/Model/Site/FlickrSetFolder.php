@@ -16,12 +16,13 @@ class FlickrSetFolder extends \Page
 
     private static $allowed_children = [
         FlickrSetPage::class,
-        FlickrSetFolder::class
+        FlickrSetFolder::class,
+        FlickrSearchPage::class
     ];
 
-    private static $db = array(
+    private static $db = [
     'PromoteToHomePage' => DBBoolean::class
-     );
+     ];
 
     private static $has_one = [
         'MainFlickrPhoto' => FlickrPhoto::class
