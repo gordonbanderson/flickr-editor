@@ -295,8 +295,8 @@ o	original image, either a jpg, gif or png, depending on source format
 
     public function getCMSFields()
     {
-        Requirements::css('weboftalent/flickr:css/flickredit.css');
-        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
+        Requirements::css( 'weboftalent/flickr:dist/admin/client/css/flickredit.css');
+        Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
 
         // this worked in SS3, but not SS4
         // @todo Figure out how to get the ID of set, other than URL hacking
@@ -388,10 +388,21 @@ o	original image, either a jpg, gif or png, depending on source format
 
     public function getThumbnail()
     {
+        $width = $this->LargeWidth;
+        $height = $this->LargeHeight;
+
+        if ($width < $height) {
+            $width = round($width*683/$height);
+            $height = 683;
+        }
+
+
         return DBField::create_field(
             'HTMLVarchar',
-            '<img class="flickrThumbnail" data-flickr-medium-url="' . $this->MediumURL .
-            '" src="' . $this->ThumbnailURL . '"  data-flickr-thumbnail-url="' .
+            '<img class="flickrThumbnail" data-flickr-preview-url="' . $this->ProtocolAgnosticLargeURL() .
+            '" data-flickr-preview-width=' . $width . ' ' .
+            ' data-flickr-preview-height=' . $height . ' ' .
+            ' src="' . $this->ThumbnailURL . '"  data-flickr-thumbnail-url="' .
             $this->ThumbnailURL . '"/>'
         );
     }

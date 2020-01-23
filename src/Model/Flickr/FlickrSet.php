@@ -79,8 +79,8 @@ class FlickrSet extends DataObject
 
     public function getCMSFields()
     {
-        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
-        Requirements::css('weboftalent/flickr:css/flickredit.css');
+        Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
+        Requirements::css( 'weboftalent/flickr:dist/admin/client/css/flickredit.css');
 
         $fields = new FieldList();
 
