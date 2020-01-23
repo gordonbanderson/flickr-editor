@@ -41,7 +41,7 @@
     "require-dev": {},
 	"extra": {
 		"expose": [
-			"css",
+			"dist",
 			"icons",
 			"javascript",
 			"thirdparty"
