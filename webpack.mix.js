@@ -1,12 +1,13 @@
 let mix = require('laravel-mix');
 
 mix.sass('client/src/css/flickr.scss', 'dist/client/css')
+
 	.sass('admin/client/src/css/flickredit.scss', 'dist/admin/client/css')
 
 	.js('admin/client/src/js/flickredit.js', 'dist/admin/client/js')
-
+/*
 	.copyFile('admin/client/src/image/spinner.gif', 'dist/admin/client/img')
-
+*/
 
 /*
  |--------------------------------------------------------------------------
