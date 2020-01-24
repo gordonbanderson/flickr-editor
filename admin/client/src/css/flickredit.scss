@@ -5,6 +5,8 @@ $light-border-color: lighten($border-color, 30%);
 $dark-border-color: lighten($border-color, 30%);
 $border-width: 2px;
 
+$vspacing: 20px;
+
 .centred {
 	margin-left: auto;
 	margin-right: auto;
@@ -51,9 +53,10 @@ tr.bucket tr {
 	}
 }
 
-
-
-
+#Root_Buckets table {
+	border-collapse:separate;
+	border-spacing: 0 2*$vspacing;
+}
 
 
 tr.bucket td img, .imageStrip img {

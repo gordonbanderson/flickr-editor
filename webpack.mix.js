@@ -1,10 +1,45 @@
 let mix = require('laravel-mix');
+let fs = require('fs');
+
+const Path = require('path');
+
+const ENV = process.env.NODE_ENV;
+
+
+mix.webpackConfig({
+	node: {
+		fs: "empty",
+		child_process: "empty",
+		net: "empty",
+		module: "empty",
+		fsevents: "empty"
+	},
+	output: {
+		jsonpFunction: 'jsonpFunction'
+	},
+	target: "web",
+	module: {
+		rules: [
+			{
+				test: /\.(jsx|js|vue)$/,
+				loader: 'eslint-loader',
+				enforce: 'pre',
+				exclude: /(node_modules)/,
+				options: {
+					formatter: require('eslint-friendly-formatter')
+				}
+			}
+		]
+	},
+});
 
 mix.sass('client/src/css/flickr.scss', 'dist/client/css')
 
 	.sass('admin/client/src/css/flickredit.scss', 'dist/admin/client/css')
 
 	.js('admin/client/src/js/flickredit.js', 'dist/admin/client/js')
+
+	.react('admin/client/src/js/components/app.js', 'dist/admin/client/js')
 /*
 	.copyFile('admin/client/src/image/spinner.gif', 'dist/admin/client/img')
 */
