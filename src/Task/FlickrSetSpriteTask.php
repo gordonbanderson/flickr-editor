@@ -111,7 +111,7 @@ class FlickrSetSpriteTask extends BuildTask
                     [
                         "cssDirectory" => $spriteDir,         // folder where you want the sprite CSS to be saved (folder has to be writable, too)
                         "cssFilename" => "flickr-set-sprites.css",      // your CSS/Less/Sass target file
-                        // "globalTemplate" => "vendor/suilven/php-spriter/src/templates/",                // global template, which contains general CSS styles for all icons (remove line for default)
+                        // "globalTemplate" => "vendor/suilven/php-spriter/src/templates/",                // global template, which contains general CSS css for all icons (remove line for default)
                         // "eachTemplate" => "vendor/suilven/php-spriter/src/templates/",                  // template for each CSS icon class (remove line for default)
                         // "eachHoverTemplate" => "vendor/suilven/php-spriter/src/templates/",             // template for each CSS icon hover class (remove line for default)
                         // "ratioTemplate" => "vendor/suilven/php-spriter/src/templates/"                  // template for each retina media query (remove line for default)
