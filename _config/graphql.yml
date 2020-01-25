@@ -1,0 +1,13 @@
+SilverStripe\Control\Director:
+  rules:
+    'admin/flickr/graphql': '%$SilverStripe\GraphQL\Controller.default'
+
+
+SilverStripe\GraphQL\Manager:
+  schemas:
+    default:
+      queries:
+        readFlickrSets: 'Suilven\Flickr\GraphQL\Query\ReadFlickrSetsQueryCreator'
+      types:
+        flickrphoto: 'Suilven\Flickr\GraphQL\Type\FlickrPhotoTypeCreator'
+        flickrset:   'Suilven\Flickr\GraphQL\Type\FlickrSetTypeCreator'
