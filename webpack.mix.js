@@ -40,6 +40,9 @@ mix.sass('client/src/css/flickr.scss', 'dist/client/css')
 	.js('admin/client/src/js/flickredit.js', 'dist/admin/client/js')
 
 	.react('admin/client/src/js/components/app.js', 'dist/admin/client/js')
+
+	//.extract(['axios'], `vendor.js`)
+
 /*
 	.copyFile('admin/client/src/image/spinner.gif', 'dist/admin/client/img')
 */
