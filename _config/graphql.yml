@@ -9,6 +9,7 @@ SilverStripe\GraphQL\Manager:
       queries:
         readFlickrSets: 'Suilven\Flickr\GraphQL\Query\ReadFlickrSetsQueryCreator'
         readFlickrPhotos: 'Suilven\Flickr\GraphQL\Query\ReadFlickrPhotosQueryCreator'
+        paginatedReadFlickrPhotos: 'Suilven\Flickr\GraphQL\Query\PagedReadFlickrPhotosQueryCreator'
       types:
         flickrphoto: 'Suilven\Flickr\GraphQL\Type\FlickrPhotoTypeCreator'
         flickrset:   'Suilven\Flickr\GraphQL\Type\FlickrSetTypeCreator'
