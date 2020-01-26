@@ -29,9 +29,6 @@ use Suilven\Flickr\Model\Flickr\FlickrExif;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
-// @todo does not work ...
-// require_once "../phpFlickr.php";
-
 /**
  * Only show a page with login when not logged in
  */

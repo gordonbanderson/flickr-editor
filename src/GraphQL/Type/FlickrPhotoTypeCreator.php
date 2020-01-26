@@ -18,6 +18,8 @@ class FlickrPhotoTypeCreator extends TypeCreator
     {
         return [
             'ID' => ['type' => Type::nonNull(Type::id())],
+            'FlickrID' => ['type' => Type::nonNull(Type::id())],
+            'Title' => ['type' => Type::string()],
             'ThumbnailWidth' => ['type' => Type::int()],
             'ThumbnailHeight' => ['type' => Type::int()],
             'ThumbnailURL' => ['type' => Type::string()],
