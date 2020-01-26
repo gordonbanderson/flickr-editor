@@ -1,11 +1,11 @@
 <?php
 namespace Suilven\Flickr\ModelAdmin;
 
-use SilverStripe\View\Requirements;
-use SilverStripe\ORM\DataList;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\LiteralField;
+use SilverStripe\ORM\DataList;
+use SilverStripe\View\Requirements;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**

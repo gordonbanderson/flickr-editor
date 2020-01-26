@@ -1,22 +1,22 @@
 <?php
 namespace Suilven\Flickr\Controller;
 
+use SilverStripe\Assets\Folder;
+use SilverStripe\Assets\Image;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Director;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Convert;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
+use SilverStripe\Security\Permission;
+use SilverStripe\Security\PermissionProvider;
+use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrBatchHelper;
 use Suilven\Flickr\Helper\FlickrBucketHelper;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Symfony\Component\Yaml\Dumper;
-use SilverStripe\Control\Director;
-use SilverStripe\Security\Permission;
-use SilverStripe\Security\Security;
-use SilverStripe\ORM\DataList;
-use SilverStripe\Core\Convert;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Assets\Image;
-use SilverStripe\ORM\DB;
-use SilverStripe\Security\PermissionProvider;
 
 // @todo FIX
 // require_once "phpFlickr.php";

@@ -1,9 +1,9 @@
 <?php
 namespace Suilven\Flickr\SiteConfig;
 
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataExtension;
 
 /**

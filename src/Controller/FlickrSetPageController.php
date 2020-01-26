@@ -1,13 +1,6 @@
 <?php
 namespace Suilven\Flickr\Controller;
 
-use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Assets\Image;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetPageController
  *

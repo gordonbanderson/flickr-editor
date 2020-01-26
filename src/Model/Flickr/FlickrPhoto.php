@@ -1,32 +1,27 @@
 <?php
 namespace Suilven\Flickr\Model\Flickr;
 
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\ORM\FieldType\DBDate;
-use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Assets\Image;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\View\Requirements;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
-use SilverStripe\View\ArrayData;
-use SilverStripe\Forms\LiteralField;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
-use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\CheckboxField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBField;
-use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\DB;
+use SilverStripe\View\ArrayData;
+use SilverStripe\View\Requirements;
 use Suilven\Flickr\Helper\FlickrTagHelper;
 use Suilven\Flickr\Helper\FlickrUpdateMetaHelper;
-use Suilven\Flickr\Model\Flickr\FlickrAuthor;
-use Suilven\Flickr\Model\Flickr\FlickrBucket;
-use Suilven\Flickr\Model\Flickr\FlickrExif;
-use Suilven\Flickr\Model\Flickr\FlickrTag;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**

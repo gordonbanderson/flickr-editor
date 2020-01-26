@@ -1,9 +1,7 @@
 <?php
 namespace Suilven\Flickr\Helper;
 
-use SilverStripe\ORM\DataList;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
-use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrPerceptiveHashHelper extends FlickrHelper
 {

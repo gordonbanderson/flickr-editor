@@ -1,10 +1,7 @@
 <?php
 namespace Suilven\Flickr\Extension;
 
-use SilverStripe\Admin\ModelAdmin;
 use SilverStripe\Core\Extension;
-use Suilven\Flickr\Model\Flickr\FlickrAuthor;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Class \Suilven\Flickr\Extension\FacetedPhotoSearchExtension

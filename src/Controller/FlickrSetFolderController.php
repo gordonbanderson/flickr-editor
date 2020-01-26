@@ -1,8 +1,6 @@
 <?php
 namespace Suilven\Flickr\Controller;
 
-use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataList;
 
 /**

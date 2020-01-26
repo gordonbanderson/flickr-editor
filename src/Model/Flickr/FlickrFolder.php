@@ -1,8 +1,8 @@
 <?php
 namespace Suilven\Flickr\Model\Flickr;
 
-use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\Image;
 use Suilven\Flickr\FlickrSetPage;
 
 /**

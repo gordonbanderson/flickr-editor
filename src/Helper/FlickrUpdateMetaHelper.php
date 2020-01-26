@@ -1,9 +1,6 @@
 <?php
 namespace Suilven\Flickr\Helper;
 
-use SilverStripe\ORM\DataList;
-use Suilven\Flickr\Model\Flickr\FlickrTag;
-
 class FlickrUpdateMetaHelper extends FlickrHelper
 {
     public function writePhotoToFlickr($flickrPhoto, $descriptionSuffix)

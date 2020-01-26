@@ -1,8 +1,8 @@
 <?php
 namespace Suilven\Flickr;
 
-use SilverStripe\View\Requirements;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\View\Requirements;
 
 /**
  * Text input field.

@@ -1,12 +1,12 @@
 <?php
 namespace Suilven\Flickr\Model\Site;
 
-use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\Image;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBBoolean;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 

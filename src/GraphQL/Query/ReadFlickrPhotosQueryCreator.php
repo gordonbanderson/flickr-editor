@@ -7,8 +7,6 @@ use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\OperationResolver;
 use SilverStripe\GraphQL\QueryCreator;
 use SilverStripe\ORM\DataObject;
-use Suilven\Flickr\Helper\FlickrSetHelper;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
 class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationResolver

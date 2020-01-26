@@ -1,16 +1,16 @@
 <?php
 namespace Suilven\Flickr\ShortCode;
 
-use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Convert;
-use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\DataList;
 use SilverStripe\View\ArrayData;
+use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 class FlickrPhotoShortCodeHandler
 {
     /**
-     * 
+     *
      * @param unknown $arguments
      * @param string $caption
      * @param unknown $parser

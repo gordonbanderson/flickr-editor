@@ -2,7 +2,6 @@
 namespace Suilven\Flickr\Helper;
 
 use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataList;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrTagHelper extends FlickrHelper
