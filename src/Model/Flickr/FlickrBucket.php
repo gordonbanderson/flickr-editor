@@ -15,6 +15,21 @@ use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Helper\FlickrTagHelper;
 
+/**
+ * Class \Suilven\Flickr\Model\Flickr\FlickrBucket
+ *
+ * @property string $Title
+ * @property string $Description
+ * @property float $Lat
+ * @property float $Lon
+ * @property int $Accuracy
+ * @property int $ZoomLevel
+ * @property string $TagsCSV
+ * @property int $FlickrSetID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSet()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrTag[] FlickrTags()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrPhoto[] FlickrPhotos()
+ */
 class FlickrBucket extends DataObject
 {
     private static $table_name = 'FlickrBucket';

@@ -31,6 +31,76 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**
  * Only show a page with login when not logged in
+ *
+ * @property string $Title
+ * @property string $FlickrID
+ * @property string $Description
+ * @property string $TakenAt
+ * @property string $FlickrLastUpdated
+ * @property boolean $GeoIsPublic
+ * @property boolean $IsDirty
+ * @property int $Orientation
+ * @property int $WoeID
+ * @property int $Accuracy
+ * @property string $FlickrPlaceID
+ * @property int $Rotation
+ * @property boolean $IsPublic
+ * @property float $Aperture
+ * @property string $ShutterSpeed
+ * @property string $ImageUniqueID
+ * @property int $FocalLength35mm
+ * @property int $ISO
+ * @property float $AspectRatio
+ * @property string $SmallURL
+ * @property int $SmallHeight
+ * @property int $SmallWidth
+ * @property string $SmallURL320
+ * @property int $SmallHeight320
+ * @property int $SmallWidth320
+ * @property string $MediumURL
+ * @property int $MediumHeight
+ * @property int $MediumWidth
+ * @property string $MediumURL640
+ * @property int $MediumHeight640
+ * @property int $MediumWidth640
+ * @property string $MediumURL800
+ * @property int $MediumHeight800
+ * @property int $MediumWidth800
+ * @property string $SquareURL
+ * @property int $SquareHeight
+ * @property int $SquareWidth
+ * @property string $SquareURL150
+ * @property int $SquareHeight150
+ * @property int $SquareWidth150
+ * @property string $LargeURL
+ * @property int $LargeHeight
+ * @property int $LargeWidth
+ * @property string $LargeURL1600
+ * @property int $LargeHeight1600
+ * @property int $LargeWidth1600
+ * @property string $LargeURL2048
+ * @property int $LargeHeight2048
+ * @property int $LargeWidth2048
+ * @property string $ThumbnailURL
+ * @property int $ThumbnailHeight
+ * @property int $ThumbnailWidth
+ * @property string $OriginalURL
+ * @property int $OriginalHeight
+ * @property int $OriginalWidth
+ * @property int $TimeShiftHours
+ * @property boolean $PromoteToHomePage
+ * @property boolean $Imported
+ * @property float $DigitalZoomRatio
+ * @property int $UploadUnixTimeStamp
+ * @property string $PerceptiveHash
+ * @property int $LocalCopyOfImageID
+ * @property int $PhotographerID
+ * @method \SilverStripe\Assets\Image LocalCopyOfImage()
+ * @method \Suilven\Flickr\Model\Flickr\FlickrAuthor Photographer()
+ * @method \SilverStripe\ORM\DataList|\Suilven\Flickr\Model\Flickr\FlickrExif[] Exifs()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrTag[] FlickrTags()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrBucket[] FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrSet[] FlickrSets()
  */
 class FlickrPhoto extends DataObject
 {

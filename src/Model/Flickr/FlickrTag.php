@@ -8,8 +8,14 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 
 /**
-* Only show a page with login when not logged in
-*/
+ * Only show a page with login when not logged in
+ *
+ * @property string $Value
+ * @property string $FlickrID
+ * @property string $RawValue
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrBucket[] FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|\FlickrPhoto[] FlickrPhotos()
+ */
 class FlickrTag extends DataObject
 {
     private static $table_name = 'FlickrTag';

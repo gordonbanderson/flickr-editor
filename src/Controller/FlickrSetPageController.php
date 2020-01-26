@@ -8,6 +8,10 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrSetPageController
+ *
+ */
 class FlickrSetPageController extends \PageController
 {
     public function FlickrPhotos()

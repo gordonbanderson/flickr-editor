@@ -5,6 +5,12 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
 
+/**
+ * Class \Suilven\Flickr\Extension\BlogFeaturedImageExtension
+ *
+ * @property \Suilven\Flickr\Extension\BlogFeaturedImageExtension $owner
+ * @property string $FeaturedFlickrImageID
+ */
 class BlogFeaturedImageExtension extends DataExtension
 {
     private static $db = [

@@ -3,6 +3,10 @@ namespace Suilven\Flickr\Controller;
 
 use SilverStripe\ORM\DataList;
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrExportController
+ *
+ */
 class FlickrExportController extends \PageController
 {
     private static $allowed_actions = array(

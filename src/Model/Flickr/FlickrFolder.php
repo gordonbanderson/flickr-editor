@@ -7,6 +7,9 @@ use Suilven\Flickr\FlickrSetPage;
 
 /**
  * Defines the GalleryFolder page type
+ *
+ * @property int $CoverPhotoID
+ * @method \SilverStripe\Assets\Image CoverPhoto()
  */
 class FlickrFolder extends \Page
 {

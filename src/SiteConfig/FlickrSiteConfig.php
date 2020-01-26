@@ -6,6 +6,13 @@ use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataExtension;
 
+/**
+ * Class \Suilven\Flickr\SiteConfig\FlickrSiteConfig
+ *
+ * @property \SilverStripe\SiteConfig\SiteConfig|\Suilven\Flickr\SiteConfig\FlickrSiteConfig $owner
+ * @property string $ImageFooter
+ * @property boolean $AddLocation
+ */
 class FlickrSiteConfig extends DataExtension
 {
     private static $db = array(

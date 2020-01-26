@@ -21,6 +21,10 @@ use SilverStripe\Security\PermissionProvider;
 // @todo FIX
 // require_once "phpFlickr.php";
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrController
+ *
+ */
 class FlickrController extends \PageController implements PermissionProvider
 {
     private static $allowed_actions = array(

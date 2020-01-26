@@ -4,6 +4,10 @@ namespace Suilven\Flickr\ModelAdmin;
 use SilverStripe\Admin\ModelAdmin;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+/**
+ * Class \Suilven\Flickr\ModelAdmin\FlickrSetAdmin
+ *
+ */
 class FlickrSetAdmin extends ModelAdmin
 {
     private static $managed_models = [FlickrSet::class];

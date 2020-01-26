@@ -10,6 +10,16 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
+/**
+ * Class \Suilven\Flickr\Model\Site\FlickrSetPage
+ *
+ * @property int $TimeShiftHours
+ * @property string $Description
+ * @property boolean $IsDirty
+ * @property string $FirstPictureTakenAt
+ * @property int $FlickrSetForPageID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSetForPage()
+ */
 class FlickrSetPage extends \Page
 {
     private static $table_name = 'FlickrSetPage';

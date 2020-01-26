@@ -9,6 +9,10 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Defines the FlickrSetFolder page type
+ *
+ * @property boolean $PromoteToHomePage
+ * @property int $MainFlickrPhotoID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto MainFlickrPhoto()
  */
 class FlickrSetFolder extends \Page
 {

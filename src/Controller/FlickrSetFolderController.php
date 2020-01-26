@@ -5,6 +5,10 @@ use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\ORM\DataList;
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrSetFolder_Controller
+ *
+ */
 class FlickrSetFolder_Controller extends \PageController
 {
     public function FlickrSetsNewestFirst()

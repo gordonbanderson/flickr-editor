@@ -25,6 +25,24 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Only show a page with login when not logged in
+ *
+ * @property string $Title
+ * @property string $FlickrID
+ * @property string $Description
+ * @property string $FirstPictureTakenAt
+ * @property boolean $IsDirty
+ * @property boolean $LockGeo
+ * @property string $BatchTags
+ * @property string $BatchTitle
+ * @property string $BatchDescription
+ * @property string $ImageFooter
+ * @property string $SpriteCSS
+ * @property int $AssetFolderID
+ * @property int $PrimaryFlickrPhotoID
+ * @method \SilverStripe\Assets\Folder AssetFolder()
+ * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto PrimaryFlickrPhoto()
+ * @method \SilverStripe\ORM\DataList|\Suilven\Flickr\Model\Flickr\FlickrBucket[] FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrPhoto[] FlickrPhotos()
  */
 class FlickrSet extends DataObject
 {

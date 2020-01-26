@@ -24,6 +24,10 @@ use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 
+/**
+ * Class \Suilven\Flickr\Model\Flickr\FlickrGallery
+ *
+ */
 class FlickrGallery extends FlickrSet
 {
 

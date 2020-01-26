@@ -4,6 +4,11 @@ namespace Suilven\Flickr\Extension;
 use SilverStripe\Core\Extension;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
+/**
+ * Class \Suilven\Flickr\Extension\FlickrImageURLExtension
+ *
+ * @property \Suilven\Flickr\Extension\FlickrImageURLExtension $owner
+ */
 class FlickrImageURLExtension extends Extension
 {
     public function getFlickrURLFromID($flickrID, $size='l')

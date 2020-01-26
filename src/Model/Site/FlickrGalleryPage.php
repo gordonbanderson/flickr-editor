@@ -11,6 +11,12 @@ use Suilven\Flickr\Model\Flickr\FlickrGallery;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
+/**
+ * Class \Suilven\Flickr\Model\Site\FlickrGalleryPage
+ *
+ * @property int $FlickrGalleryForPageID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrGallery FlickrGalleryForPage()
+ */
 class FlickrGalleryPage extends FlickrSetPage
 {
     private static $table_name = 'FlickrGalleryPage';

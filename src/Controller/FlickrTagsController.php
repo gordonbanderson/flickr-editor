@@ -5,6 +5,10 @@ use SilverStripe\Control\Director;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrTagsController
+ *
+ */
 class FlickrTagsController extends \PageController
 {
     private static $allowed_actions = array(

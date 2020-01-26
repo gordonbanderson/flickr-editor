@@ -9,6 +9,8 @@ use SilverStripe\Admin\ModelAdmin;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**
+ * Class \Suilven\Flickr\ModelAdmin\FlickrSetPageFolderAdmin
+ *
  * @author Marcus Nyeholt <marcus@silverstripe.com.au>
  * @license BSD http://silverstripe.org/bsd-license/
  */

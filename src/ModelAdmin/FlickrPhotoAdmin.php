@@ -5,6 +5,10 @@ use SilverStripe\Admin\ModelAdmin;
 use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
+/**
+ * Class \Suilven\Flickr\ModelAdmin\FlickrPhotoAdmin
+ *
+ */
 class FlickrPhotoAdmin extends ModelAdmin
 {
     private static $managed_models = [
