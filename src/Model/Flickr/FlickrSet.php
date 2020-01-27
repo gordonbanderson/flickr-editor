@@ -144,8 +144,10 @@ class FlickrSet extends DataObject
         $lfImage = new LiteralField('BucketEdit', $html);
         $fields->addFieldToTab('Root.Buckets', $lfImage);
 
-
-        $html = $forTemplate->renderWith('Includes/VisibleImageSelector');
+        $templateData = new ArrayData([
+            'FlickrSet' => $this
+        ]);
+        $html = $forTemplate->renderWith('Includes/VisibleImageSelector', $templateData);
         $lfImage = new LiteralField('VisibleImagesField', $html);
         $fields->addFieldToTab('Root.Visible', $lfImage);
 
