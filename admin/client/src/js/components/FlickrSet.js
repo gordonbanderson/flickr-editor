@@ -26,7 +26,6 @@ class FlickrSet extends React.Component {
 		this.state = {photos: []};
 
 		this.loadImages = this.loadImages.bind(this);
-		this.addNode = this.addNode.bind(this);
 
 		console.log('About to call load images....')
 
@@ -43,15 +42,11 @@ class FlickrSet extends React.Component {
 		return (
 			<div className="flickrSet">
 				<h1> {this.props.Title}</h1>
-				PHOTOS: {this.componentList}
+				PHOTOS: {this.state.photos}
 			</div>
 		);
 	}
 
-
-	addNode(props) {
-		console.log('ADD NODE');
-	}
 
 	/**
 	 * Make a GraphQL call to load images
@@ -109,6 +104,10 @@ class FlickrSet extends React.Component {
 			);
 
 		console.log('RESULT', result)
+
+		this.setState({
+			photos: result
+		})
 
 
 	}
