@@ -5,6 +5,8 @@ import {InMemoryCache, NormalizedCacheObject} from 'apollo-cache-inmemory';
 import {HttpLink} from 'apollo-link-http';
 import gql from "graphql-tag";
 import FlickrPhoto from "./FlickrPhoto";
+import '../../css/flickrreact.scss';
+
 
 
 const cache = new InMemoryCache();
@@ -40,9 +42,9 @@ class FlickrSet extends React.Component {
 
 	render() {
 		return (
-			<div className="flickrSet">
+			<div className="visibility flickrSet">
 				<h1> {this.props.Title}</h1>
-				PHOTOS: {this.state.photos}
+				{this.state.photos}
 			</div>
 		);
 	}

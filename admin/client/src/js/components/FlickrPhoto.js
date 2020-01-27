@@ -5,7 +5,7 @@ class FlickrPhoto extends React.Component {
 	render() {
 		return (
 			<div className="flickrPhoto">
-				PHOTO:<img src={this.props.ThumbnailURL} title={this.props.Title}/>
+				<img src={this.props.ThumbnailURL} title={this.props.Title}/>
 			</div>
 		);
 	}

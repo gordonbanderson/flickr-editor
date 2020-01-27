@@ -1,11 +1,12 @@
 @import "mixins";
 
-$border-color: #666;
-$light-border-color: lighten($border-color, 30%);
-$dark-border-color: lighten($border-color, 30%);
+$border-color: #888;
+$percentage: 20%;
+$light-border-color: lighten($border-color, $percentage);
+$dark-border-color: darken($border-color, $percentage);
 $border-width: 2px;
 
-$vspacing: 20px;
+$vspacing: 2px;
 
 .centred {
 	margin-left: auto;
@@ -135,3 +136,50 @@ Theme, not edit specific - move later
 .flickrSetPages {
 	clear: both;
 }
+
+
+// @todo associate with component
+div.visibility {
+	width: 50%;
+}
+
+div.visibility .flickrPhoto {
+	float: left;
+	border-left: solid $light-border-color $border-width;
+	border-top: solid $light-border-color $border-width;
+	border-bottom: solid $dark-border-color $border-width;
+	border-right: solid $dark-border-color $border-width;
+	margin: 2px;
+	@include box_shadow(1);
+
+}
+
+.flickrPhoto {
+	//padding: 100px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
