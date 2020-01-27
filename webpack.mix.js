@@ -5,6 +5,28 @@ const Path = require('path');
 
 const ENV = process.env.NODE_ENV;
 
+// Import the core config
+const webpackConfig = require('@silverstripe/webpack-config');
+const {
+	resolveJS,
+	externalJS,
+	moduleJS,
+	pluginJS,
+	moduleCSS,
+	pluginCSS,
+} = webpackConfig;
+
+const PATHS = {
+	MODULES: 'node_modules',
+	FILES_PATH: '../',
+	ROOT: Path.resolve(),
+	SRC: Path.resolve('client/src'),
+	DIST: Path.resolve('client/dist'),
+};
+
+const externals = externalJS(ENV, PATHS);
+delete externals.reactstrap;
+
 
 mix.webpackConfig({
 	node: {
@@ -28,8 +50,16 @@ mix.webpackConfig({
 				options: {
 					formatter: require('eslint-friendly-formatter')
 				}
+			},
+			{
+				test: /\.tsx?$/,
+				loader: "ts-loader",
+				exclude: /node_modules/
 			}
 		]
+	},
+	resolve: {
+		extensions: ['*', '.js', '.jsx', '.vue', '.ts', '.tsx'],
 	},
 });
 
@@ -40,6 +70,8 @@ mix.sass('client/src/css/flickr.scss', 'dist/client/css')
 	.js('admin/client/src/js/flickredit.js', 'dist/admin/client/js')
 
 	.react('admin/client/src/js/components/app.js', 'dist/admin/client/js')
+
+	.sourceMaps()
 
 	//.extract(['axios'], `vendor.js`)
 
