@@ -9,16 +9,7 @@ import '../../css/flickrreact.scss';
 import { connect } from 'react-redux';
 import { INCREMENT, DECREMENT } from './actions';
 
-const cache = new InMemoryCache();
-const link = new HttpLink({
-	uri: 'http://localhost/admin/flickr/graphql'
-});
-
-const client = new ApolloClient({
-	cache,
-	link
-});
-
+import {client} from './transport';
 
 
 
@@ -133,10 +124,8 @@ class FlickrSet extends React.Component {
 
 const mapStateToProps = (state) => {
 	return {
-		count: state? state.count : null
+		count: state.count
 	};};
 
-//export default FlickrSet;
 
-// this breaks with state not found
 export default connect(mapStateToProps)(FlickrSet);

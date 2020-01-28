@@ -6,7 +6,8 @@ import FlickrSet from './FlickrSet';
 import Welcome from './Welcome';
 import {Provider} from "react-redux";
 import FlickrPhotoPreview from "./FlickrPhotoPreview";
-import {createStore} from "redux";
+import thunk from 'redux-thunk';
+import { createStore, applyMiddleware } from 'redux';
 
 
 const reducer = (state, action) => {
@@ -22,7 +23,7 @@ const reducer = (state, action) => {
 	}
 };
 
-const store = createStore(reducer);
+const store = createStore(reducer, applyMiddleware(thunk));
 
 
 
