@@ -6,8 +6,8 @@ import {HttpLink} from 'apollo-link-http';
 import gql from "graphql-tag";
 import FlickrPhoto from "./FlickrPhoto";
 import '../../css/flickrreact.scss';
-import FlickrPhotoPreview from "./FlickrPhotoPreview";
-
+import { connect } from 'react-redux';
+import { INCREMENT, DECREMENT } from './actions';
 
 const cache = new InMemoryCache();
 const link = new HttpLink({
@@ -23,7 +23,7 @@ const client = new ApolloClient({
 
 
 class FlickrSet extends React.Component {
-
+	state = { count: 0 };
 	constructor(props) {
 		super(props);
 		console.log(this.props);
@@ -39,6 +39,15 @@ class FlickrSet extends React.Component {
 		// this does not work when navigating between tabs
 
 
+	}
+
+
+	decrement() {
+		this.props.dispatch({ type: DECREMENT });
+	}
+
+	increment() {
+		this.props.dispatch({ type: INCREMENT });
 	}
 
 
@@ -116,6 +125,17 @@ class FlickrSet extends React.Component {
 
 	}
 
+
 }
 
-export default FlickrSet;
+
+// Add this function:
+function mapStateToProps(state) {
+	return {
+		count: state? state.count : null
+	};
+}
+//export default FlickrSet;
+
+// this breaks with state not found
+export default connect(mapStateToProps)(FlickrSet);
