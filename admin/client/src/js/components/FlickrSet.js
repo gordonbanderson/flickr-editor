@@ -6,7 +6,7 @@ import {HttpLink} from 'apollo-link-http';
 import gql from "graphql-tag";
 import FlickrPhoto from "./FlickrPhoto";
 import '../../css/flickrreact.scss';
-
+import FlickrPhotoPreview from "./FlickrPhotoPreview";
 
 
 const cache = new InMemoryCache();
@@ -19,8 +19,10 @@ const client = new ApolloClient({
 	link
 });
 
-class FlickrSet extends React.Component {
 
+
+
+class FlickrSet extends React.Component {
 
 	constructor(props) {
 		super(props);
@@ -43,9 +45,9 @@ class FlickrSet extends React.Component {
 	render() {
 		return (
 			<div className="visibility flickrSet">
-				<h1> {this.props.Title}</h1>
 				{this.state.photos}
 			</div>
+
 		);
 	}
 
@@ -66,7 +68,7 @@ class FlickrSet extends React.Component {
 					ID
 					Title
 					FlickrID
-					FlickrPhotos {
+					FlickrPhotos(limit: 100) {
 					  edges {
 						node {
 						  ID
