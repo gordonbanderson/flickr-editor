@@ -9,10 +9,18 @@ import FlickrPhotoPreview from "./FlickrPhotoPreview";
 import {createStore} from "redux";
 
 
-function reducer(state, action) {
-	console.log('reducer', state, action);
-	return state;
-}
+const reducer = (state, action) => {
+	state === undefined ? (state = { count: 0 }) : null; //Definition for beginning state value and its structure
+
+	switch (action.type) {
+		case "INCREMENT":
+			return Object.assign({}, state, { count: state.count + 1 }); //Using non-mutating method
+		case "DECREMENT":
+			return Object.assign({}, state, { count: state.count - 1 });
+		default:
+			return state;
+	}
+};
 
 const store = createStore(reducer);
 

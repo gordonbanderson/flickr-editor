@@ -130,11 +130,12 @@ class FlickrSet extends React.Component {
 
 
 // Add this function:
-function mapStateToProps(state) {
+
+const mapStateToProps = (state) => {
 	return {
 		count: state? state.count : null
-	};
-}
+	};};
+
 //export default FlickrSet;
 
 // this breaks with state not found
