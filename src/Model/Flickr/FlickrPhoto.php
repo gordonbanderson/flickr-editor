@@ -196,7 +196,9 @@ class FlickrPhoto extends DataObject
 
         // A hash that relates to the visual nature of the image, an attempt to automate the
         // identificationi of sequences of images
-        'PerceptiveHash' => 'Varchar(64)'
+        'PerceptiveHash' => 'Varchar(64)',
+
+        'Visible' => 'Boolean'
 
 
         //TODO - place id
