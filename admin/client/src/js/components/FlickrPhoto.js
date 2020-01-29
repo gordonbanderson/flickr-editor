@@ -1,16 +1,16 @@
-import ReactDOM from 'react-dom';
 import React from 'react';
-
-import styles from '../../css/components/flickrphoto.module.scss';
 
 
 class FlickrPhoto extends React.Component {
 
+	handleClick(ssID) {
+		console.log('Click happened ', ssID);
+	}
 
 
 	render() {
 		return (
-			<div className="flickrPhoto">
+			<div className="flickrPhoto" key={this.props.ID} onClick={() => this.handleClick(this.props.ID)}>
 				<img src={this.props.ThumbnailURL} title={this.props.Title}/>
 			</div>
 		);

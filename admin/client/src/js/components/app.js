@@ -1,14 +1,13 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-
 //import FlickrPhoto from './FlickrPhoto';
 import FlickrSet from './FlickrSet';
-import Welcome from './Welcome';
 import {Provider} from "react-redux";
 import FlickrPhotoPreview from "./FlickrPhotoPreview";
 import thunk from 'redux-thunk';
-import { createStore, applyMiddleware } from 'redux';
-
+import {applyMiddleware, createStore} from 'redux';
+import {ApolloProvider} from '@apollo/react-hooks';
+import {client} from "./transport";
 
 const reducer = (state, action) => {
 	state === undefined ? (state = { count: 0 }) : null; //Definition for beginning state value and its structure
@@ -23,6 +22,7 @@ const reducer = (state, action) => {
 	}
 };
 
+
 const store = createStore(reducer, applyMiddleware(thunk));
 
 
@@ -33,10 +33,12 @@ console.log('SET ID', setID);
 
 // this provides for a store, see https://daveceddia.com/redux-tutorial/
 const App = () => (
+	<ApolloProvider client={client}>
 	<Provider store={store}>
 		<FlickrSet ID={setID} />
 		<FlickrPhotoPreview />
 	</Provider>
+	</ApolloProvider>
 );
 
 ReactDOM.render(<App />, document.getElementById('reactTest'));

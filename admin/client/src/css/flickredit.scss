@@ -140,7 +140,7 @@ Theme, not edit specific - move later
 
 // ---------------- REACT RELATED -----------------
 div.visibility {
-	width: 35%;
+	width: 450px;
 }
 
 div.visibility .flickrPhoto {
@@ -151,6 +151,10 @@ div.visibility .flickrPhoto {
 	border-right: solid $dark-border-color $border-width;
 	margin: 2px;
 	@include box_shadow(1);
+
+	img {
+		height: 63px;
+	}
 
 }
 
