@@ -39,6 +39,7 @@ mix.webpackConfig({
 	output: {
 		jsonpFunction: 'jsonpFunction'
 	},
+
 	target: "web",
 	module: {
 		rules: [
@@ -64,18 +65,25 @@ mix.webpackConfig({
 });
 
 mix.sass('client/src/css/flickr.scss', 'dist/client/css')
-
 	.sass('admin/client/src/css/flickredit.scss', 'dist/admin/client/css')
+	.sass('admin/client/src/css/flickrreact.scss', 'dist/admin/client/css')
 
 	.js('admin/client/src/js/flickredit.js', 'dist/admin/client/js')
-
 	.react('admin/client/src/js/components/app.js', 'dist/admin/client/js')
 
 	.sourceMaps()
 
-	//.extract(['axios'], `vendor.js`)
+	//.extract(['apollo-boost'], `vendor.js`)
 
 /*
+    "apollo-cache-inmemory": "^1.2.1",
+    "apollo-client": "^2.3.1",
+    "apollo-link": "^1.2.2",
+    "apollo-link-batch-http": "^1.2.1",
+    "apollo-link-error": "^1.0.9",
+    "apollo-link-http": "^1.5.4",
+    "apollo-link-state": "^0.4.1",
+
 	.copyFile('admin/client/src/image/spinner.gif', 'dist/admin/client/img')
 */
 
