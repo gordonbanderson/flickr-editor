@@ -24,7 +24,8 @@ class FlickrPhotoTypeCreator extends TypeCreator
             'ThumbnailHeight' => ['type' => Type::int()],
             'ThumbnailURL' => ['type' => Type::string()],
             'LargeURL' => ['type' => Type::string()],
-            'Visible' => ['type' => Type::boolean()]
+            'Visible' => ['type' => Type::boolean()],
+            'Orientation' => ['type' => Type::int()]
         ];
     }
 }
