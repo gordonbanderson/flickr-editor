@@ -3,9 +3,7 @@
 	<div id="react-visible-image-selector">
 		$FlickrSet.Title
 		<div id="flickrVisibleWidget" data-id="$FlickrSet.ID">
-			WIDGET HERE
 			<FlickrSet ID="$FlickrSet.ID"/>
-			<Welcome name="Sara"/>
 		</div>
 	</div>
 
