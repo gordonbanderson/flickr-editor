@@ -1,23 +1,23 @@
 import React from 'react';
+import gql from "graphql-tag";
+import {useQuery} from "@apollo/react-hooks";
 
-class FlickrPhotoPreview extends React.Component {
+const GET_PREVIEW_URL = gql`  query GetPreviewURL {    previewURL orientation @client  }`;
 
-	constructor(props) {
-		super(props);
-		console.log(this.props);
-		this.state = {photo: null};
-	}
+const FlickrPhotoPreview = () => {
+	const { loading, error, data } = useQuery(GET_PREVIEW_URL);
 
+	if (loading) return <p>Loading...</p>;
+	if (error) return <p>Error :(</p>;
+	if (!data) return <p>Not found</p>
 
+	var cn='previewFlickrImage orientation'+data.orientation;
 
-	render() {
-		return (
-			<div className="flickrPhotoPreview">
-				Preview ++++++!
-				title = 'test'
-			</div>
-		);
-	}
+	return (
+		<img className={cn} src={data.previewURL}/>
+	)
 }
 
 export default FlickrPhotoPreview;
+
+

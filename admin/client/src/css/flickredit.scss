@@ -8,6 +8,8 @@ $border-width: 2px;
 
 $vspacing: 2px;
 
+$previewSpacing: 20px;
+
 .centred {
 	margin-left: auto;
 	margin-right: auto;
@@ -140,8 +142,9 @@ Theme, not edit specific - move later
 
 // ---------------- REACT RELATED -----------------
 div.visibility {
-	width: 450px;
+	width: 38%;
 }
+
 
 div.visibility .flickrPhoto {
 	float: left;
@@ -160,6 +163,26 @@ div.visibility .flickrPhoto {
 
 .flickrPhoto {
 	//padding: 100px;
+}
+
+
+
+img.previewFlickrImage {
+	position: fixed;
+	top: 4*$previewSpacing;
+	right: $previewSpacing;
+
+	width: 55%;
+	border-left: solid $light-border-color $border-width;
+	border-top: solid $light-border-color $border-width;
+	border-bottom: solid $dark-border-color $border-width;
+	border-right: solid $dark-border-color $border-width;
+	@include box_shadow(4);
+
+	&.orientation90 {
+		width: 35%;
+	}
+
 }
 
 

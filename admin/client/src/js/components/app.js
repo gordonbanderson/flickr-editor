@@ -1,8 +1,6 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
-//import FlickrPhoto from './FlickrPhoto';
 import FlickrSet from './FlickrSet';
-import {Provider} from "react-redux";
 import FlickrPhotoPreview from "./FlickrPhotoPreview";
 import thunk from 'redux-thunk';
 import {applyMiddleware, createStore} from 'redux';
@@ -34,10 +32,8 @@ console.log('SET ID', setID);
 // this provides for a store, see https://daveceddia.com/redux-tutorial/
 const App = () => (
 	<ApolloProvider client={client}>
-	<Provider store={store}>
 		<FlickrSet ID={setID} />
 		<FlickrPhotoPreview />
-	</Provider>
 	</ApolloProvider>
 );
 

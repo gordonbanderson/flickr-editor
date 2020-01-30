@@ -1,11 +1,10 @@
 import React from "react";
 import {useQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag";
-import FlickrPhoto from "./FlickrPhoto";
+import FlickrPhotoApollo from "./functionComponents/FlickrPhotoApollo";
 
-const FlickrPhotos = (X) => {
-	console.log('X', X.FlickrSetID);
-	var flickrSetID = X.FlickrSetID;
+const FlickrPhotos = (params) => {
+	var flickrSetID = params.FlickrSetID;
 	const { loading, error, data } = useQuery(gql`query {
 			  readFlickrSets(ID: ${flickrSetID}) {
 				ID
@@ -18,6 +17,8 @@ const FlickrPhotos = (X) => {
 					  Title
 					  FlickrID
 					  ThumbnailURL
+					  LargeURL
+					  Orientation
 					}
 				  }
 				  pageInfo {
@@ -35,11 +36,13 @@ const FlickrPhotos = (X) => {
 	if (!data) return <p>Not found</p>
 
 	var images = data.readFlickrSets[0].FlickrPhotos.edges;
-	console.log('IMAGES', images);
+
+	console.log(images);
 
 	return (<div>
 		{images.map(photo => (
-				<FlickrPhoto key={photo.node.ID} ID={photo.node.ID} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
+				<FlickrPhotoApollo key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
+								   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
 		))
 		}
 		</div>
