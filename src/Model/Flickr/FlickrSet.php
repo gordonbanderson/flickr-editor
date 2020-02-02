@@ -1,4 +1,5 @@
 <?php
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Assets\Folder;
@@ -96,8 +97,10 @@ class FlickrSet extends DataObject
 
     public function getCMSFields()
     {
+        //dist/admin/client/js/thirdpartyvendor.js
+        //Requirements::javascript('weboftalent/flickr:dist/admin/client/js/thirdpartyvendor.js');
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
-        Requirements::css( 'weboftalent/flickr:dist/admin/client/css/flickredit.css');
+        Requirements::css('weboftalent/flickr:dist/admin/client/css/flickredit.css');
 
         $fields = new FieldList();
 
@@ -109,24 +112,21 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab('Root.Main', new TextField('ImageFooter', 'Text to be added to each image in this album when saving'));
         $fields->addFieldToTab('Root.Main', new CheckboxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
 
+
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'Title', 'Description' ]);
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
+
+        // @todo Make page size configurable
         $gridConfig->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
-
-
         $gridField = new GridField("FlickrPhotos", "List of Photos:", $this->FlickrPhotos(), $gridConfig);
-
-//        echo $this->FlickrPhotos()->count();
-//        die;
-
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
-        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'Title', 'Description' ]);
+        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
         $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
-        $bucketsByDate =  $this->FlickrBucketsByDate();
+        $bucketsByDate = $this->FlickrBucketsByDate();
         if ($bucketsByDate->count() > 0) {
             $gridField2 = new GridField("FlickrBuckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
@@ -143,7 +143,10 @@ class FlickrSet extends DataObject
         // $fields->addFieldToTab( 'Root.Buckets', $bucketTimeField );
 
         $lfImage = new LiteralField('BucketEdit', $html);
-        $fields->addFieldToTab('Root.Buckets', $lfImage);
+
+        // @todo This is loading all the thumbnails, disable temporarily
+         //$fields->addFieldToTab('Root.Buckets', $lfImage);
+
 
         $templateData = new ArrayData([
             'FlickrSet' => $this,
@@ -152,7 +155,6 @@ class FlickrSet extends DataObject
         $html = $forTemplate->renderWith('Includes/VisibleImageSelector', $templateData);
         $lfImage = new LiteralField('VisibleImagesField', $html);
         $fields->addFieldToTab('Root.Visible', $lfImage);
-
 
 
         $this->extend('updateCMSFields', $fields);
@@ -165,6 +167,8 @@ class FlickrSet extends DataObject
         $htmlBatch .= '<input type="button" id="batchUpdatePhotographs" value="Batch Update"></input>';
         $lf = new LiteralField('BatchUpdate', $htmlBatch);
         $fields->addFieldToTab('Root.Batch', $lf);
+
+
         return $fields;
     }
 
@@ -173,7 +177,6 @@ class FlickrSet extends DataObject
     {
         return $this->FlickrPhotos()->filter(['Visible' => true]);
     }
-
 
 
     /*
@@ -210,9 +213,9 @@ class FlickrSet extends DataObject
         */
 
         $buckets = FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
-    innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
-    innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')->
-    sort('TakenAt');
+        innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
+        innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')->
+        sort('TakenAt');
 
 
         $result = new ArrayList();
@@ -224,7 +227,6 @@ class FlickrSet extends DataObject
         return $result;
 
     }
-
 
 
     /*
@@ -304,18 +306,17 @@ class FlickrSet extends DataObject
     }
 
 
-
     public function writeToFlickr()
     {
         $siteConfig = SiteConfig::current_site_config();
-        $suffix = $this->ImageFooter ."\n\n".$siteConfig->ImageFooter;
+        $suffix = $this->ImageFooter . "\n\n" . $siteConfig->ImageFooter;
         $imagesToUpdate = $this->FlickrPhotos()->filter(['IsDirty' => 1]);
         $ctr = 1;
         $amount = $imagesToUpdate->count();
 
         /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $fp */
         foreach ($imagesToUpdate as $fp) {
-            error_log($ctr . '/' . $amount .' [' . $fp->FlickrID . ']  - UPDATING:'.$fp->Title);
+            error_log($ctr . '/' . $amount . ' [' . $fp->FlickrID . ']  - UPDATING:' . $fp->Title);
             $fp->writeToFlickr($suffix);
             $ctr++;
         }
