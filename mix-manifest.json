@@ -1,7 +1,9 @@
 {
     "/dist/admin/client/js/app.js": "/dist/admin/client/js/app.js",
     "/dist/admin/client/css/flickrreact.css": "/dist/admin/client/css/flickrreact.css",
+    "/dist/admin/client/js/app.js.map": "/dist/admin/client/js/app.js.map",
     "/dist/admin/client/js/flickredit.js": "/dist/admin/client/js/flickredit.js",
     "/dist/client/css/flickr.css": "/dist/client/css/flickr.css",
-    "/dist/admin/client/css/flickredit.css": "/dist/admin/client/css/flickredit.css"
+    "/dist/admin/client/css/flickredit.css": "/dist/admin/client/css/flickredit.css",
+    "/dist/admin/client/js/flickredit.js.map": "/dist/admin/client/js/flickredit.js.map"
 }
