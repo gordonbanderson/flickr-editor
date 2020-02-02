@@ -150,9 +150,4 @@ class FlickrSetPage extends \Page
         $this->Dirty = true;
     }
 
-
-    public function BasicMap()
-    {
-        return $this->FlickrSetForPage()->BasicMap();
-    }
 }
