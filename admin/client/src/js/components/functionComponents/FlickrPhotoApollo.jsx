@@ -36,14 +36,25 @@ export default function FlickrPhotoApollo(props) {
 
 		<div className={cn} key={props.ID}
 			 onClick={() => {
-				 client.writeData({ data: { ID: props.ID, Title: props.Title, previewURL: props.LargeURL, orientation: props.Orientation } });
+				 client.writeData({
+					 data: {
+						 ID: props.ID,
+						 Title: props.Title,
+						 previewURL: props.LargeURL,
+						 orientation: props.Orientation
+					 }
+				 });
 				 var values = {ID: props.ID};
 				 console.log('Calling mutate?');
 
-				 onToggleVisibility({variables: {
-				 	ID: props.ID
-					 }})
-			 }}
+				 onToggleVisibility({
+					 variables: {
+						 ID: props.ID
+					 }
+				 })
+
+			 }
+			 }
 		>
 			<img src={props.ThumbnailURL} title={props.Title}/>
 		</div>
