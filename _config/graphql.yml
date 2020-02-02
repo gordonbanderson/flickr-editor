@@ -15,3 +15,4 @@ SilverStripe\GraphQL\Manager:
         flickrset:   'Suilven\Flickr\GraphQL\Type\FlickrSetTypeCreator'
       mutations:
         toggleVisibility: 'Suilven\Flickr\GraphQL\Mutation\FlickrPhotoVisibilityMutationCreator'
+        changeMainImage: 'Suilven\Flickr\GraphQL\Mutation\FlickrSetMainImageMutationCreator'
