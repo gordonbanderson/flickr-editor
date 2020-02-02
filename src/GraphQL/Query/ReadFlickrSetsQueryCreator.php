@@ -46,6 +46,8 @@ class ReadFlickrSetsQueryCreator extends QueryCreator implements OperationResolv
             $sets = $sets->filter('ID', $args['ID']);
         }
 
+        error_log('ARGS: '. print_r($args, 1));
+
         return $sets;
     }
 }

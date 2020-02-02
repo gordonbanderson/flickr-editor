@@ -6,6 +6,8 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\Pagination\Connection;
 use SilverStripe\GraphQL\TypeCreator;
+use SilverStripe\Security\Security;
+use SilverStripe\Security\SecurityToken;
 
 class FlickrSetTypeCreator extends TypeCreator
 {
@@ -35,7 +37,7 @@ class FlickrSetTypeCreator extends TypeCreator
                 'args' => $photosConnection->args(),
                 'resolve' => function($object, array $args, $context, ResolveInfo $info) use ($photosConnection) {
                     return $photosConnection->resolveList(
-                        $object->FlickrPhotos(),
+                        $object->FlickrPhotos()->sort('TakenAt'),
                         $args,
                         $context
                     );

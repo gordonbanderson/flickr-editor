@@ -19,6 +19,7 @@ const FlickrPhotos = (params) => {
 					  ThumbnailURL
 					  LargeURL
 					  Orientation
+					  Visible
 					}
 				  }
 				  pageInfo {
@@ -41,7 +42,7 @@ const FlickrPhotos = (params) => {
 
 	return (<div>
 		{images.map(photo => (
-				<FlickrPhotoApollo key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
+				<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
 								   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
 		))
 		}

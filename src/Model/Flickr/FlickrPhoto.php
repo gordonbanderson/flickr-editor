@@ -247,18 +247,11 @@ o	original image, either a jpg, gif or png, depending on source format
     private static $summary_fields = array(
         'Thumbnail' => 'Thumbnail',
         'Title' => 'Title',
- //       'TakenAt' => 'TakenAt',
- //       'HasGeoEng' => 'Geolocated?'
+        'Visible' => 'Visible'
     );
 
 
-    private static $sphinx = array(
-        "search_fields" => array( "Title", "Description", 'FocalLength35mm', 'Aperture', 'ISO', 'ShutterSpeed' ),
-        "filter_fields" => array(),
-        "index_filter" => '"ID" != 0',
-        "sort_fields" => array( "Title" )
-
-    );
+    private static $default_sort = 'TakenAt';
 
     // -- helper methods to ensure that URLs are of the form //path/to/image so that http and https work with console warnings
     public function ProtocolAgnosticLargeURL()
@@ -366,8 +359,6 @@ o	original image, either a jpg, gif or png, depending on source format
         // @todo Figure out how to get the ID of set, other than URL hacking
         $flickrSetID = Controller::curr()->request->param('ID');
 
-        $fields = parent::getCMSFields();
-
         $fields = new FieldList();
 
 
@@ -386,6 +377,7 @@ o	original image, either a jpg, gif or png, depending on source format
         $fields->addFieldToTab('Root.Main', $lfImage);
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
         $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
+        $fields->addFieldToTab('Root.Main', new CheckboxField('Visible', 'Visible?'));
 
         // only show a map for editing if no sets have geolock on them
         $lockgeo = false;

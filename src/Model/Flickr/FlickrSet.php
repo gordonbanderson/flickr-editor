@@ -17,6 +17,7 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\Requirements;
@@ -145,7 +146,8 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab('Root.Buckets', $lfImage);
 
         $templateData = new ArrayData([
-            'FlickrSet' => $this
+            'FlickrSet' => $this,
+            'SecurityToken' => SecurityToken::inst()->getValue()
         ]);
         $html = $forTemplate->renderWith('Includes/VisibleImageSelector', $templateData);
         $lfImage = new LiteralField('VisibleImagesField', $html);

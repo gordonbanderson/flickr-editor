@@ -4,7 +4,11 @@ import {ApolloClient} from "apollo-client";
 import { resolvers, typeDefs } from "./resolvers";
 const cache = new InMemoryCache();
 const link = new HttpLink({
-	uri: 'http://localhost/admin/flickr/graphql'
+	uri: 'http://localhost/admin/flickr/graphql',
+	headers: {
+		'X-CSRF-TOKEN': document.getElementById('flickrVisibleWidget') .
+				getAttribute('data-security-token')
+	}
 });
 
 export const client = new ApolloClient({

@@ -166,7 +166,7 @@ div.visibility .flickrPhoto {
 }
 
 
-
+// react related
 img.previewFlickrImage {
 	position: fixed;
 	top: 4*$previewSpacing;
@@ -180,9 +180,13 @@ img.previewFlickrImage {
 	@include box_shadow(4);
 
 	&.orientation90 {
-		width: 35%;
+		width: 25%;
 	}
 
+}
+
+.visible.flickrPhoto img {
+	border: solid red 2px;
 }
 
 

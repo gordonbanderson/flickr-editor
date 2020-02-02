@@ -5,7 +5,6 @@ export const typeDefs = gql`
     previewURL: String!
     orientation: Int!
   }
-
 `;
 
 export const resolvers = {};
