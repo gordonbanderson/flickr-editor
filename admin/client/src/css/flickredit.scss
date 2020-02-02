@@ -185,6 +185,13 @@ img.previewFlickrImage {
 
 }
 
+
+#changeMainPictureButton {
+	position: fixed;
+	top: 0px;
+	right: 0px;
+}
+
 .visible.flickrPhoto img {
 	border: solid red 2px;
 }

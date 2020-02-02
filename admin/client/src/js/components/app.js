@@ -30,7 +30,7 @@ console.log('SET ID', setID);
 const App = () => (
 	<ApolloProvider client={client}>
 		<FlickrSet ID={setID} />
-		<FlickrPhotoPreview />
+		<FlickrPhotoPreview FlickrSetID={setID}/>
 	</ApolloProvider>
 );
 

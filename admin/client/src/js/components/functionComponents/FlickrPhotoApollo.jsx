@@ -44,6 +44,7 @@ export default function FlickrPhotoApollo(props) {
 						 orientation: props.Orientation
 					 }
 				 });
+
 				 var values = {ID: props.ID};
 				 console.log('Calling mutate?');
 
