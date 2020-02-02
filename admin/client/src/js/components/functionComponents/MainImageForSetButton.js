@@ -5,7 +5,7 @@ import gql from "graphql-tag";
 export default function MainImageForSetButton(props) {
 	const client = useApolloClient();
 	const CHANGE_MAIN_IMAGE_QUERY = gql`
-		mutation changeMainImageMutation($ID: Int!, $FlickPhotoID: Int!) {
+		mutation changeMainImageMutation($ID: Int!, $FlickrPhotoID: Int!) {
   			changeMainImage(ID: $ID, FlickrPhotoID: $FlickrPhotoID) {
     			ID
     			Title
