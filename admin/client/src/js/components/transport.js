@@ -2,7 +2,10 @@ import {InMemoryCache} from "apollo-cache-inmemory";
 import {HttpLink} from "apollo-link-http";
 import {ApolloClient} from "apollo-client";
 import { resolvers, typeDefs } from "./resolvers";
-const cache = new InMemoryCache();
+const cache = new InMemoryCache({
+	dataIdFromObject: o => o.ID
+});
+
 const link = new HttpLink({
 	uri: 'http://localhost/admin/flickr/graphql',
 	headers: {
