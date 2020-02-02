@@ -5,7 +5,7 @@ import FlickrPhotoApollo from "./functionComponents/FlickrPhotoApollo";
 
 const FlickrPhotos = (params) => {
 	var flickrSetID = params.FlickrSetID;
-	const { loading, error, data } = useQuery(gql`query {
+	const PHOTO_QUERY = gql`query PhotoFeed{
 			  readFlickrSets(ID: ${flickrSetID}) {
 				ID
 				Title
@@ -30,7 +30,8 @@ const FlickrPhotos = (params) => {
 				}
 			  }
 			  }
-				`);
+				`;
+	const { loading, error, data } = useQuery(PHOTO_QUERY);
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error :(</p>;
