@@ -524,22 +524,6 @@ class FlickrController extends \PageController implements PermissionProvider
     }
 
 
-    /**
-     * @throws \SilverStripe\ORM\ValidationException
-     */
-    public function changeFlickrSetMainImage()
-    {
-        // these are broken at the FlickrPhoto getCMSFields stage
-        $flickrsetID = $this->request->param('ID');
-        $flickrphotoID = $this->request->param('OtherID');
-
-        $flickrset = FlickrSet::get()->filter('ID', $flickrsetID)->first();
-        $flickrset->PrimaryFlickrPhotoID = $flickrphotoID;
-        $flickrset->write();
-    }
-
-
-
     public function splitMoblog()
     {
 
