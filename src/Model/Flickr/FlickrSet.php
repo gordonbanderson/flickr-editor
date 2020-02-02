@@ -169,6 +169,12 @@ class FlickrSet extends DataObject
     }
 
 
+    public function VisibleFlickrPhotos()
+    {
+        return $this->FlickrPhotos()->filter(['Visible' => true]);
+    }
+
+
 
     /*
     Mark image as dirty upon a save
