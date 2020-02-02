@@ -30,7 +30,7 @@ class FlickrSetMainImageMutationCreator extends MutationCreator implements Opera
     public function args()
     {
         return [
-            'ID' => ['type' => Type::nonNull(Type::int())],
+            'FlickrSetID' => ['type' => Type::nonNull(Type::int())],
             'FlickrPhotoID' => ['type' => Type::nonNull(Type::int())],
         ];
     }
@@ -42,8 +42,8 @@ class FlickrSetMainImageMutationCreator extends MutationCreator implements Opera
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
         // ID is the FlickrSet SilverStripe ID
-        if (!isset($args['ID'])) {
-            throw new \InvalidArgumentException('SERVER ID parameter is required');
+        if (!isset($args['FlickrSetID'])) {
+            throw new \InvalidArgumentException('SERVER FlickrSetID parameter is required');
         }
 
         if (!isset($args['FlickrPhotoID'])) {
@@ -52,7 +52,7 @@ class FlickrSetMainImageMutationCreator extends MutationCreator implements Opera
 
 
 
-        $flickrset = DataObject::get_by_id(FlickrSet::class, $args['ID']);
+        $flickrset = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
         $flickrset->PrimaryFlickrPhotoID = $args['FlickrPhotoID'];
         $flickrset->write();
         return $flickrset;
