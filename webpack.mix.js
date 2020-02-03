@@ -27,6 +27,19 @@ const PATHS = {
 const externals = externalJS(ENV, PATHS);
 delete externals.reactstrap;
 
+// drop console.log in prod
+if (mix.inProduction()) {
+	mix.options({
+		terser: {
+			terserOptions: {
+				compress: {
+					drop_console: true
+				}
+			}
+		}
+	});
+}
+
 
 mix.webpackConfig({
 	node: {
@@ -73,16 +86,23 @@ mix.sass('client/src/css/flickr.scss', 'dist/client/css')
 
 	.sourceMaps()
 
-	//.extract(['apollo-boost'], `vendor.js`)
-
+// this renders the app not running
+	/*
+	.extract(['apollo-boost', 'apollo-cache', 'apollo-cache-inmemory', 'apollo-client',
+		'apollo-link', 'apollo-link-error', 'apollo-link-http', 'apollo-link-http-common',
+		'apollo-utilities' ], `dist/admin/client/js/thirdpartyvendor.js`)
+*/
 /*
-    "apollo-cache-inmemory": "^1.2.1",
-    "apollo-client": "^2.3.1",
-    "apollo-link": "^1.2.2",
-    "apollo-link-batch-http": "^1.2.1",
-    "apollo-link-error": "^1.0.9",
-    "apollo-link-http": "^1.5.4",
-    "apollo-link-state": "^0.4.1",
+apollo-boost
+apollo-cache
+apollo-cache-inmemory
+apollo-client
+apollo-link
+apollo-link-error
+apollo-link-http
+apollo-link-http-common
+apollo-utilities
+
 
 	.copyFile('admin/client/src/image/spinner.gif', 'dist/admin/client/img')
 */
