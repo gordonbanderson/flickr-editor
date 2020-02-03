@@ -3,14 +3,15 @@ import {useQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag";
 import FlickrPhotoApollo from "./functionComponents/FlickrPhotoApollo";
 
-const FlickrPhotos = (params) => {
-	var flickrSetID = params.FlickrSetID;
-	const PHOTO_QUERY = gql`query PhotoFeed($FlickrSetID: Int!) {
+const FlickrPhotos = (props) => {
+	console.log('FP PROPS', props);
+	var flickrSetID = props.FlickrSetID;
+	const PHOTO_QUERY = gql`query PhotoFeed($FlickrSetID: Int!, $limit: Int!, $offset: Int!) {
 			  readFlickrSets(ID: $FlickrSetID) {
 				ID
 				Title
 				FlickrID
-				FlickrPhotos(limit: 100) {
+				FlickrPhotos(limit: $limit, offset: $offset) {
 				  edges {
 					node {
 					  ID
@@ -33,7 +34,9 @@ const FlickrPhotos = (params) => {
 				`;
 	const { loading, error, data } = useQuery(PHOTO_QUERY, {
 		variables: {
-			FlickrSetID: params.FlickrSetID
+			FlickrSetID: props.FlickrSetID,
+			limit: props.Limit,
+			offset: props.Offset
 		}
 	});
 
@@ -77,15 +80,23 @@ still not sussed out pagination
 */
 
 	var images = data.readFlickrSets[0].FlickrPhotos.edges;
+    var pageInfo = data.readFlickrSets[0].FlickrPhotos.pageInfo;
+    console.log('Images', images);
+	console.log('Page info', pageInfo);
 
-	console.log(images);
-
-	return (<div>
-		{images.map(photo => (
-				<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
-								   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
-		))
-		}
+	return (
+		<div>
+			<div>
+			{images.map(photo => (
+					<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
+									   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
+			))
+			}
+			</div>
+			<div className="visiblePictureButtons">
+				<button className="primary" onClick={props.onPrevPage}>Prev</button>
+				<button className="primary" onClick={props.onNextPage}>Next</button>
+			</div>
 		</div>
 			);
 

@@ -1,22 +1,38 @@
 import React from 'react';
 import '../../css/flickrreact.scss';
 
-import FlickrPhotosListQuery from "./FlickrPhotosListQuery";
+import FlickrPhotos from "./FlickrPhotos";
 
 
 class FlickrSet extends React.Component {
-	state = { count: 0 };
+	state = { limit:10, offset: 0 };
+
 	constructor(props) {
 		super(props);
 		console.log(this.props);
-		this.state = {};
+		this.prevPage = this.prevPage.bind(this);
+		this.nextPage = this.nextPage.bind(this);
+	}
+
+	nextPage(e) {
+		this.setState({
+			offset: this.state.offset+this.state.limit
+		});
+	}
+
+	prevPage(e) {
+		this.setState({
+			offset: this.state.offset-this.state.limit
+		});
 	}
 
 	render() {
 		console.log('Set id', this.props.ID);
 		return (
 			<div className="visibility flickrSet">
-				<FlickrPhotosListQuery FlickrSetID={this.props.ID}/>
+				<FlickrPhotos FlickrSetID={this.props.ID} Limit={this.state.limit} Offset={this.state.offset}
+							  onNextPage={this.nextPage} onPrevPage={this.prevPage}/>
+
 			</div>
 
 		);
