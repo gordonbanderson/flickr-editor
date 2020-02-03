@@ -21,7 +21,7 @@ const FlickrPhotoPreview = (props) => {
 	var cn='previewFlickrImage orientation'+data.orientation;
 
 	return (
-		<div>
+		<div className="col col-8">
 			<div>
 				<div> <img className={cn} src={data.previewURL} title={data.Title}/></div>
 				<MainImageForSetButton FlickrSetID={props.FlickrSetID} FlickrPhotoID={data.ID}/>

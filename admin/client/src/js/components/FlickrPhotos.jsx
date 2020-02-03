@@ -44,60 +44,37 @@ const FlickrPhotos = (props) => {
 	if (error) return <p>Error :(</p>;
 	if (!data) return <p>Not found</p>
 
-/*
-still not sussed out pagination
-
-	const FeedData = ({ match }) => (
-		<Query
-			query={PHOTO_QUERY}
-			variables={{
-				FlickrSetID: props.FlickrSetID
-			}}
-			fetchPolicy="cache-and-network"
-		>
-			{({ data, fetchMore }) => (
-				<Feed
-					entries={data.feed || []}
-					onLoadMore={() =>
-						fetchMore({
-							variables: {
-								offset: data.feed.length,
-								FlickrSetID: props.FlickrSetID
-							},
-							updateQuery: (prev, { fetchMoreResult }) => {
-								if (!fetchMoreResult) return prev;
-								return Object.assign({}, prev, {
-									feed: [...prev.feed, ...fetchMoreResult.feed]
-								});
-							}
-						})
-					}
-				/>
-			)}
-		</Query>
-	);
-
-*/
 
 	var images = data.readFlickrSets[0].FlickrPhotos.edges;
     var pageInfo = data.readFlickrSets[0].FlickrPhotos.pageInfo;
     console.log('Images', images);
 	console.log('Page info', pageInfo);
 
+	var pageNumber = 1 + props.Offset / props.Limit;
+	var pages = pageInfo.totalCount / props.Limit;
+	var pageDescription = pageNumber + ' / ' + Math.ceil(pages);
+
 	return (
-		<div>
-			<div>
-			{images.map(photo => (
-					<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
-									   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
-			))
-			}
+			<div className="col col-4 flickrSet visibility">
+				<div className="row">
+					<div className="col col-12">
+						{images.map(photo => (
+							<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
+											   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
+						))
+						}
+					</div>
+				</div>
+
+				<div className="row">
+					<div className="col col-12 mt-8">
+						{console.log('Test in JSX', pageInfo.hasPreviousPage)}
+						<button className="btn btn-primary" disabled={!pageInfo.hasPreviousPage} onClick={props.onPrevPage}>Previous</button>
+						{pageDescription}
+						<button className="btn btn-primary ml-1" disabled={!pageInfo.hasNextPage} onClick={props.onNextPage}>Next</button>
+					</div>
+				</div>
 			</div>
-			<div className="visiblePictureButtons">
-				<button className="primary" onClick={props.onPrevPage}>Prev</button>
-				<button className="primary" onClick={props.onNextPage}>Next</button>
-			</div>
-		</div>
 			);
 
 }

@@ -29,8 +29,12 @@ console.log('SET ID', setID);
 
 const App = () => (
 	<ApolloProvider client={client}>
-		<FlickrSet ID={setID} />
-		<FlickrPhotoPreview FlickrSetID={setID}/>
+		<div className="row">
+				<FlickrSet ID={setID} />
+				<FlickrPhotoPreview FlickrSetID={setID}/>
+		</div>
+
+
 	</ApolloProvider>
 );
 

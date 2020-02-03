@@ -29,11 +29,9 @@ class FlickrSet extends React.Component {
 	render() {
 		console.log('Set id', this.props.ID);
 		return (
-			<div className="visibility flickrSet">
 				<FlickrPhotos FlickrSetID={this.props.ID} Limit={this.state.limit} Offset={this.state.offset}
 							  onNextPage={this.nextPage} onPrevPage={this.prevPage}/>
 
-			</div>
 
 		);
 	}
