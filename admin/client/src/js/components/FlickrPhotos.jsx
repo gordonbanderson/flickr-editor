@@ -5,8 +5,8 @@ import FlickrPhotoApollo from "./functionComponents/FlickrPhotoApollo";
 
 const FlickrPhotos = (params) => {
 	var flickrSetID = params.FlickrSetID;
-	const PHOTO_QUERY = gql`query PhotoFeed{
-			  readFlickrSets(ID: ${flickrSetID}) {
+	const PHOTO_QUERY = gql`query PhotoFeed($FlickrSetID: Int!) {
+			  readFlickrSets(ID: $FlickrSetID) {
 				ID
 				Title
 				FlickrID
@@ -31,18 +31,24 @@ const FlickrPhotos = (params) => {
 			  }
 			  }
 				`;
-	const { loading, error, data } = useQuery(PHOTO_QUERY);
+	const { loading, error, data } = useQuery(PHOTO_QUERY, {
+		variables: {
+			FlickrSetID: params.FlickrSetID
+		}
+	});
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>Error :(</p>;
 	if (!data) return <p>Not found</p>
 
+/*
+still not sussed out pagination
 
 	const FeedData = ({ match }) => (
 		<Query
 			query={PHOTO_QUERY}
 			variables={{
-
+				FlickrSetID: props.FlickrSetID
 			}}
 			fetchPolicy="cache-and-network"
 		>
@@ -52,7 +58,8 @@ const FlickrPhotos = (params) => {
 					onLoadMore={() =>
 						fetchMore({
 							variables: {
-								offset: data.feed.length
+								offset: data.feed.length,
+								FlickrSetID: props.FlickrSetID
 							},
 							updateQuery: (prev, { fetchMoreResult }) => {
 								if (!fetchMoreResult) return prev;
@@ -67,7 +74,7 @@ const FlickrPhotos = (params) => {
 		</Query>
 	);
 
-
+*/
 
 	var images = data.readFlickrSets[0].FlickrPhotos.edges;
 
