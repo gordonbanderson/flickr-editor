@@ -7,6 +7,7 @@ SilverStripe\GraphQL\Manager:
   schemas:
     default:
       queries:
+        photosForFlickrSet: 'Suilven\Flickr\GraphQL\Query\PhotosForFlickrSetQueryCreator'
         readFlickrSets: 'Suilven\Flickr\GraphQL\Query\ReadFlickrSetsQueryCreator'
         readFlickrPhotos: 'Suilven\Flickr\GraphQL\Query\ReadFlickrPhotosQueryCreator'
         paginatedReadFlickrPhotos: 'Suilven\Flickr\GraphQL\Query\PagedReadFlickrPhotosQueryCreator'

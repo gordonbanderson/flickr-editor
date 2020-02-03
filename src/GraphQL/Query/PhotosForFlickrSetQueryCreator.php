@@ -9,13 +9,13 @@ use SilverStripe\GraphQL\QueryCreator;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
-class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationResolver
+class PhotosForFlickrSetQueryCreator extends QueryCreator implements OperationResolver
 {
 
     public function attributes()
     {
         return [
-            'name' => 'readFlickrPhotos'
+            'name' => 'photosForFlickrSet'
         ];
     }
 
@@ -38,17 +38,13 @@ class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationReso
     {
 
         if (!isset($args['FlickrSetID'])) {
-            throw new \InvalidArgumentException('FlickrSetID parameter is required');
+            throw new \InvalidArgumentException('ID parameter is required');
         }
 
-        $photos = [];
-        if (isset($args['FlickrSetID'])) {
-            $flickrSet = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
 
-        }
+        /** @var FlickrSet $set */
+        $set = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
 
-        $photos = $flickrSet->FlickrPhotos()->sort('TakenAt');
-
-        return $photos;
+        return $set->FlickrPhotos()->sort('TakenAt');
     }
 }
