@@ -35,6 +35,17 @@ export default function FlickrPhotoApollo(props) {
 
 
 		<div className={cn} key={props.ID}
+			 onMouseEnter={() => {
+				 client.writeData({
+					 data: {
+						 ID: props.ID,
+						 Title: props.Title,
+						 previewURL: props.LargeURL,
+						 orientation: props.Orientation
+					 }
+				 });
+			 }}
+
 			 onClick={() => {
 				 client.writeData({
 					 data: {

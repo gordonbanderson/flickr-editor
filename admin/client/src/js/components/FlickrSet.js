@@ -5,7 +5,7 @@ import FlickrPhotos from "./FlickrPhotos";
 
 
 class FlickrSet extends React.Component {
-	state = { limit:10, offset: 0 };
+	state = { limit:100, offset: 0 };
 
 	constructor(props) {
 		super(props);
