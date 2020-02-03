@@ -1,6 +1,13 @@
+---
+Name: flickr-graphql-routes
+After:
+  - '#admin-graphql-routes'
+---
+
 SilverStripe\Control\Director:
   rules:
     'admin/flickr/graphql': '%$SilverStripe\GraphQL\Controller.default'
+
 
 
 SilverStripe\GraphQL\Manager:
