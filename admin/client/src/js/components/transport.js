@@ -7,7 +7,7 @@ const cache = new InMemoryCache({
 });
 
 const link = new HttpLink({
-	uri: 'http://localhost/admin/flickr/graphql',
+	uri: window.location.origin + '/admin/flickr/graphql',
 	headers: {
 		'X-CSRF-TOKEN': document.getElementById('flickrVisibleWidget') .
 				getAttribute('data-security-token')
