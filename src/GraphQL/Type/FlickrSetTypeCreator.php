@@ -37,7 +37,7 @@ class FlickrSetTypeCreator extends TypeCreator
                 'args' => $photosConnection->args(),
                 'resolve' => function($object, array $args, $context, ResolveInfo $info) use ($photosConnection) {
                     return $photosConnection->resolveList(
-                        $object->FlickrPhotos()->sort('TakenAt'),
+                        $object->FlickrPhotos()->sort('UploadUnixTimeStamp'),
                         $args,
                         $context
                     );
