@@ -36,7 +36,7 @@ export default function MainImageForSetButton(props) {
 			 }
 		>
 
-			<button className="btn action btn-primary font-icon-camera mt-1 mb-4">
+			<button className="changeMainImageButton btn action btn-primary font-icon-camera mt-1 mb-4">
 				Make this the main image {props.FlickrPhotoID}
 			</button>
 

@@ -37,6 +37,38 @@ const FlickrPhotos = (params) => {
 	if (error) return <p>Error :(</p>;
 	if (!data) return <p>Not found</p>
 
+
+	const FeedData = ({ match }) => (
+		<Query
+			query={PHOTO_QUERY}
+			variables={{
+
+			}}
+			fetchPolicy="cache-and-network"
+		>
+			{({ data, fetchMore }) => (
+				<Feed
+					entries={data.feed || []}
+					onLoadMore={() =>
+						fetchMore({
+							variables: {
+								offset: data.feed.length
+							},
+							updateQuery: (prev, { fetchMoreResult }) => {
+								if (!fetchMoreResult) return prev;
+								return Object.assign({}, prev, {
+									feed: [...prev.feed, ...fetchMoreResult.feed]
+								});
+							}
+						})
+					}
+				/>
+			)}
+		</Query>
+	);
+
+
+
 	var images = data.readFlickrSets[0].FlickrPhotos.edges;
 
 	console.log(images);

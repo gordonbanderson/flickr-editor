@@ -186,10 +186,10 @@ img.previewFlickrImage {
 }
 
 
-#changeMainPictureButton {
+.changeMainImageButton {
 	position: fixed;
-	top: 0px;
-	right: 0px;
+	top: 3*$previewSpacing;
+	right: $previewSpacing;
 }
 
 .visible.flickrPhoto img {

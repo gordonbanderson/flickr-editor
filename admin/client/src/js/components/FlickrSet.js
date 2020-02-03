@@ -1,8 +1,7 @@
 import React from 'react';
 import '../../css/flickrreact.scss';
 
-
-import FlickrPhotos from "./FlickrPhotos";
+import FlickrPhotosListQuery from "./FlickrPhotosListQuery";
 
 
 class FlickrSet extends React.Component {
@@ -11,35 +10,17 @@ class FlickrSet extends React.Component {
 		super(props);
 		console.log(this.props);
 		this.state = {};
-
-		//this.loadImages = this.loadImages.bind(this);
-
-		//console.log('About to call load images....')
-
-		//this.fetchPhotos(this.props.ID);
-
-
-		// this does not work when navigating between tabs
-
-
 	}
-
-
-
 
 	render() {
 		console.log('Set id', this.props.ID);
 		return (
 			<div className="visibility flickrSet">
-				<FlickrPhotos FlickrSetID={this.props.ID}/>
+				<FlickrPhotosListQuery FlickrSetID={this.props.ID}/>
 			</div>
 
 		);
 	}
-
-
-
-
 
 }
 
