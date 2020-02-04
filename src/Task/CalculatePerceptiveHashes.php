@@ -8,13 +8,10 @@
 
 namespace Suilven\Flickr\Task;
 
-use Jenssegers\ImageHash\ImageHash;
-use Jenssegers\ImageHash\Implementations\PerceptualHash;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
-use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
 
@@ -41,7 +38,6 @@ class CalculatePerceptiveHashes extends BuildTask
     {
         error_log('---- new image ----');
         error_log('SIZE: ' . $size);
-        $hasher = new ImageHash(new PerceptualHash(256));
         $counter = 0;
         $total = $flickrSet->FlickrPhotos()->count();
 
@@ -101,7 +97,7 @@ class CalculatePerceptiveHashes extends BuildTask
             $o = exec($hashCMD, $output);
             $splits = explode(' ', $o);
             $hash = $splits[0];
-            
+
             error_log($counter . '/' . $total . '    [' . $hash .']');
 
 
