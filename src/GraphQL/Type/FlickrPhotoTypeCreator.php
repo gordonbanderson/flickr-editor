@@ -23,10 +23,16 @@ class FlickrPhotoTypeCreator extends TypeCreator
             'ThumbnailWidth' => ['type' => Type::int()],
             'ThumbnailHeight' => ['type' => Type::int()],
             'ThumbnailURL' => ['type' => Type::string()],
+            'MediumWidth' => ['type' => Type::int()],
+            'MediumHeight' => ['type' => Type::int()],
+            'MediumURL' => ['type' => Type::string()],
+            'SmallURL' => ['type' => Type::string()],
+            'SmallURL320' => ['type' => Type::string()],
             'LargeURL' => ['type' => Type::string()],
             'Visible' => ['type' => Type::boolean()],
             'Orientation' => ['type' => Type::int()],
             'CSRFToken' => ['type' => Type::string()],
+            'TakenAt' => ['type' => Type::string()],
         ];
     }
 }
