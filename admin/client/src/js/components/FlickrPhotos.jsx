@@ -18,9 +18,11 @@ const FlickrPhotos = (props) => {
 					  Title
 					  FlickrID
 					  ThumbnailURL
+					  SmallURL
 					  LargeURL
 					  Orientation
 					  Visible
+					  TakenAt
 					}
 				  }
 				  pageInfo {
@@ -60,7 +62,9 @@ const FlickrPhotos = (props) => {
 					<div className="col col-12">
 						{images.map(photo => (
 							<FlickrPhotoApollo Visible={photo.node.Visible} key={photo.node.ID} ID={photo.node.ID} LargeURL={photo.node.LargeURL}
-											   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}/>
+											   Orientation={photo.node.Orientation} ThumbnailURL={photo.node.ThumbnailURL} Title={photo.node.Title}
+												SmallURL={photo.node.SmallURL} TakenAt={photo.node.TakenAt}
+							/>
 						))
 						}
 					</div>
@@ -68,7 +72,6 @@ const FlickrPhotos = (props) => {
 
 				<div className="row">
 					<div className="col col-12 mt-8">
-						{console.log('Test in JSX', pageInfo.hasPreviousPage)}
 						<button className="btn btn-primary" disabled={!pageInfo.hasPreviousPage} onClick={props.onPrevPage}>Previous</button>
 						{pageDescription}
 						<button className="btn btn-primary ml-1" disabled={!pageInfo.hasNextPage} onClick={props.onNextPage}>Next</button>

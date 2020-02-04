@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import MainImageForSetButton from "./functionComponents/MainImageForSetButton";
 
-const GET_PREVIEW_URL = gql`  query GetPreviewURL {    previewURL orientation ID Title @client  }`;
+const GET_PREVIEW_URL = gql`  query GetPreviewURL {    previewURL orientation ID Title TakenAt @client  }`;
 
 const FlickrPhotoPreview = (props) => {
 	// @todo Initial case needs fixed
@@ -22,9 +22,11 @@ const FlickrPhotoPreview = (props) => {
 
 	return (
 		<div className="col col-8">
-			<div>
-				<div> <img className={cn} src={data.previewURL} title={data.Title}/></div>
+			<div className="previewImageContainer text-center">
+				<div className="takenAt">{data.TakenAt}</div>
 				<MainImageForSetButton FlickrSetID={props.FlickrSetID} FlickrPhotoID={data.ID}/>
+				<div> <img className={cn} src={data.previewURL} title={data.Title}/></div>
+
 			</div>
 
 		</div>

@@ -23,8 +23,6 @@ export default function MainImageForSetButton(props) {
 
 		<div key={props.FlickrPhotoID}
 			 onClick={() => {
-				 console.log('Calling mutate?  Main set image');
-				 console.log('PROPS', props);
 				 changeSetMainImage({
 					 variables: {
 						 FlickrSetID: props.FlickrSetID,

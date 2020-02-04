@@ -156,7 +156,7 @@ div.visibility .flickrPhoto {
 	@include box_shadow(1);
 
 	img {
-		height: 63px;
+		//height: 63px;
 	}
 
 }
@@ -166,21 +166,24 @@ div.visibility .flickrPhoto {
 }
 
 
+.previewImageContainer {
+	position: fixed;
+	top: 3*$previewSpacing;
+	padding-right: $previewSpacing;
+}
+
 // react related
 img.previewFlickrImage {
-	position: fixed;
-	top: 4*$previewSpacing;
-	right: $previewSpacing;
-
-	width: 55%;
 	border-left: solid $light-border-color $border-width;
 	border-top: solid $light-border-color $border-width;
 	border-bottom: solid $dark-border-color $border-width;
 	border-right: solid $dark-border-color $border-width;
 	@include box_shadow(4);
 
+	width: 100%;
+
 	&.orientation90 {
-		width: 25%;
+		width: 50%;
 	}
 
 }
@@ -190,6 +193,18 @@ img.previewFlickrImage {
 	position: fixed;
 	top: 3*$previewSpacing;
 	right: $previewSpacing;
+
+}
+
+.takenAt {
+	position: fixed;
+	top: 3.5*$previewSpacing;
+	right: 18*$previewSpacing;
+	z-index: 100;
+	font-weight: bold;
+	color: white;
+	background: rgba(black, 0.5);
+	padding: 4px;
 }
 
 .visible.flickrPhoto img {

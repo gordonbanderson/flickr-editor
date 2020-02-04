@@ -11,6 +11,7 @@ export default function FlickrPhotoApollo(props) {
     			FlickrID
     			Title
     			ThumbnailURL
+    			SmallURL320
     			LargeURL
     			Visible
     			Orientation
@@ -41,7 +42,8 @@ export default function FlickrPhotoApollo(props) {
 						 ID: props.ID,
 						 Title: props.Title,
 						 previewURL: props.LargeURL,
-						 orientation: props.Orientation
+						 orientation: props.Orientation,
+						 TakenAt: props.TakenAt
 					 }
 				 });
 			 }}
@@ -52,12 +54,12 @@ export default function FlickrPhotoApollo(props) {
 						 ID: props.ID,
 						 Title: props.Title,
 						 previewURL: props.LargeURL,
-						 orientation: props.Orientation
+						 orientation: props.Orientation,
+						 TakenAt: props.TakenAt
 					 }
 				 });
 
 				 var values = {ID: props.ID};
-				 console.log('Calling mutate?');
 
 				 onToggleVisibility({
 					 variables: {
@@ -68,7 +70,7 @@ export default function FlickrPhotoApollo(props) {
 			 }
 			 }
 		>
-			<img src={props.ThumbnailURL} title={props.Title}/>
+			<img src={props.SmallURL} title={props.Title}/>
 		</div>
 	);
 
