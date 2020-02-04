@@ -18,14 +18,14 @@ use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
 
-class CalculatePerceptiveHashes extends BuildTask
+class CreateVideoFromPerceptiveHashes extends BuildTask
 {
 
     protected $title = 'Calculate perceptive hashes for a Flickr Set';
 
     protected $description = 'Calculate perceptive hashes and store in the database for a given Flickr set';
 
-    private static $segment = 'calculate-perceptive-hash';
+    private static $segment = 'create-video-perceptive-hash';
 
     protected $enabled = true;
 
@@ -42,16 +42,15 @@ class CalculatePerceptiveHashes extends BuildTask
         error_log('---- new image ----');
         error_log('SIZE: ' . $size);
         $hasher = new ImageHash(new PerceptualHash(256));
-        $counter = 0;
-        $total = $flickrSet->FlickrPhotos()->count();
 
         foreach ($flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp') as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
-            $counter++;
 
 
-
+            error_log('START: hash = ' . $oldHash);
+            error_log('ID: ' . $flickrPhoto->ID);
             if ($flickrPhoto->PerceptiveHash) {
+                echo '>>>>> Already calculated hash';
                 continue;
             }
             $imageURL = $flickrPhoto->SmallURL;
@@ -74,17 +73,17 @@ class CalculatePerceptiveHashes extends BuildTask
                 default:
                     // url already defaulted
             }
-            //error_log('Downloading ' . $imageURL . ' of size ' . $size);
+            error_log('Downloading ' . $imageURL . ' of size ' . $size);
             $ch = curl_init($imageURL);
 
             $filename = 'tohash.jpg';
             $complete_hash_file_path = trim($targetDir) . '/' . trim($filename);
             $complete_hash_file_path = str_replace(' ', '', $complete_hash_file_path);
 
-            //error_log('CSL: ' . $complete_hash_file_path);
+            error_log('CSL: ' . $complete_hash_file_path);
 
             // @todo This fails if public/flickr/images/FLICKR_SET_ID is missing
-            //error_log('TARGET DIR: ' . $targetDir);
+            error_log('TARGET DIR: ' . $targetDir);
             $fp = fopen($complete_hash_file_path, 'wb');
 
             curl_setopt($ch, CURLOPT_FILE, $fp);
@@ -101,9 +100,11 @@ class CalculatePerceptiveHashes extends BuildTask
             $o = exec($hashCMD, $output);
             $splits = explode(' ', $o);
             $hash = $splits[0];
-            
-            error_log($counter . '/' . $total . '    [' . $hash .']');
 
+/*
+            $hash = $hasher->hash($complete_hash_file_path);
+*/
+            error_log('Saving hash ' . $hash);
 
             $flickrPhoto->PerceptiveHash = $hash;
             $flickrPhoto->write();
@@ -111,6 +112,55 @@ class CalculatePerceptiveHashes extends BuildTask
         }
 
     }
+
+    public function findSequences($flickrSet, $srcDir, $targetDir)
+    {
+        $helper = new FlickrPerceptiveHashHelper();
+        $buckets = $helper->findSequences($flickrSet);
+
+        $html = '';
+
+        $ctr = 0;
+
+        $bucketSize = count($buckets);
+
+        error_log('BS: ' . $bucketSize);
+
+        for($j=0; $j< $bucketSize; $j++) {
+            error_log('BUCKET');
+            $bucket = $buckets[$j];
+            for ($i=0; $i<$bucketSize; $i++) {
+                $html .= "\n<img src='". $bucket[$i]['url']."'/>";
+
+                $filename = basename($bucket[$i]['url']);
+                $from = trim($srcDir) .'/' . trim($filename);
+
+                $paddedCtr = str_pad($ctr, 8, '0', STR_PAD_LEFT);
+                $to  = trim($targetDir) .'/' . $paddedCtr . '.JPG';
+                error_log($from . ' --> ' . $to);
+                copy($from, $to);
+                $rotated = $bucket[$i]['rotated'];
+                error_log('>>>> ROTATED: ' . $rotated);
+                if ($rotated) {
+                    $dimensions = '2048x1365';
+                    $cmd = ('/usr/bin/convert ' . $to .' -gravity center -background black -extent ' . $dimensions .' ' . $to);
+                    error_log('CMD:' . $cmd);
+                    exec($cmd);
+                }
+
+                $ctr++;
+            }
+
+
+            $html .= '<br/><hr/><br/>';
+        }
+
+        file_put_contents('/var/www/buckets.html', $html);
+    }
+
+
+
+
 
 
     public function run($request)
@@ -121,7 +171,7 @@ class CalculatePerceptiveHashes extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = isset($_GET['size']) ? $_GET['size'] : 'small';
+        $size = 'small';
 
         $flickrSetID = $_GET['id'];
 
@@ -136,7 +186,8 @@ class CalculatePerceptiveHashes extends BuildTask
 
         $srcDir = 'public/flickr/images/' . $flickrSetID;
 
-        $this->calculatePerceptiveHashes($flickrSet, $targetDir, $size);
+        $this->calculatePerceptiveHashes($flickrSet, $srcDir, $targetDir, $size);
+        $this->findSequences($flickrSet, $srcDir, $movieDir);
     }
 
 
