@@ -169,6 +169,16 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab('Root.Batch', $lf);
 
 
+        // unix commands
+        $forTemplate = new ArrayData([
+            'ID' => $this->FlickrID
+        ]);
+        $html = $forTemplate->renderWith('Includes/UNIXCommands');
+        $lfCommands = new LiteralField('Commands', $html);
+        $fields->addFieldToTab('Root.Commands', $lfCommands);
+
+
+
         return $fields;
     }
 
