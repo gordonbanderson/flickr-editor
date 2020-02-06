@@ -7,7 +7,7 @@
 		</div>
 	</div>
 
-	<div id="reactTest">
+	<div id="visibleImageSelectorApp">
 
 	</div>
 </div>

@@ -27,15 +27,13 @@ var securityToken = element.getAttribute('data-security-token');
 console.log(securityToken);
 console.log('SET ID', setID);
 
-const App = () => (
+const VisibleImagesApp = () => (
 	<ApolloProvider client={client}>
 		<div className="row">
 				<FlickrSet ID={setID} />
 				<FlickrPhotoPreview FlickrSetID={setID}/>
 		</div>
-
-
 	</ApolloProvider>
 );
 
-ReactDOM.render(<App />, document.getElementById('reactTest'));
+ReactDOM.render(<VisibleImagesApp />, document.getElementById('visibleImageSelectorApp'));
