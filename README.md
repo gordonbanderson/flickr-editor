@@ -1,9 +1,11 @@
 # Flickr Editor
 [![Build Status](https://travis-ci.org/gordonbanderson/flickr-editor.svg?branch=upgradess4)](https://travis-ci.org/gordonbanderson/flickr-editor)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/quality-score.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=upgradess4)
-[![Code Coverage](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/coverage.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=upgradess4)
-[![Build Status](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/build.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/build-status/master)
+[![Build Status](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/build.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/build-status/upgradess4)
+[![CircleCI](https://circleci.com/gh/gordonbanderson/flickr-editor.svg?style=svg)](https://circleci.com/gh/gordonbanderson/flickr-editor)
+
 [![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/coverage.svg?branch=upgradess4)](https://codecov.io/github/gordonbanderson/flickr-editor?branch=upgradess4)
+
 
 [![Latest Stable Version](https://poser.pugx.org/weboftalent/flickr/version)](https://packagist.org/packages/weboftalent/flickr)
 [![Latest Unstable Version](https://poser.pugx.org/weboftalent/flickr/v/unstable)](//packagist.org/packages/weboftalent/flickr)
@@ -11,21 +13,26 @@
 [![License](https://poser.pugx.org/weboftalent/flickr/license)](https://packagist.org/packages/weboftalent/flickr)
 [![Monthly Downloads](https://poser.pugx.org/weboftalent/flickr/d/monthly)](https://packagist.org/packages/weboftalent/flickr)
 [![Daily Downloads](https://poser.pugx.org/weboftalent/flickr/d/daily)](https://packagist.org/packages/weboftalent/flickr)
+[![composer.lock](https://poser.pugx.org/weboftalent/flickr/composerlock)](https://packagist.org/packages/weboftalent/flickr)
 
-[![Dependency Status](https://www.versioneye.com/php/weboftalent:flickr/badge.svg)](https://www.versioneye.com/php/weboftalent:flickr)
-[![Reference Status](https://www.versioneye.com/php/weboftalent:flickr/reference_badge.svg?style=flat)](https://www.versioneye.com/php/weboftalent:flickr/references)
+[![GitHub Code Size](https://img.shields.io/github/languages/code-size/gordonbanderson/flickr-editor)](https://github.com/gordonbanderson/flickr-editor)
+[![GitHub Repo Size](https://img.shields.io/github/repo-size/gordonbanderson/flickr-editor)](https://github.com/gordonbanderson/flickr-editor)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/gordonbanderson/flickr-editor)](https://github.com/gordonbanderson/flickr-editor)
+[![GitHub Activity](https://img.shields.io/github/commit-activity/m/gordonbanderson/flickr-editor)](https://github.com/gordonbanderson/flickr-editor)
+[![GitHub Issues](https://img.shields.io/github/issues/gordonbanderson/flickr-editor)](https://github.com/gordonbanderson/flickr-editor/issues)
 
 ![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/branch.svg?branch=upgradess4)
+
 
 ## Maintainers
 
 * Gordon Anderson (Nickname: nontgor)
 	<gordon.b.anderson@gmail.com>
 
-##NOTE!!!!
+## NOTE!!!!
 Module has been used by myself for some time but needs love, testing, code layout fixing.
 
-##Introduction
+## Introduction
 
 * Import Flickr photos into a SilverStripe site
 * Provides interface to edit Flickr photos in bulk, with maps in addition
