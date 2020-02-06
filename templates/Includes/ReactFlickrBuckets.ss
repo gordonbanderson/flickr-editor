@@ -1,6 +1,6 @@
 <table class="ss-gridfield-table" cellpadding="0" cellspacing="0"><thead><tr class="title">
 	<th colspan="2">
-		<h2>Edit Photo Groups</h2>
+		<h2>Create Buckets</h2>
 		<div class="right"></div>
 		<div class="left"></div>
 	</th>
