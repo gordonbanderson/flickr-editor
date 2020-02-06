@@ -26,9 +26,7 @@ jobs:
     branches:
       only:
         - master
-        - develop
         - upgradess4
-        - upgradess4clean
 
     steps:
       - checkout
@@ -43,8 +41,6 @@ jobs:
       - run: composer validate
       - run: composer require --prefer-source --no-update silverstripe/recipe-cms:4.x-dev
       - run: composer install --prefer-source --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
-      - run: composer require --prefer-source --no-interaction silverstripe/widgets
-
 
 
       - save_cache:
