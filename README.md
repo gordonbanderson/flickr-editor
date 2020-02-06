@@ -1,9 +1,9 @@
 # Flickr Editor
-[![Build Status](https://travis-ci.org/gordonbanderson/flickr-editor.svg?branch=master)](https://travis-ci.org/gordonbanderson/flickr-editor)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=master)
-[![Build Status](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/build.png?b=master)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/build-status/master)
-[![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/coverage.svg?branch=master)](https://codecov.io/github/gordonbanderson/flickr-editor?branch=master)
+[![Build Status](https://travis-ci.org/gordonbanderson/flickr-editor.svg?branch=upgradess4)](https://travis-ci.org/gordonbanderson/flickr-editor)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/quality-score.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=upgradess4)
+[![Code Coverage](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/coverage.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/?branch=upgradess4)
+[![Build Status](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/badges/build.png?b=upgradess4)](https://scrutinizer-ci.com/g/gordonbanderson/flickr-editor/build-status/master)
+[![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/coverage.svg?branch=upgradess4)](https://codecov.io/github/gordonbanderson/flickr-editor?branch=upgradess4)
 
 [![Latest Stable Version](https://poser.pugx.org/weboftalent/flickr/version)](https://packagist.org/packages/weboftalent/flickr)
 [![Latest Unstable Version](https://poser.pugx.org/weboftalent/flickr/v/unstable)](//packagist.org/packages/weboftalent/flickr)
@@ -15,7 +15,7 @@
 [![Dependency Status](https://www.versioneye.com/php/weboftalent:flickr/badge.svg)](https://www.versioneye.com/php/weboftalent:flickr)
 [![Reference Status](https://www.versioneye.com/php/weboftalent:flickr/reference_badge.svg?style=flat)](https://www.versioneye.com/php/weboftalent:flickr/references)
 
-![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/branch.svg?branch=master)
+![codecov.io](https://codecov.io/github/gordonbanderson/flickr-editor/branch.svg?branch=upgradess4)
 
 ## Maintainers
 
