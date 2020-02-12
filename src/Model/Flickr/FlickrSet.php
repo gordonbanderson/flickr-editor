@@ -4,6 +4,7 @@ namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Assets\Folder;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
@@ -16,6 +17,7 @@ use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Security\SecurityToken;
@@ -37,6 +39,7 @@ use SilverStripe\View\Requirements;
  * @property string $BatchDescription
  * @property string $ImageFooter
  * @property string $SpriteCSS
+ * @property string $SortOrder
  * @property int $AssetFolderID
  * @property int $PrimaryFlickrPhotoID
  * @method \SilverStripe\Assets\Folder AssetFolder()
@@ -60,7 +63,8 @@ class FlickrSet extends DataObject
         'BatchTitle' => 'Varchar',
         'BatchDescription' => 'HTMLText',
         'ImageFooter' => 'Text',
-        'SpriteCSS' => 'Text'
+        'SpriteCSS' => 'Text',
+        'SortOrder' => "Enum('TakenAt,UploadUnixTimeStamp', 'UploadUnixTimeStamp')"
     ];
 
     private static $defaults = [
@@ -109,6 +113,11 @@ class FlickrSet extends DataObject
 
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
         $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
+
+        $fields->addFieldsToTab('Root.Main',
+            DropdownField::create( 'SortOrder', 'Sort Order', singleton(FlickrSet::class)->
+            dbObject('SortOrder')->enumValues()));
+
         $fields->addFieldToTab('Root.Main', new TextField('ImageFooter', 'Text to be added to each image in this album when saving'));
         $fields->addFieldToTab('Root.Main', new CheckboxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
 
@@ -126,26 +135,32 @@ class FlickrSet extends DataObject
         $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
         $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
+        /** @var DataList $bucketsByDate */
         $bucketsByDate = $this->FlickrBucketsByDate();
+
+        /*
+        foreach($bucketsByDate as $item) {
+            print_r($item);
+            die;
+        }
+        */
         if ($bucketsByDate->count() > 0) {
             $gridField2 = new GridField("FlickrBuckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
         }
+
 
         $forTemplate = new ArrayData([
             'Title' => $this->Title,
             'ID' => $this->ID,
             'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
         ]);
-        $html = $forTemplate->renderWith('Includes/GridFieldFlickrBuckets');
-
-        $bucketTimeField = new NumericField('BucketTime');
-        // $fields->addFieldToTab( 'Root.Buckets', $bucketTimeField );
-
+        $html = $forTemplate->renderWith('Includes/ReactFlickrBuckets');
         $lfImage = new LiteralField('BucketEdit', $html);
 
+
         // @todo This is loading all the thumbnails, disable temporarily
-         //$fields->addFieldToTab('Root.Buckets', $lfImage);
+         $fields->addFieldToTab('Root.Buckets', $lfImage);
 
 
         $templateData = new ArrayData([
@@ -202,40 +217,27 @@ class FlickrSet extends DataObject
 
     public function FlickrPhotosNotInBucket()
     {
-        // @todo FIX: Use ORM
         return $this->FlickrPhotos()->
         where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from "FlickrPhoto_FlickrBuckets")')
-            ->sort('TakenAt');
+            ->sort($this->SortOrder);
     }
 
 
+    /**
+     * @return ArrayList
+     */
     public function FlickrBucketsByDate()
     {
-        // in 3.1 data list is immutable, hence the chaining
-        /*
-        $sqlbucketidsinorder = 'select distinct FlickrBucketID from (
-	  select FlickrBucketID, FlickrPhoto.TakenAt from FlickrBucket
-		INNER JOIN FlickrPhoto_FlickrBuckets ON FlickrBucketID = FlickrBucket.ID
-		INNER JOIN FlickrPhoto ON FlickrPhoto.ID = FlickrPhoto_FlickrBuckets.FlickrPhotoID
-		WHERE (FlickrSetID = '.$this->ID.')
-		order by FlickrPhoto.TakenAt
-	  ) as OrderedBuckets';
-        */
-
+        // adding in a sort field of TakenAt results in duplicates.  If one uses UploadUnixTimeStamp
+        // the issue is worse, a unique row is being created for each unique UploadUnixTimeStamp,
+        // so for now, use Title
         $buckets = FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
-        innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
-        innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')->
-        sort('TakenAt');
+            innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
+            innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')
+            ->sort('Title')
+            ;
 
-
-        $result = new ArrayList();
-        foreach ($buckets->getIterator() as $bucket) {
-            $result->push($bucket);
-        }
-        $result->removeDuplicates();
-
-        return $result;
-
+        return $buckets;
     }
 
 

@@ -41,7 +41,7 @@ class CalculatePerceptiveHashes extends BuildTask
         $counter = 0;
         $total = $flickrSet->FlickrPhotos()->count();
 
-        foreach ($flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp') as $flickrPhoto) {
+        foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
             $counter++;
 

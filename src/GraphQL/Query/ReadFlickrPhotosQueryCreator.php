@@ -47,7 +47,7 @@ class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationReso
 
         }
 
-        $photos = $flickrSet->FlickrPhotos()->sort('TakenAt');
+        $photos = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder);
 
         return $photos;
     }

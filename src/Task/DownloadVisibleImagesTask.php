@@ -38,7 +38,8 @@ class DownloadVisibleImagesTask extends BuildTask
     {
         error_log('SIZE: ' . $size);
         $counter = 0;
-        foreach ($flickrSet->FlickrPhotos()->filter('Visible', true)->sort('UploadUnixTimeStamp') as $flickrPhoto) {
+        foreach ($flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder)
+                 as $flickrPhoto) {
             $counter++;
             $paddedCounter = sprintf('%04d', $counter);
             $imageURL = $flickrPhoto->SmallURL;

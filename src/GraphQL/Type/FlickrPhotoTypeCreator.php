@@ -33,6 +33,7 @@ class FlickrPhotoTypeCreator extends TypeCreator
             'Orientation' => ['type' => Type::int()],
             'CSRFToken' => ['type' => Type::string()],
             'TakenAt' => ['type' => Type::string()],
+            'PerceptiveHash' => ['type' => Type::string()],
         ];
     }
 }

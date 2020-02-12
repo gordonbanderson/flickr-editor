@@ -43,7 +43,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
         error_log('SIZE: ' . $size);
         $hasher = new ImageHash(new PerceptualHash(256));
 
-        foreach ($flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp') as $flickrPhoto) {
+        foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
 
 

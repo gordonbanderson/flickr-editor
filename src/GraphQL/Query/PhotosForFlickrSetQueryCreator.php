@@ -45,6 +45,6 @@ class PhotosForFlickrSetQueryCreator extends QueryCreator implements OperationRe
         /** @var FlickrSet $set */
         $set = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
 
-        return $set->FlickrPhotos()->sort('TakenAt');
+        return $set->FlickrPhotos()->sort($set->SortOrder);
     }
 }

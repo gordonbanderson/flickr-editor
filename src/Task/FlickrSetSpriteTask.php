@@ -74,7 +74,8 @@ class FlickrSetSpriteTask extends BuildTask
         while ($page < $nPages) {
             error_log($page + 1 . '/' . $nPages);
 
-            $photosForSprite = $flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp')->limit($imagesPerSprite, $imagesPerSprite * $page);
+            $photosForSprite = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder)->
+            limit($imagesPerSprite, $imagesPerSprite * $page);
 
             error_log('Moving ' . $photosForSprite->count() . ' files to temporary space');
             /** @var FlickrPhoto $photo */

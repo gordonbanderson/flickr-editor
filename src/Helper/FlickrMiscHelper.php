@@ -75,7 +75,8 @@ class FlickrMiscHelper extends FlickrHelper
                 continue;
             }
             if ($fs->FirstPictureTakenAt == null) {
-                $firstDate = $fs->FlickrPhotos()->sort('TakenAt')->where('TakenAt is not null');
+                $sortField = $fs->SortOrder;
+                $firstDate = $fs->FlickrPhotos()->sort($sortField)->where($sortField . ' is not null');
                 $firstDate = $firstDate->first();
 
                 if ($firstDate) {

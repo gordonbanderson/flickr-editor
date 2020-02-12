@@ -13,7 +13,7 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
         $hashes = [];
         error_log($flickrSet->Title);
 
-        foreach ($flickrSet->FlickrPhotos()->sort('UploadUnixTimeStamp') as $flickrPhoto) {
+        foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $pair = [
                 'ID' => $flickrPhoto->ID,
                 'pHash' => $flickrPhoto->PerceptiveHash,
