@@ -35,18 +35,10 @@ class ReadFlickrSetsQueryCreator extends QueryCreator implements OperationResolv
      */
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
-        /**
-        if (!isset($args['ID'])) {
-            throw new \InvalidArgumentException('ID parameter is required');
-        }
-         */
-
         $sets = FlickrSet::get();
         if (isset($args['ID'])) {
             $sets = $sets->filter('ID', $args['ID']);
         }
-
-        error_log('ARGS: '. print_r($args, 1));
 
         return $sets;
     }

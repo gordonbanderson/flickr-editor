@@ -45,7 +45,7 @@ class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
                 $photos = null;
                 if (isset($args['FlickrSetID'])) {
                     $flickrSet = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
-                    $photos = $flickrSet->FlickrPhotos();
+                    $photos = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder);
                 }
 
                 return $photos;
