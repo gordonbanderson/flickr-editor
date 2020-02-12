@@ -31,13 +31,14 @@ class FlickrSetTypeCreator extends TypeCreator
             'ID' => ['type' => Type::nonNull(Type::id())],
             'FlickrID' => ['type' => Type::nonNull(Type::id())],
             'Title' => ['type' => Type::string()],
+            'SortOrder' => ['type' => Type::int()],
 
             'FlickrPhotos' => [
                 'type' => $photosConnection->toType(),
                 'args' => $photosConnection->args(),
-                'resolve' => function($object, array $args, $context, ResolveInfo $info) use ($photosConnection) {
+                'resolve' => function($flickrSet, array $args, $context, ResolveInfo $info) use ($photosConnection) {
                     return $photosConnection->resolveList(
-                        $object->FlickrPhotos()->sort('UploadUnixTimeStamp'),
+                        $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
                         $args,
                         $context
                     );
