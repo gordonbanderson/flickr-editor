@@ -8,8 +8,6 @@
 
 namespace Suilven\Flickr\Task;
 
-use Jenssegers\ImageHash\ImageHash;
-use Jenssegers\ImageHash\Implementations\PerceptualHash;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
@@ -25,7 +23,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
     protected $description = 'Calculate perceptive hashes and store in the database for a given Flickr set';
 
-    private static $segment = 'create-video-perceptive-hash';
+    private static $segment = 'create-video-from-perceptive-hash';
 
     protected $enabled = true;
 
@@ -41,7 +39,6 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     {
         error_log('---- new image ----');
         error_log('SIZE: ' . $size);
-        $hasher = new ImageHash(new PerceptualHash(256));
 
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
@@ -127,9 +124,15 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
         error_log('BS: ' . $bucketSize);
 
         for($j=0; $j< $bucketSize; $j++) {
-            error_log('BUCKET');
             $bucket = $buckets[$j];
-            for ($i=0; $i<$bucketSize; $i++) {
+            error_log('BUCKET, OF SIZE ' . count($bucket));
+
+            error_log(print_r($bucket, 1));
+
+            $currentBucketSize = count($bucket);
+            for ($i=0; $i<$currentBucketSize; $i++) { // HACK, had to -1 to get it to work
+                error_log('Bucket ' . $i);
+                error_log(print_r($bucket[$i],1));
                 $html .= "\n<img src='". $bucket[$i]['url']."'/>";
 
                 $filename = basename($bucket[$i]['url']);

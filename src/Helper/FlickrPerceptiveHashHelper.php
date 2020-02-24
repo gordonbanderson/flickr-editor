@@ -31,7 +31,10 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
         }
 
         $tolerance = 34;
-        $minLength = 10;
+        $minLength = 9;
+
+        // optimal_bitrate = 50 * 25 * 2048 * 1366 / 256
+        // mencoder "mf://*.JPG" -mf fps=12 -o test.avi -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=13660000
 
         $currentBucket = [];
         $buckets = [];
