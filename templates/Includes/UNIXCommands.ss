@@ -7,6 +7,8 @@ This is a ready reckoner of UNIX commands for image processing
 <p>Calculate perceptive hashes for a Flickr Set: </p>
 <pre>vendor/bin/sake dev/tasks/calculate-perceptive-hash id=$ID</pre>
 
+<p>Create a video using sequences identified via perceptive hashes: </p>
+<pre>vendor/bin/sake dev/tasks/create-video-from-perceptive-hash id=$ID</pre>
 
 <p>Create buckets for a flickr set based on perceptive hash:</p>
 <pre>vendor/bin/sake dev/tasks/buckets-from-perceptive-hash id=$ID</pre>
