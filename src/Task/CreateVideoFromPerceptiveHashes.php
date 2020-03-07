@@ -14,6 +14,7 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
+use Suilven\Sluggable\Helper\SluggableHelper;
 
 
 class CreateVideoFromPerceptiveHashes extends BuildTask
@@ -145,7 +146,9 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
                 $rotated = $bucket[$i]['rotated'];
                 error_log('>>>> ROTATED: ' . $rotated);
                 if ($rotated) {
-                    $dimensions = '2048x1365';
+                    $dimensions = '1365x2048';
+                    //$dimensions = '66%x100%';
+                    //convert [input file] -resize 1920x1080 -background black -gravity center -extent 1920x1080 [output file]
                     $cmd = ('/usr/bin/convert ' . $to .' -gravity center -background black -extent ' . $dimensions .' ' . $to);
                     error_log('CMD:' . $cmd);
                     exec($cmd);
@@ -191,6 +194,16 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
         $this->calculatePerceptiveHashes($flickrSet, $srcDir, $targetDir, $size);
         $this->findSequences($flickrSet, $srcDir, $movieDir);
+
+        $slugHelper = new SluggableHelper();
+        $slug = $slugHelper->getSlug($flickrSet->Title);
+
+        $cmd = 'cd /tmp/flickr/' . $flickrSetID . '/movie && ';
+        $cmd .= 'mencoder "mf://*.JPG" -mf fps=12 -o /var/www/' . $slug;
+        $cmd .= '.avi -ovc lavc -lavcopts vcodec=mpeg4:vbitrate=13660000 && cd -';
+
+        error_log($cmd);
+
     }
 
 
