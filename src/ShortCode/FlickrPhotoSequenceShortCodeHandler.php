@@ -32,14 +32,11 @@ class FlickrPhotoSequenceShortCodeHandler
 
         /** @var FlickrSet $set */
         $set = FlickrSet::get()->filter('FlickrID', $setID)->first(); // flickr set IDs are unique
-        echo 'SPID=' . $startPhotoID;
         $startPhoto = $set->FlickrPhotos()->filter('FlickrID', $startPhotoID)->first();
         //         $startPhoto = FlickrPhoto::get()->filter('FlickrID', $startPhotoID)->first();
         $sortField = $set->SortOrder;
 
-        echo 'ID=' . $startPhoto->ID;
-
-
+        
         // @todo Use ORM
         $ctr = 0;
         $adding = false;
