@@ -36,13 +36,13 @@ class FlickrPhotoSequenceShortCodeHandler
         //         $startPhoto = FlickrPhoto::get()->filter('FlickrID', $startPhotoID)->first();
         $sortField = $set->SortOrder;
 
-        
+
         // @todo Use ORM
         $ctr = 0;
         $adding = false;
        // $frames = 100;
         foreach ($set->FlickrPhotos()->sort($sortField) as $photo) {
-            if ($ctr > $frames) {
+            if ($ctr >= $frames) {
                 break;
             }
 
