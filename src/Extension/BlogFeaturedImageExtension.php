@@ -4,6 +4,8 @@ namespace Suilven\Flickr\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\DataObject;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Class \Suilven\Flickr\Extension\BlogFeaturedImageExtension
@@ -23,5 +25,13 @@ class BlogFeaturedImageExtension extends DataExtension
             TextField::create('FeaturedFlickrImageID','ID of Flickr Image to Show as the default',
              'FeaturedImage'),
         ]);
+    }
+
+    public function getFeaturedFlickrImage()
+    {
+        $result = empty($this->owner->FeaturedFlickrImageID) ?
+            null : FlickrPhoto::get()->filter('FlickrID', $this->owner->FeaturedFlickrImageID)->first();
+
+        return $result;
     }
 }
