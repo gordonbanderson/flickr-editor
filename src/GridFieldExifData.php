@@ -5,6 +5,8 @@ namespace Suilven\Flickr;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
 use SilverStripe\View\ArrayData;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
 /**
  * GridFieldExifData displays read only exif data for a Flickr photograph
  *
@@ -14,7 +16,8 @@ use SilverStripe\View\ArrayData;
  */
 class GridFieldExifData implements GridField_HTMLProvider
 {
-    public function getHTMLFragments($gridField)
+    /** @return array<string,string> */
+    public function getHTMLFragments(\SilverStripe\Forms\GridField\GridField $gridField): array
     {
         $forTemplate = new ArrayData([]);
 

@@ -36,45 +36,35 @@ class FlickrTagsController extends \PageController
     }
 
 
-    /** @return array */
-    public function index(): array
-    {
-        return [];
-    }
-
-
-    /** @return array */
-    public function photo(): array
+    /** @return \Suilven\Flickr\Controller\DataList<\Suilven\Flickr\Controller\FlickrPhoto> */
+    public function photo(): DataList
     {
         $tagValue = Director::URLParam('ID');
         $this->Title = "Photos tagged '" . $tagValue . "'";
+
+        // @todo This is very old style code, fix
         $tag = DataObject::get_one('Tag', "Value='" . $tagValue . "'");
         $this->TagValue = $tagValue;
         $this->Tag = $tag;
 
-        $result = [];
         if ($tag) {
-            $result = $tag->FlickrPhotos();
             $this->FlickrPhotos = $tag->FlickrPhotos();
         }
 
-        return [];
+        return $this->FlickrPhotos;
     }
 
 
-    public function PhotoKey(): string
-    {
-        return 'tagphoto_' . $ID;
-    }
+    // @TODO check this method, old as
 
-
-    /** @return array */
-    public function photos(): array
+    /** @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Controller\FlickrPhoto> */
+    public function photos(): \SilverStripe\ORM\DataList
     {
         $this->Tags = DataObject::get('Tag');
         $this->Title = 'Tags for photos';
 
-        $maxCount = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by TagID Order by ct desc limit 1")->value();
+        $maxCount = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by' .'
+            ' TagID Order by ct desc limit 1")->value();
 
         $sql = "select t.ID, t.ClassName, count(TagID) as Amount, t.Value
 				From FlickrPhoto_FlickrTags ft
@@ -93,7 +83,5 @@ class FlickrTagsController extends \PageController
         }
 
         $this->TagCloud = $tagCloud;
-
-        return [];
     }
 }

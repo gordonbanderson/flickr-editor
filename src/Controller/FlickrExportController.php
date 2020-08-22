@@ -13,11 +13,6 @@ class FlickrExportController extends \PageController
         'toJson',
     ];
 
-    public function index()
-    {
-        return 'wibble';
-    }
-
 
     public function toJson(): void
     {
