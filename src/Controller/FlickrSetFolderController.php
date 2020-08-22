@@ -4,19 +4,25 @@ namespace Suilven\Flickr\Controller;
 
 use SilverStripe\ORM\DataList;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetFolder_Controller
  */
-class FlickrSetFolder_Controller extends \PageController
+class FlickrSetFolderController extends \PageController
 {
-    public function FlickrSetsNewestFirst()
+    /** @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Controller\FlickrSetPage> */
+    public function FlickrSetsNewestFirst(): DataList
     {
-        return DataList::create('FlickrSetPage')->where('ParentID = '.$this->ID)->sort('FirstPictureTakenAt desc');
+        return DataList::create('FlickrSetPage')->where('ParentID = '.$this->ID)->
+        sort('FirstPictureTakenAt desc');
     }
 
 
-    public function FlickrSetFoldersNewestFirst()
+    /** @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Controller\FlickrSetFolder> */
+    public function FlickrSetFoldersNewestFirst(): DataList
     {
-        return DataList::create('FlickrSetFolder')->where('ParentID = '.$this->ID)->sort('Created desc');
+        return DataList::create('FlickrSetFolder')->where('ParentID = '.$this->ID)->
+        sort('Created desc');
     }
 }

@@ -9,7 +9,11 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 class FlickrPhotoHelper extends FlickrHelper
 {
 
-    public function createFromFlickrArray($photoInfo, $only_new_photos = false)
+    /**
+     * @param array<string,string|int|bool|float> $photoInfo
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function createFromFlickrArray(array $photoInfo, bool $only_new_photos = false): ?FlickrPhoto
     {
         $flickrPhotoID = $photoInfo['id'];
 
@@ -27,7 +31,7 @@ class FlickrPhotoHelper extends FlickrHelper
         if ($flickrPhoto->Imported) {
             \error_log('Skipping import, already done');
 
-            return false;
+            return null;
         }
 
         // if we are in the mode of only importing new then skip to the next iteration if this pic already exists
@@ -175,17 +179,13 @@ class FlickrPhotoHelper extends FlickrHelper
         }
 
         $flickrPhoto->Imported = true;
-
         $flickrPhoto->write();
-
 
         \error_log(
             'Written photo object',
         );
 
-
-
-        foreach ($singlePhotoInfo['tags']['tag'] as $key => $taginfo) {
+        foreach ($singlePhotoInfo['tags']['tag'] as $taginfo) {
             \error_log('TAG');
 
             $tag = FlickrTag::get()->filter(['Value' => $taginfo['_content']])->first();

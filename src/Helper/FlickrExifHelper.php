@@ -25,7 +25,7 @@ class FlickrExifHelper extends FlickrHelper
 
         echo "Using exif data for ".$flickrPhoto->Title."\n";
         $exifs = [];
-        foreach ($exifData['exif'] as $key => $exifInfo) {
+        foreach ($exifData['exif'] as $exifInfo) {
             $exif = new FlickrExif();
             $exif->TagSpace = $exifInfo['tagspace'];
             $exif->TagSpaceID = $exifInfo['tagspaceid'];
@@ -39,7 +39,7 @@ class FlickrExifHelper extends FlickrHelper
                 case 'FocalLength':
                     $raw = \str_replace(' mm', '', $exif->Raw);
                     // model focal length
-                    $focallength = $raw;
+                    $flickrPhoto->FocalLength35mm = $raw;
 
                     break;
                 case 'ImageUniqueID':

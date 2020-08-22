@@ -22,11 +22,17 @@ class FlickrSiteConfig extends DataExtension
     ];
 
 
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): FieldList
     {
-        $fields->addFieldToTab("Root.Flickr", new TextareaField("ImageFooter", 'This text will be appended to all image descriptions'));
+        $fields->addFieldToTab("Root.Flickr", new TextareaField(
+            "ImageFooter",
+            'This text will be appended to all image descriptions',
+        ));
         //, 'Add the location as text to the picture');
-        $fields->addFieldToTab("Root.Flickr", new CheckboxField("AddLocation", 'Add a textual description of the location to all images'));
+        $fields->addFieldToTab("Root.Flickr", new CheckboxField(
+            "AddLocation",
+            'Add a textual description of the location to all images',
+        ));
 
         return $fields;
     }

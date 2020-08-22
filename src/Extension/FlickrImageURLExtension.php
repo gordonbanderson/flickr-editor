@@ -12,7 +12,11 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
  */
 class FlickrImageURLExtension extends Extension
 {
-    public function getFlickrURLFromID($flickrID, $size = 'l')
+    /**
+     * @param string $size s,sq,sql50,m,m640,,m800,l1600,l2048
+     * @return string|null the Flickr URL or null
+     */
+    public function getFlickrURLFromID(int $flickrID, string $size = 'l'): ?string
     {
         /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrImage */
         $flickrImage = FlickrPhoto::get()->filter(['FlickrID' => $flickrID])->first();
