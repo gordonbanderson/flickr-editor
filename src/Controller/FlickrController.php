@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Suilven\Flickr\Controller;
 
@@ -851,9 +851,12 @@ Rows matched: 53  Changed: 53  Warnings: 0
         \exec("chmod 775 ../assets/flickr/$year");
         \exec("chmod 775 ../assets/flickr/$year/$month");
         \exec("chmod 775 ../assets/flickr/$year/$month/$day");
-        \exec("chown gordon:www-data ../assets/flickr/$year");;
-        \exec("chown gordon:www-data ../assets/flickr/$year/$month");;
-        \exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");;
+        \exec("chown gordon:www-data ../assets/flickr/$year");
+        ;
+        \exec("chown gordon:www-data ../assets/flickr/$year/$month");
+        ;
+        \exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
+        ;
 
 
         $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);

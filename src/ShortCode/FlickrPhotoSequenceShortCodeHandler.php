@@ -7,6 +7,7 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
+
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
 class FlickrPhotoSequenceShortCodeHandler

@@ -18,7 +18,7 @@ class FlickrSiteConfig extends DataExtension
 {
     private static $db = [
         'ImageFooter' => 'Text',
-        'AddLocation' => 'Boolean'
+        'AddLocation' => 'Boolean',
     ];
 
 

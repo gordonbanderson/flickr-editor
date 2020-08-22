@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare(strict_types = 1);
 
 namespace Suilven\Flickr\Model\Flickr;
 
@@ -195,7 +195,7 @@ o   original image, either a jpg, gif or png, depending on source format
     // this one is what created the database FlickrPhoto_FlickrTagss
     private static $many_many = [
         'FlickrTags' => FlickrTag::class,
-        'FlickrBuckets' => FlickrBucket::class
+        'FlickrBuckets' => FlickrBucket::class,
     ];
 
     private static $has_many = [
@@ -204,13 +204,13 @@ o   original image, either a jpg, gif or png, depending on source format
 
     private static $has_one = [
         'LocalCopyOfImage' => Image::class,
-        'Photographer' => FlickrAuthor::class
+        'Photographer' => FlickrAuthor::class,
     ];
 
     private static $summary_fields = [
         'Thumbnail' => 'Thumbnail',
         'Title' => 'Title',
-        'Visible' => 'Visible'
+        'Visible' => 'Visible',
     ];
 
     private static $default_sort = 'TakenAt';
