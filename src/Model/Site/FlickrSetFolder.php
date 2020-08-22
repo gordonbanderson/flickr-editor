@@ -33,10 +33,17 @@ class FlickrSetFolder extends \Page
     ];
 
 
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.CoverPhoto', new FlickrPhotoSelectionField('MainFlickrPhotoID', 'Cover Photo', $this->MainFlickrPhoto()));
+        $fields->addFieldToTab(
+            'Root.CoverPhoto',
+            new FlickrPhotoSelectionField(
+                'MainFlickrPhotoID',
+                'Cover Photo',
+                $this->MainFlickrPhoto(),
+            ),
+        );
 
 
         $fields->renameField("Content", "Brief Description");
@@ -46,7 +53,7 @@ class FlickrSetFolder extends \Page
     }
 
 
-    public function getPortletTitle()
+    public function getPortletTitle(): string
     {
         return $this->Title;
     }
@@ -62,7 +69,7 @@ class FlickrSetFolder extends \Page
      */
     public function getPortletImage(): string
     {
-        return $this->MainFlickrPhoto();
+        return $this->MainFlickrPhoto()->ThumbnailURL;
     }
 
 

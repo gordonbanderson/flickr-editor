@@ -25,6 +25,8 @@ use Suilven\Flickr\Helper\FlickrTagHelper;
 use Suilven\Flickr\Helper\FlickrUpdateMetaHelper;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Only show a page with login when not logged in
  *
@@ -211,76 +213,85 @@ o   original image, either a jpg, gif or png, depending on source format
 
     private static $default_sort = 'TakenAt';
 
-    // -- helper methods to ensure that URLs are of the form //path/to/image so that http and https work with console warnings
+    //helper methods to ensure that URLs are of the form //path/to/image so that http and https
+    //  work with console warnings
+
+    /** @return string|array<string> */
     public function ProtocolAgnosticLargeURL()
     {
         return $this->stripProtocol($this->LargeURL);
     }
 
 
-    public function ProtocolAgnosticSmallURL()
+    public function ProtocolAgnosticSmallURL(): string
     {
         return $this->stripProtocol($this->SmallURL);
     }
 
 
-    public function ProtocolAgnosticMediumURL()
+    public function ProtocolAgnosticMediumURL(): string
     {
         return $this->stripProtocol($this->MediumURL);
     }
 
 
-    public function ProtocolAgnosticThumbnailURL()
+    public function ProtocolAgnosticThumbnailURL(): string
     {
         return $this->stripProtocol($this->ThumbnailURL);
     }
 
 
-    public function ProtocolAgnosticOriginalURL()
+    public function ProtocolAgnosticOriginalURL(): string
     {
         return $this->stripProtocol($this->OriginalURL);
     }
 
 
-    public function HorizontalMargin($intendedWidth)
+    public function HorizontalMargin(int $intendedWidth): int
     {
         //FIXME - is there a way to avoid a database call here?
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
-        return ($intendedWidth-$fp->ThumbnailWidth)/2;
+        $vh = ($intendedWidth-$fp->ThumbnailWidth)/2;
+        $vh = \intval(\round($vh));
+
+        return $vh;
     }
 
 
-    public function InfoWindow()
+    public function InfoWindow(): void
     {
-        return GoogleMapUtil::sanitize($this->renderWith('FlickrPhotoInfoWindow'));
+        //return GoogleMapUtil::sanitize($this->renderWith('FlickrPhotoInfoWindow'));
     }
 
 
-    public function VerticalMargin($intendedHeight)
+    public function VerticalMargin(int $intendedHeight): int
     {
         //FIXME - is there a way to avoid a database call here?
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
-        return ($intendedHeight-$fp->ThumbnailHeight)/2;
+        $vm = ($intendedHeight-$fp->ThumbnailHeight)/2;
+        $vm = \intval(\round($vm));
+
+        return $vm;
     }
 
 
-    public function Link()
+    public function Link(): string
     {
         return "http://www.flickr.com/photos/{$this->Photographer()->PathAlias}/{$this->FlickrID}/";
     }
 
 
-    public function AbsoluteLink()
+    public function AbsoluteLink(): string
     {
         return $this->Link();
     }
 
 
-    /*
-        Mark image as dirty upon a save
-        */
+    /**
+     * Mark an image as dirty when saving it, meaning it is out of sync with Flickr
+     */
     public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
@@ -293,13 +304,11 @@ o   original image, either a jpg, gif or png, depending on source format
             $this->AspectRatio = ($this->LargeHeight) / ($this->LargeWidth);
         }
 
-        $this->IsDirty = !$this->KeepClean
-            ? true
-            : false;
+        $this->IsDirty = !$this->KeepClean;
     }
 
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         Requirements::css('weboftalent/flickr:dist/admin/client/css/flickredit.css');
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
@@ -374,28 +383,31 @@ o   original image, either a jpg, gif or png, depending on source format
         }
 
         // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
-        $fields->addFieldToTab('Root.Main', new TextField('QuickTags', 'Enter tags here separated by commas'));
+        $fields->addFieldToTab('Root.Main', new TextField(
+            'QuickTags',
+            'Enter tags here separated by commas',
+        ));
 
         //->addComponent( new GridFieldSortableRows( 'Value' ) );
         $gridConfig = GridFieldConfig_RelationEditor::create();
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Value', 'RawValue']);
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
+            setSearchFields(['Value', 'RawValue']);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
         $fields->addFieldToTab("Root.Main", $gridField);
 
-        $fields->addFieldToTab("Root.Main", new CheckboxField('PromoteToHomePage', 'Promote to Home Page'));
+        $fields->addFieldToTab("Root.Main", new CheckboxField(
+            'PromoteToHomePage',
+            'Promote to Home Page',
+        ));
 
         return $fields;
     }
 
 
-    public function AdjustedTime()
-    {
-        // @todo Is this required?
-        return 'FP ADJ TIME '.$this->TimeShiftHours;
-    }
-
-
-    public function getThumbnail()
+    /**
+     * Get a thumbnail for CMS rendering
+     */
+    public function getThumbnail(): DBField
     {
         $width = $this->LargeWidth;
         $height = $this->LargeHeight;
@@ -416,24 +428,32 @@ o   original image, either a jpg, gif or png, depending on source format
     }
 
 
-    public function EffectiveFocalLength35mm()
+    public function EffectiveFocalLength35mm(): int
     {
         $fl = $this->FocalLength35mm;
         if ($this->DigitalZoomRatio) {
             $fl = \round($fl * $this->DigitalZoomRatio);
         }
 
+        $fl = \intval($fl);
+
         return $fl;
     }
 
 
-    public function HasGeo()
+    /** @return bool true if the photo has geography */
+    public function HasGeo(): bool
     {
         return $this->Lat !== 0 || $this->Lon !== 0;
     }
 
 
-    public function HasGeoEng()
+    /**
+     * Return Yes or No depending on whether the photo has geographic info
+     *
+     * @return string Either Yes or No
+     */
+    public function HasGeoEng(): string
     {
         return $this->HasGeo()
             ? 'Yes'
@@ -445,7 +465,7 @@ o   original image, either a jpg, gif or png, depending on source format
      * Convert URLs of the form https://live.staticflickr.com/65535/48204433551_63a99226e7_t.jpg to
      * 48204433551_63a99226e7_t, as this used for sprite CSS purposes
      */
-    public function CSSSpriteFileName()
+    public function CSSSpriteFileName(): string
     {
         $splits = \explode('/', $this->SmallURL);
         $filename = \end($splits);
@@ -455,7 +475,7 @@ o   original image, either a jpg, gif or png, depending on source format
     }
 
 
-    public function SpriteNumber($position)
+    public function SpriteNumber(int $position): int
     {
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
 
@@ -463,45 +483,26 @@ o   original image, either a jpg, gif or png, depending on source format
     }
 
 
-
-
-
-    /*
-    Update Flickr with details held in SilverStripe
-    @param $descriptionSuffix The suffix to be appended to the photographic description
-    */
-    public function writeToFlickr($descriptionSuffix): void
+    /**
+     * Write data such as photo descriptions / titles back to Flickr
+     *
+     * @param string $descriptionSuffix A string to add to each description, e.g. Copyright info
+     */
+    public function writeToFlickr(string $descriptionSuffix): void
     {
         $helper = new FlickrUpdateMetaHelper();
         $helper->writePhotoToFlickr($this, $descriptionSuffix);
     }
 
 
-    private function stripProtocol($url)
+    /**
+     * Remove http and https from the begging of a URL
+     */
+    private function stripProtocol(string $url): string
     {
-        $url = \str_replace('http:', '', $url);
         $url = \str_replace('https:', '', $url);
+        $url = \str_replace('http:', '', $url);
 
         return $url;
-    }
-    // thumbnail related
-
-
-
-    private function initialiseFlickrOBSOLE(): void
-    {
-        if (isset($this->f)) {
-            return;
-        }
-
-        // get flickr details from config
-        $key = Config::inst()->get('FlickrController', 'api_key');
-        $secret = Config::inst()->get('FlickrController', 'secret');
-        $access_token = Config::inst()->get('FlickrController', 'access_token');
-
-        $this->f = new phpFlickr($key, $secret);
-
-        //Fleakr.auth_token    = ''
-        $this->f->setToken($access_token);
     }
 }

@@ -26,18 +26,15 @@ class FlickrFolder extends \Page
      ];
 
 
+    /**
+     * @return \SilverStripe\Forms\FieldList
+     */
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
         $fields->addFieldToTab("Root.Content.CoverPhoto", new UploadField('CoverPhoto'));
-
-
         $fields->renameField("Content", "Brief Description");
 
-        /*
-        $fields->addFieldToTab('Root.Content.Main', new CalendarDateField('Date'), 'Content');
-        $fields->addFieldToTab('Root.Content.Main', new TextField('Author'), 'Content');
-        */
         return $fields;
     }
 }

@@ -4,6 +4,7 @@ namespace Suilven\Flickr;
 
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\View\Requirements;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 // These are for the FieldHolder method
 // @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
@@ -33,7 +34,7 @@ class FlickrPhotoSelectionField extends HiddenField
     public function __construct(
         string $name,
         ?string $title = null,
-        string $flickrPhoto = '',
+        ?FlickrPhoto $flickrPhoto = null,
         ?int $maxLength = null,
         ?Form $form = null
     ) {

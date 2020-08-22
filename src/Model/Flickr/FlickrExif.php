@@ -5,6 +5,8 @@ namespace Suilven\Flickr\Model\Flickr;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Only show a page with login when not logged in
  *
@@ -22,11 +24,11 @@ class FlickrExif extends DataObject
     private static $table_name = 'FlickrExif';
 
     private static $db = [
-        'TagSpace' => 'Varchar';
-    private 'Tag' => 'Varchar';
-    private 'Label' => 'Varchar';
-    private 'Raw' => 'Varchar';
-    private 'TagSpaceID' => 'Int',
+        'TagSpace' => 'Varchar',
+        'Tag' => 'Varchar',
+        'Label' => 'Varchar',
+         'Raw' => 'Varchar',
+        'TagSpaceID' => 'Int',
     ];
 
     private static $belongs_many_many = [
@@ -37,7 +39,7 @@ class FlickrExif extends DataObject
         'FlickrPhoto' => FlickrPhoto::class,
     ];
 
-    public function getCMSFields_forPopup()
+    public function getCMSFields_forPopup(): FieldSet
     {
         $fields = new FieldSet();
         $fields->push(new TextField('Title', 'Title'));
