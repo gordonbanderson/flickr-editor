@@ -5,6 +5,7 @@ namespace Suilven\Flickr\Controller;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
@@ -237,10 +238,15 @@ class FlickrController extends \PageController implements PermissionProvider
     {
         //FIXME authentication
 
-        $flickrSetID = Convert::raw2sql($this->request->param('ID'));
-        $batchTitle = Convert::raw2sql($_POST['BatchTitle']);
-        $batchDescription = Convert::raw2sql($_POST['BatchDescription']);
-        $batchTags = \str_getcsv(Convert::raw2sql($_POST['BatchTags']));
+        $controller = Controller::curr();
+        $request = $controller->getRequest();
+
+        // @todo this class was messed up, possibly a get var
+        $flickrSetID = Convert::raw2sql($request->postVar('ID'));
+
+        $batchTitle = Convert::raw2sql($request->postVar('BatchTitle'));
+        $batchDescription = Convert::raw2sql($request->postVar('BatchDescription'));
+        $batchTags = \str_getcsv(Convert::raw2sql($request->postVar('BatchTags')));
 
         $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
         $helper = new FlickrBatchHelper();
@@ -288,11 +294,13 @@ class FlickrController extends \PageController implements PermissionProvider
 
     public function createBucket(): void
     {
+        $request = Controller::curr()->getRequest();
         $flickrPhotoIDs = $this->request->param('OtherID');
         $flickrPhotoIDs = Convert::raw2sql($flickrPhotoIDs);
         $flickrSetID = Convert::raw2sql($this->request->param('ID'));
+        $flickrSetID = \intval($flickrSetID);
 
-        $ajax_bucket_row = Convert::raw2sql($_GET['bucket_row']);
+        $ajax_bucket_row = Convert::raw2sql($request->getVar('bucket_row'));
         $bucketHelper = new FlickrBucketHelper();
         $bucket = $bucketHelper->createBucket($flickrSetID, $flickrPhotoIDs);
 
@@ -373,7 +381,8 @@ class FlickrController extends \PageController implements PermissionProvider
 
         while ($page <= $nPages) {
             echo "\n\nLoading $page / $nPages\n";
-            $query = $_GET['q'];
+            $request = Controller::curr()->getRequest();
+            $query = $request->getVar('q');
             $searchParams['text'] = $query;
             $searchParams['license'] = 7;
             $searchParams['per_page'] = 500;
@@ -410,19 +419,11 @@ class FlickrController extends \PageController implements PermissionProvider
     // @todo this should be a helper / task
     public function importSet(): void
     {
-        /*
-
-        static $only_new_photos = false;
-
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
-        if (!$canAccess) {
-            return Security::permissionFailure($this);
-        }
-        */
+        $request = Controller::curr()->getRequest();
 
         // Code for the register action here
-        $flickrSetID = $this->request->param('ID');
-        $path = $_GET['path'];
+        $flickrSetID = $request->getVar('ID');
+        $path = $request->getVar('path'):
         $parentNode = SiteTree::get_by_link($path);
         if ($parentNode === null) {
             echo "ERROR: Path " . $path . " cannot be found in this site\n";

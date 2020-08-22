@@ -5,6 +5,7 @@ namespace Suilven\Flickr\Helper;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrGallery;
@@ -61,8 +62,8 @@ class FlickrGalleryHelper extends FlickrHelper
         $pages = 1e7;
         static $only_new_photos = false;
 
-
-        $path = $_GET['path'];
+        $controller = Controller::curr();
+        $path = $controller->getRequest()->getVar('path');
         $parentNode = SiteTree::get_by_link($path);
         if ($parentNode === null) {
             \user_error("ERROR: Path ".$path." cannot be found in this site");
