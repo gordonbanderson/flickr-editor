@@ -17,9 +17,4 @@ class FlickrGalleryPage extends FlickrSetPage
     private static $has_one = [
         'FlickrGalleryForPage' => FlickrGallery::class,
     ];
-
-    public function getFlickrImageCollectionForPage()
-    {
-        return $this->FlickrGalleryForPage();
-    }
 }

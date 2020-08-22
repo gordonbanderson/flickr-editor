@@ -11,6 +11,8 @@ use SilverStripe\ORM\FieldType\DBBoolean;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Class \Suilven\Flickr\Model\Site\FlickrSetPage
  *
@@ -39,13 +41,13 @@ class FlickrSetPage extends \Page
         'FirstPictureTakenAt' => 'Datetime',
     ];
 
-    public function getFlickrImageCollectionForPage()
+    public function getFlickrImageCollectionForPage(): FlickrSet
     {
         return $this->FlickrSetForPage();
     }
 
 
-    public function getPortletTitle()
+    public function getPortletTitle(): string
     {
         return $this->Title;
     }
@@ -61,7 +63,7 @@ class FlickrSetPage extends \Page
      */
     public function getPortletImage(): string
     {
-        return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
+        return $this->FlickrSetForPage()->PrimaryFlickrPhoto()->ThumbnailURL;
     }
 
 
@@ -79,16 +81,13 @@ class FlickrSetPage extends \Page
     }
 
 
-    public function ColumnLayout()
+    public function ColumnLayout(): string
     {
         return 'layout1col';
     }
 
 
-    /* Get the main image of the set
-    FIXME: Use flickr option, and make more efficient
-    */
-    public function MainImage()
+    public function MainImage(): ?Image
     {
         $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
@@ -97,43 +96,21 @@ class FlickrSetPage extends \Page
     }
 
 
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
 
-
-        // this is what shows int he tab with the table in it
-
-        /*
-        $tablefield = new HasOneComplexTableField(
-            $this,
-            'FlickrSetForPage',
-            'FlickrSet',
-            array(
-                'Title' => 'Title'
-            ),
-            'getCMSFields_forPopup'
+        $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(
+            new GridFieldSortableRows('SortOrder'),
         );
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
+            setSearchFields(['URL', 'Title', 'Description']);
 
-        $tablefield->setParentClass('FLickrSetPage');
-        */
+        $fields->addFieldToTab('Root.Main', new HTMLEditorField(
+            'Description',
+            'Description',
+        ), 'Content');
 
-        $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(new GridFieldSortableRows('SortOrder'));
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['URL', 'Title', 'Description']);
-        //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
-        //$fields->addFieldToTab( "Root.Links", $gridField );
-
-
-        $fields->addFieldToTab('Root.Main', new HTMLEditorField('Description', 'Description'), 'Content');
-        //fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
-
-        //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
-        /*
-        $dropdown->setEmptyString('-- Please Select One --');
-        $fields->addFieldToTab('Root.ParentGallery',
-            $dropdown
-        );
-        */
         return $fields;
     }
 
