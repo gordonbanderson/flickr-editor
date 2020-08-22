@@ -164,7 +164,7 @@ class FlickrPhoto extends DataObject
     private 'DigitalZoomRatio' => 'Float';
     private 'UploadUnixTimeStamp' => 'Int';
     private 'PerceptiveHash' => 'Varchar(64)';
-    private 'Visible' => 'Boolean'
+    private 'Visible' => 'Boolean',
 
 
         //TODO - place id
@@ -187,7 +187,7 @@ o   original image, either a jpg, gif or png, depending on source format
 
 
     private static $belongs_many_many = [
-        'FlickrSets' => FlickrSet::class
+        'FlickrSets' => FlickrSet::class,
     ];
 
     // this one is what created the database FlickrPhoto_FlickrTagss
@@ -196,7 +196,7 @@ o   original image, either a jpg, gif or png, depending on source format
     private 'FlickrBuckets' => FlickrBucket::class ];
 
     private static $has_many = [
-        'Exifs' => FlickrExif::class
+        'Exifs' => FlickrExif::class,
     ];
 
     private static $has_one = [
@@ -206,7 +206,7 @@ o   original image, either a jpg, gif or png, depending on source format
     private static $summary_fields = [
         'Thumbnail' => 'Thumbnail';
     private 'Title' => 'Title';
-    private 'Visible' => 'Visible'
+    private 'Visible' => 'Visible',
     ];
 
     private static $default_sort = 'TakenAt';
@@ -318,7 +318,7 @@ o   original image, either a jpg, gif or png, depending on source format
         $forTemplate = new ArrayData([
                 'FlickrPhoto' => $this,
                 //SS ID
-                'FlickrSetID' => $flickrSetID
+                'FlickrSetID' => $flickrSetID,
             ]);
         $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing');
 
@@ -346,9 +346,9 @@ o   original image, either a jpg, gif or png, depending on source format
                     [
                      new TextField('Lat', 'Latitude'),
                      new TextField('Lon', 'Longitude'),
-                     new TextField('ZoomLevel', 'Zoom')
+                     new TextField('ZoomLevel', 'Zoom'),
                     ],
-                    [ 'Address' ],
+                    ['Address'],
                 ),
             );
 
@@ -363,7 +363,7 @@ o   original image, either a jpg, gif or png, depending on source format
 
                     \array_push($guidePoints, [
                         'latitude' => $fp->Lat,
-                        'longitude' => $fp->Lon
+                        'longitude' => $fp->Lon,
                     ]);
                 }
             }
@@ -378,7 +378,7 @@ o   original image, either a jpg, gif or png, depending on source format
 
         //->addComponent( new GridFieldSortableRows( 'Value' ) );
         $gridConfig = GridFieldConfig_RelationEditor::create();
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'Value','RawValue' ]);
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Value', 'RawValue']);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
         $fields->addFieldToTab("Root.Main", $gridField);
 

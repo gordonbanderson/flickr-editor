@@ -119,7 +119,7 @@ class FlickrSetPage extends \Page
         */
 
         $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(new GridFieldSortableRows('SortOrder'));
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'URL', 'Title', 'Description' ]);
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['URL', 'Title', 'Description']);
         //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
         //$fields->addFieldToTab( "Root.Links", $gridField );
 

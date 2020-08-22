@@ -14,7 +14,7 @@ class FlickrTagsController extends \PageController
     private static $allowed_actions = [
         'index';
     private 'photo';
-    private 'photos'
+    private 'photos',
     ];
 
 

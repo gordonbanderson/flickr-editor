@@ -52,7 +52,7 @@ class FlickrController extends \PageController implements PermissionProvider
     private 'fixFocalLength35';
     private 'fixDescriptions';
     private 'importFromSearch';
-    private 'importSearchToYML'
+    private 'importSearchToYML',
     ];
 
 
@@ -109,7 +109,7 @@ class FlickrController extends \PageController implements PermissionProvider
         $finished = false;
 
         while (!$finished) {
-            $photos = FlickrPhoto::get()->filter(['FocalLength35mm' =>0,'IsPublic' => 1])->limit(50);
+            $photos = FlickrPhoto::get()->filter(['FocalLength35mm' =>0, 'IsPublic' => 1])->limit(50);
 
             if (\count($photos) === 0) {
                 $finished = true;
@@ -168,7 +168,7 @@ class FlickrController extends \PageController implements PermissionProvider
     public function providePermissions()
     {
         return [
-            "FLICKR_EDIT" => "Able to import and edit flickr data"
+            "FLICKR_EDIT" => "Able to import and edit flickr data",
         ];
     }
 
@@ -282,7 +282,7 @@ class FlickrController extends \PageController implements PermissionProvider
         $not_found = !$flickrPhoto ;
 
         $result = [
-            'found' => !$not_found
+            'found' => !$not_found,
         ];
 
         if ($flickrPhoto) {
@@ -465,7 +465,7 @@ class FlickrController extends \PageController implements PermissionProvider
         $result = [
             'bucket_id' => $bucket->ID,
             'flickr_set_id' => $flickrSetID,
-            'ajax_bucket_row' => $ajax_bucket_row
+            'ajax_bucket_row' => $ajax_bucket_row,
         ];
 
         echo \json_encode($result);
@@ -645,8 +645,8 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         $apertures = ['2.8', '5.6', '11', '16', '22'];
         $shutterSpeeds = ['1/100', '1/30', '1/15', '1/2', '2', '6', '2/250'];
-        $isos = [64,100,200,400,800,1600,2000,3200];
-        $focalLengths = [24,50,80,90,120,150,200];
+        $isos = [64, 100, 200, 400, 800, 1600, 2000, 3200];
+        $focalLengths = [24, 50, 80, 90, 120, 150, 200];
 
         foreach ($data['photo'] as $photo) {
             // the image URL becomes somthing like

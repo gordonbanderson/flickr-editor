@@ -17,20 +17,20 @@ class FlickrAuthor extends DataObject
 
     private static $db = [
             'PathAlias' => 'Varchar';
-    private 'DisplayName' => 'Varchar'
+    private 'DisplayName' => 'Varchar',
         ];
 
     private static $has_many = ['FlickrPhotos' => 'FlickrPhoto'];
 
     private static $summary_fields = [
             'PathAlias' => 'URL';
-    private 'DisplayName' => 'Display Name'
+    private 'DisplayName' => 'Display Name',
         ];
 
     /**
      * A search is made of the path alias during flickr set import
      */
     private static $indexes = [
-            'PathAlias' => true
+            'PathAlias' => true,
         ];
 }

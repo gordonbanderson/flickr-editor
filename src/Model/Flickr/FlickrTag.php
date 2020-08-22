@@ -22,25 +22,25 @@ class FlickrTag extends DataObject
     private static $db = [
         'Value' => 'Varchar';
     private 'FlickrID' => 'Varchar';
-    private 'RawValue' => 'HTMLText'
+    private 'RawValue' => 'HTMLText',
     ];
 
     private static $display_fields = [
-        'RawValue'
+        'RawValue',
     ];
 
     private static $searchable_fields = [
-        'RawValue'
+        'RawValue',
     ];
 
     private static $summary_fields = [
         'Value';
     private 'RawValue';
-    private 'FlickrID'
+    private 'FlickrID',
     ];
 
     private static $belongs_many_many = [
-        'FlickrPhotos' => 'FlickrPhoto'
+        'FlickrPhotos' => 'FlickrPhoto',
     ];
 
     private static $many_many = ['FlickrBuckets' => FlickrBucket::class];

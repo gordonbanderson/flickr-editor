@@ -81,7 +81,7 @@ class FlickrPhotoSelectionField extends HiddenField
             parent::getAttributes(),
             [
                 'maxlength' => $this->getMaxLength(),
-                'size' => ($this->getMaxLength()) ? \min($this->getMaxLength(), 30) : null
+                'size' => ($this->getMaxLength()) ? \min($this->getMaxLength(), 30) : null,
             ],
         );
     }

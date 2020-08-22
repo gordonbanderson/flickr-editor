@@ -26,15 +26,15 @@ class FlickrExif extends DataObject
     private 'Tag' => 'Varchar';
     private 'Label' => 'Varchar';
     private 'Raw' => 'Varchar';
-    private 'TagSpaceID' => 'Int'
+    private 'TagSpaceID' => 'Int',
     ];
 
     private static $belongs_many_many = [
-        'FlickrPhotos' => FlickrPhoto::class
+        'FlickrPhotos' => FlickrPhoto::class,
      ];
 
     private static $has_one = [
-        'FlickrPhoto' => FlickrPhoto::class
+        'FlickrPhoto' => FlickrPhoto::class,
     ];
 
     public function getCMSFields_forPopup()

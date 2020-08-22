@@ -43,7 +43,7 @@ class FlickrBatchHelper extends FlickrHelper
         }
 
         return [
-            'number_of_images_updated' => $flickrPhotos->count()
+            'number_of_images_updated' => $flickrPhotos->count(),
         ];
     }
 }
