@@ -26,10 +26,7 @@ class FlickrFolder extends \Page
      ];
 
 
-    /**
-     * @return \SilverStripe\Forms\FieldList
-     */
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
         $fields->addFieldToTab("Root.Content.CoverPhoto", new UploadField('CoverPhoto'));

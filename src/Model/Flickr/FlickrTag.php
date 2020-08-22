@@ -6,6 +6,8 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Only show a page with login when not logged in
  *
@@ -20,9 +22,9 @@ class FlickrTag extends DataObject
     private static $table_name = 'FlickrTag';
 
     private static $db = [
-        'Value' => 'Varchar';
-    private 'FlickrID' => 'Varchar';
-    private 'RawValue' => 'HTMLText',
+        'Value' => 'Varchar',
+        'FlickrID' => 'Varchar',
+        'RawValue' => 'HTMLText',
     ];
 
     private static $display_fields = [
@@ -34,9 +36,9 @@ class FlickrTag extends DataObject
     ];
 
     private static $summary_fields = [
-        'Value';
-    private 'RawValue';
-    private 'FlickrID',
+        'Value',
+        'RawValue',
+        'FlickrID',
     ];
 
     private static $belongs_many_many = [
@@ -45,15 +47,7 @@ class FlickrTag extends DataObject
 
     private static $many_many = ['FlickrBuckets' => FlickrBucket::class];
 
-
-
-    public function NormaliseCount($c)
-    {
-        return \log(\doubleval($c), 2);
-    }
-
-
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = new FieldList();
         $fields->push(new TextField('Value'));
@@ -63,8 +57,10 @@ class FlickrTag extends DataObject
     }
 
 
-    // this is required so the grid field autocompleter returns readable entries after searching
-    public function Title()
+    /**
+     * This is reqired for the GridFieldAutoCompleter to show tag names correctly in the CMS
+     */
+    public function Title(): string
     {
         return $this->RawValue;
     }

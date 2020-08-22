@@ -15,6 +15,8 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
 use Suilven\Flickr\Helper\FlickrTagHelper;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Class \Suilven\Flickr\Model\Flickr\FlickrBucket
  *
@@ -44,7 +46,8 @@ class FlickrBucket extends DataObject
 
         'Accuracy' => 'Int',
         'ZoomLevel' => 'Int',
-        'TagsCSV' => 'Varchar'];
+        'TagsCSV' => 'Varchar',
+    ];
 
     private static $has_one = ['FlickrSet' => FlickrSet::class];
 
@@ -58,22 +61,36 @@ class FlickrBucket extends DataObject
     private static $many_many = ['FlickrTags' => FlickrTag::class];
 
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = new FieldList();
 
         $fields->push(new TabSet("Root", $mainTab = new Tab("Main")));
         $mainTab->setTitle(\_t('SiteTree.TABMAIN', "Main"));
 
-        $lf = new LiteralField('<p>Instructions', 'All of the images in this bucket will have the same information that you enter here</p>');
+        $lf = new LiteralField(
+            '<p>Instructions',
+            'All of the images in this bucket will have the same information that you ' .
+            'enter here</p>',
+        );
         $fields->push($lf);
 
         $fields->addFieldToTab('Root.Main', $lf);
-        $fields->addFieldToTab('Root.Main', new TextField('Title', 'Bucket Title'));
-        $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Bucket Description'));
+        $fields->addFieldToTab('Root.Main', new TextField(
+            'Title',
+            'Bucket Title',
+        ));
+        $fields->addFieldToTab('Root.Main', new TextareaField(
+            'Description',
+            'Bucket Description',
+        ));
 
-        // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
-        $fields->addFieldToTab('Root.Main', new TextField('QuickTags', 'Quick tags - enter tags here separated by commas'));
+        // quick tags, faster than the grid editor - these are processed prior to save to
+        // create/assign tags
+        $fields->addFieldToTab('Root.Main', new TextField(
+            'QuickTags',
+            'Quick tags - enter tags here separated by commas',
+        ));
 
         $lf2 = new LiteralField('ImageStrip', $this->getImageStrip());
         $fields->push($lf2);
@@ -127,7 +144,8 @@ class FlickrBucket extends DataObject
     }
 
 
-    public function GeoLocked()
+    /** @return bool iff the bucket contains photographs from sets that are not geolocked */
+    public function GeoLocked(): bool
     {
         // only show a map for editing if no sets have geolock on them
         $lockgeo = false;
@@ -148,10 +166,11 @@ class FlickrBucket extends DataObject
     }
 
 
-    public function getImageStrip()
+    /** @return \SilverStripe\ORM\FieldType\DBField field containing HTML showing a strip of images */
+    public function getImageStrip(): DBField
     {
         $html = '<div class="imageStrip">';
-        foreach ($this->FlickrPhotos() as $key => $photo) {
+        foreach ($this->FlickrPhotos() as $photo) {
             $html .= '<img class="flickrThumbnail" ';
             $html .= 'src="' . $photo->ThumbnailURL . '" ';
             $html .= 'data-flickr-thumbnail-url="' . $photo->ThumbnailURL . '" ';
