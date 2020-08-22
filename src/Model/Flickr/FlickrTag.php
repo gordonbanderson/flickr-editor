@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\FieldList;
@@ -11,45 +12,44 @@ use SilverStripe\ORM\DataObject;
  * @property string $Value
  * @property string $FlickrID
  * @property string $RawValue
- * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrBucket[] FlickrBuckets()
- * @method \SilverStripe\ORM\ManyManyList|\FlickrPhoto[] FlickrPhotos()
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrBucket> FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|array<\FlickrPhoto> FlickrPhotos()
  */
 class FlickrTag extends DataObject
 {
     private static $table_name = 'FlickrTag';
 
-    private static $db = array(
-        'Value' => 'Varchar',
-        'FlickrID' => 'Varchar',
-        'RawValue' => 'HTMLText'
-    );
+    private static $db = [
+        'Value' => 'Varchar';
+    private 'FlickrID' => 'Varchar';
+    private 'RawValue' => 'HTMLText'
+    ];
 
-    private static $display_fields = array(
+    private static $display_fields = [
         'RawValue'
-    );
+    ];
 
-
-    private static $searchable_fields = array(
+    private static $searchable_fields = [
         'RawValue'
-    );
+    ];
 
-    private static $summary_fields = array(
-        'Value',
-        'RawValue',
-        'FlickrID'
-    );
+    private static $summary_fields = [
+        'Value';
+    private 'RawValue';
+    private 'FlickrID'
+    ];
 
-    private static $belongs_many_many = array(
+    private static $belongs_many_many = [
         'FlickrPhotos' => 'FlickrPhoto'
-    );
+    ];
 
-    private static $many_many = array('FlickrBuckets' => FlickrBucket::class);
+    private static $many_many = ['FlickrBuckets' => FlickrBucket::class];
 
 
 
     public function NormaliseCount($c)
     {
-        return log(doubleval($c), 2);
+        return \log(\doubleval($c), 2);
     }
 
 
@@ -58,6 +58,7 @@ class FlickrTag extends DataObject
         $fields = new FieldList();
         $fields->push(new TextField('Value'));
         $fields->push(new TextField('RawValue'));
+
         return $fields;
     }
 
@@ -67,7 +68,4 @@ class FlickrTag extends DataObject
     {
         return $this->RawValue;
     }
-
-
-
 }

@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Extension;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
@@ -16,22 +16,24 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 class BlogFeaturedImageExtension extends DataExtension
 {
     private static $db = [
-        'FeaturedFlickrImageID' => 'Varchar'
+        'FeaturedFlickrImageID' => 'Varchar',
     ];
 
-    public function updateCMSFields(FieldList $fields)
+    public function updateCMSFields(FieldList $fields): void
     {
         $fields->addFieldsToTab('Root.Flickr', [
-            TextField::create('FeaturedFlickrImageID','ID of Flickr Image to Show as the default',
-             'FeaturedImage'),
+            TextField::create(
+                'FeaturedFlickrImageID',
+                'ID of Flickr Image to Show as the default',
+                'FeaturedImage',
+            ),
         ]);
     }
 
+
     public function getFeaturedFlickrImage()
     {
-        $result = empty($this->owner->FeaturedFlickrImageID) ?
+        return empty($this->owner->FeaturedFlickrImageID) ?
             null : FlickrPhoto::get()->filter('FlickrID', $this->owner->FeaturedFlickrImageID)->first();
-
-        return $result;
     }
 }

@@ -1,10 +1,10 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use Suilven\Flickr\Model\Flickr\FlickrAuthor;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
-
 
 class FlickrPhotoHelper extends FlickrHelper
 {
@@ -25,12 +25,15 @@ class FlickrPhotoHelper extends FlickrHelper
         }
 
         if ($flickrPhoto->Imported) {
-            error_log('Skipping import, already done');
+            \error_log('Skipping import, already done');
+
             return false;
         }
 
         // if we are in the mode of only importing new then skip to the next iteration if this pic already exists
-        elseif ($only_new_photos) {
+
+
+        if ($only_new_photos) {
             // @todo Fix, this fails continue;
         }
 
@@ -122,7 +125,8 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->OriginalHeight = $photoInfo['height_o'];
         $flickrPhoto->OriginalWidth = $photoInfo['width_o'];
 
-        $flickrPhoto->Description = 'test';// $value['description']['_content'];
+        // $value['description']['_content'];
+        $flickrPhoto->Description = 'test';
 
         $author = FlickrAuthor::get()->filter('PathAlias', $pathalias)->first();
         if (!$author) {
@@ -133,8 +137,8 @@ class FlickrPhotoHelper extends FlickrHelper
 
         $flickrPhoto->PhotographerID = $author->ID;
 
-        $lat = number_format($photoInfo['latitude'], 15);
-        $lon = number_format($photoInfo['longitude'], 15);
+        $lat = \number_format($photoInfo['latitude'], 15);
+        $lon = \number_format($photoInfo['longitude'], 15);
 
 
         if ($photoInfo['latitude']) {
@@ -175,14 +179,14 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->write();
 
 
-        error_log(
-            'Written photo object'
+        \error_log(
+            'Written photo object',
         );
 
 
 
         foreach ($singlePhotoInfo['tags']['tag'] as $key => $taginfo) {
-            error_log('TAG');
+            \error_log('TAG');
 
             $tag = FlickrTag::get()->filter(['Value' => $taginfo['_content']])->first();
             if (!$tag) {

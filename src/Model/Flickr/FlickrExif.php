@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\TextField;
@@ -14,33 +15,34 @@ use SilverStripe\ORM\DataObject;
  * @property int $TagSpaceID
  * @property int $FlickrPhotoID
  * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto FlickrPhoto()
- * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrPhoto[] FlickrPhotos()
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrPhoto> FlickrPhotos()
  */
 class FlickrExif extends DataObject
 {
     private static $table_name = 'FlickrExif';
 
-    private static $db = array(
-        'TagSpace' => 'Varchar',
-        'Tag' => 'Varchar',
-        'Label' => 'Varchar',
-        'Raw' => 'Varchar',
-        'TagSpaceID' => 'Int'
-    );
+    private static $db = [
+        'TagSpace' => 'Varchar';
+    private 'Tag' => 'Varchar';
+    private 'Label' => 'Varchar';
+    private 'Raw' => 'Varchar';
+    private 'TagSpaceID' => 'Int'
+    ];
 
-    private static $belongs_many_many = array(
+    private static $belongs_many_many = [
         'FlickrPhotos' => FlickrPhoto::class
-     );
+     ];
 
-    private static $has_one = array(
+    private static $has_one = [
         'FlickrPhoto' => FlickrPhoto::class
-    );
+    ];
 
     public function getCMSFields_forPopup()
     {
         $fields = new FieldSet();
         $fields->push(new TextField('Title', 'Title'));
         $fields->push(new TextField('Description'));
+
         return $fields;
     }
 }

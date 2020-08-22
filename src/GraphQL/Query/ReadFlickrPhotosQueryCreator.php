@@ -1,6 +1,6 @@
-<?php
-namespace Suilven\Flickr\GraphQL\Query;
+<?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\GraphQL\Query;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -15,25 +15,26 @@ class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationReso
     public function attributes()
     {
         return [
-            'name' => 'readFlickrPhotos'
+            'name' => 'readFlickrPhotos',
         ];
     }
+
 
     public function args()
     {
         return [
-            'FlickrSetID' => ['type' => Type::int()]
+            'FlickrSetID' => ['type' => Type::int()],
         ];
     }
+
 
     public function type()
     {
         return Type::listOf($this->manager->getType('flickrphoto'));
     }
 
-    /**
-     * @inheritDoc
-     */
+
+    /** @inheritDoc */
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
 
@@ -44,11 +45,8 @@ class ReadFlickrPhotosQueryCreator extends QueryCreator implements OperationReso
         $photos = [];
         if (isset($args['FlickrSetID'])) {
             $flickrSet = DataObject::get_by_id(FlickrSet::class, $args['FlickrSetID']);
-
         }
 
-        $photos = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder);
-
-        return $photos;
+        return $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder);
     }
 }

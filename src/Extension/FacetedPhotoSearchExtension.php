@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Extension;
 
 use SilverStripe\Core\Extension;
@@ -11,19 +12,21 @@ use SilverStripe\Core\Extension;
 class FacetedPhotoSearchExtension extends Extension
 {
 
-    public function postProcessFacetTitle(&$facetTitle) {
+    public function postProcessFacetTitle(&$facetTitle): void
+    {
 
         $titles = [
           'aperture' => 'Aperture',
           'shutterspeed' => 'Shutter Speed',
           'iso' => 'ISO',
-          'flickrtagid' => 'Tags'
+          'flickrtagid' => 'Tags',
         ];
 
-       if (in_array($facetTitle, array_keys($titles))) {
-           $facetTitle = $titles[$facetTitle];
-       }
+        if (!\in_array($facetTitle, \array_keys($titles))) {
+            return;
+        }
 
+        $facetTitle = $titles[$facetTitle];
     }
 
 
@@ -32,51 +35,42 @@ class FacetedPhotoSearchExtension extends Extension
      * @param $tokenFacets - the facets for this token
      * @return array - massaged title and facets
      */
-    public function postProcessFacetResults( $token, $tokenFacets) {
+    public function postProcessFacetResults($token, $tokenFacets): array
+    {
         $result = [];
 
         foreach ($tokenFacets as $facet) {
             $value = $facet['Value'];
 
-            switch($token)
-            {
+            switch ($token) {
                 case 'Aperture':
                     //$value = $facet['Value'];
 
-                    $value = str_replace('.0', '', $value);
+                    $value = \str_replace('.0', '', $value);
                     //$aperture = str_replace('000000', '', $aperture);
-                    $value = str_replace('00000', '', $value);
+                    $value = \str_replace('00000', '', $value);
 
-                    if (empty($value)) {
-                        $facet['Value'] = 'Unknown';
-                    } else {
-                        $facet['Value'] = 'f' . $value;
-                    }
+                    $facet['Value'] = empty($value)
+                        ? 'Unknown'
+                        : 'f' . $value;
 
                     break;
                 case 'Shutter Speed':
                     if (empty($value)) {
                         $facet['Value'] = 'Unknown';
-
                     }
 
                 case 'ISO':
                     if (empty($value)) {
                         $facet['Value'] = 'Unknown';
-
                     }
                 default:
                     // do nothing
                     break;
             }
-            array_push($result, $facet);
+            \array_push($result, $facet);
         }
-
-
-
-
 
         return $result;
     }
-
 }

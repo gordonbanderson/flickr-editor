@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -14,7 +15,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
-
 class DownloadVisibleImagesTask extends BuildTask
 {
 
@@ -22,73 +22,10 @@ class DownloadVisibleImagesTask extends BuildTask
 
     protected $description = 'Download selected gallery, in numerical order, and create a zip file';
 
-    private static $segment = 'download-flickr-set-for-facebook';
-
     protected $enabled = true;
 
+    private static $segment = 'download-flickr-set-for-facebook';
 
-    private function mkdir_if_required($dir)
-    {
-        if (!file_exists($dir) && !is_dir($dir)) {
-            mkdir($dir);
-        }
-    }
-
-    private function downloadSet($flickrSet, $targetDir, $size)
-    {
-        error_log('SIZE: ' . $size);
-        $counter = 0;
-        foreach ($flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder)
-                 as $flickrPhoto) {
-            $counter++;
-            $paddedCounter = sprintf('%04d', $counter);
-            $imageURL = $flickrPhoto->SmallURL;
-            switch($size) {
-                case 'original':
-                    $imageURL = $flickrPhoto->OriginalURL;
-                    break;
-                case 'small':
-                    $imageURL = $flickrPhoto->SmallURL;
-                    break;
-                case 'medium':
-                    $imageURL = $flickrPhoto->MediumURL;
-                    break;
-                case 'large':
-                    $imageURL = $flickrPhoto->LargeURL;
-                    break;
-                case 'large1600':
-                    $imageURL = $flickrPhoto->LargeURL1600;
-                    break;
-                case 'large2048':
-                    $imageURL = $flickrPhoto->LargeURL2048;
-                    break;
-                default:
-                    // url already defaulted
-            }
-            error_log('Downloading ' . $imageURL);
-            $ch = curl_init($imageURL);
-
-            $filename = basename($imageURL);
-            $complete_save_loc = trim($targetDir) .'/' . $paddedCounter . '.JPG';
-            $complete_save_loc = str_replace(' ', '', $complete_save_loc);
-
-            error_log('CSL: ' . $complete_save_loc);
-
-
-            $fp = fopen($complete_save_loc, 'wb');
-
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
-
-        }
-
-        $cmd = "cd public/flickr/images/ && zip -r ../../{$flickrSet->FlickrID}.zip {$flickrSet->ID}";
-        error_log($cmd);
-
-    }
 
     public function run($request)
     {
@@ -98,7 +35,9 @@ class DownloadVisibleImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = isset($_GET['size']) ? $_GET['size'] : 'large2048';
+        $size = isset($_GET['size'])
+            ? $_GET['size']
+            : 'large2048';
 
         $flickrSetID = $_GET['id'];
 
@@ -111,14 +50,76 @@ class DownloadVisibleImagesTask extends BuildTask
         $this->mkdir_if_required($targetDir);
 
         $this->downloadSet($flickrSet, $targetDir, $size);
-
     }
 
 
+    private function mkdir_if_required($dir): void
+    {
+        if (\file_exists($dir) || \is_dir($dir)) {
+            return;
+        }
+
+        \mkdir($dir);
+    }
 
 
+    private function downloadSet($flickrSet, $targetDir, $size): void
+    {
+        \error_log('SIZE: ' . $size);
+        $counter = 0;
+        foreach ($flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder)
+        as $flickrPhoto) {
+            $counter++;
+            $paddedCounter = \sprintf('%04d', $counter);
+            $imageURL = $flickrPhoto->SmallURL;
+            switch ($size) {
+                case 'original':
+                    $imageURL = $flickrPhoto->OriginalURL;
+
+                    break;
+                case 'small':
+                    $imageURL = $flickrPhoto->SmallURL;
+
+                    break;
+                case 'medium':
+                    $imageURL = $flickrPhoto->MediumURL;
+
+                    break;
+                case 'large':
+                    $imageURL = $flickrPhoto->LargeURL;
+
+                    break;
+                case 'large1600':
+                    $imageURL = $flickrPhoto->LargeURL1600;
+
+                    break;
+                case 'large2048':
+                    $imageURL = $flickrPhoto->LargeURL2048;
+
+                    break;
+                default:
+                    // url already defaulted
+            }
+            \error_log('Downloading ' . $imageURL);
+            $ch = \curl_init($imageURL);
+
+            $filename = \basename($imageURL);
+            $complete_save_loc = \trim($targetDir) .'/' . $paddedCounter . '.JPG';
+            $complete_save_loc = \str_replace(' ', '', $complete_save_loc);
+
+            \error_log('CSL: ' . $complete_save_loc);
 
 
+            $fp = \fopen($complete_save_loc, 'wb');
 
+            \curl_setopt($ch, \CURLOPT_FILE, $fp);
+            \curl_setopt($ch, \CURLOPT_HEADER, 0);
+            \curl_exec($ch);
+            \curl_close($ch);
+            \fclose($fp);
+        }
 
+        $cmd = "cd public/flickr/images/ && zip -r ../../{$flickrSet->FlickrID}.zip {$flickrSet->ID}";
+        \error_log($cmd);
+    }
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -7,7 +8,6 @@
  */
 
 namespace Suilven\Flickr\Task;
-
 
 use SilverStripe\Core\Environment;
 use SilverStripe\Dev\BuildTask;
@@ -19,18 +19,18 @@ class GetOAuthToken extends BuildTask
 
     protected $description = 'Given the existence of API key and secret, get the oauth tokens';
 
-    private static $segment = 'get-flickr-oauth';
-
     protected $enabled = true;
 
+    private static $segment = 'get-flickr-oauth';
 
-    public function run($request)
+
+    public function run($request): void
     {
         $apiKey = Environment::getEnv('FLICKR_API_KEY');
         $apiSecret = Environment::getEnv('FLICKR_API_SECRET');
 
         if (empty($apiKey) || empty($apiSecret)) {
-            user_error('Please set FLICKR_API_KEY and FLICKR_API_SECRET in your .env file');
+            \user_error('Please set FLICKR_API_KEY and FLICKR_API_SECRET in your .env file');
         }
 
 
@@ -53,31 +53,28 @@ class GetOAuthToken extends BuildTask
             /*
              * The CLI workflow.
              */
-            error_log('CLI WORKFLOW');
+            \error_log('CLI WORKFLOW');
             $storage = new \OAuth\Common\Storage\Memory();
             $flickr->setOauthStorage($storage);
             $url = $flickr->getAuthUrl('delete');
             echo "Go to $url\nEnter access code: ";
-            $code = fgets(STDIN);
-            $verifier = preg_replace('/[^0-9]/', '', $code);
+            $code = \fgets(\STDIN);
+            $verifier = \preg_replace('/[^0-9]/', '', $code);
             $accessToken = $flickr->retrieveAccessToken($verifier);
         }
-        if (isset($accessToken) && $accessToken instanceof \OAuth\Common\Token\TokenInterface) {
-            /*
-             * You should save the access token and its secret somewhere safe.
-             */
-            echo '$accessToken = "'.$accessToken->getAccessToken().'";'.PHP_EOL;
-            echo '$accessTokenSecret = "'.$accessToken->getAccessTokenSecret().'";'.PHP_EOL;
-            /*
-             * Any methods can now be called.
-             */
-            $login = $flickr->test()->login();
-            echo "You are authenticated as: {$login['username']}\n";
+        if (!isset($accessToken) || !($accessToken instanceof \OAuth\Common\Token\TokenInterface)) {
+            return;
         }
 
-
+        /*
+         * You should save the access token and its secret somewhere safe.
+         */
+        echo '$accessToken = "'.$accessToken->getAccessToken().'";'.\PHP_EOL;
+        echo '$accessTokenSecret = "'.$accessToken->getAccessTokenSecret().'";'.\PHP_EOL;
+        /*
+         * Any methods can now be called.
+         */
+        $login = $flickr->test()->login();
+        echo "You are authenticated as: {$login['username']}\n";
     }
-
-
-
 }

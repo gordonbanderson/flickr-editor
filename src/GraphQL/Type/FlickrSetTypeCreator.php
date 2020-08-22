@@ -1,22 +1,21 @@
-<?php
-namespace Suilven\Flickr\GraphQL\Type;
+<?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\GraphQL\Type;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\Pagination\Connection;
 use SilverStripe\GraphQL\TypeCreator;
-use SilverStripe\Security\Security;
-use SilverStripe\Security\SecurityToken;
 
 class FlickrSetTypeCreator extends TypeCreator
 {
     public function attributes()
     {
         return [
-            'name' => 'flickrsets'
+            'name' => 'flickrsets',
         ];
     }
+
 
     public function fields()
     {
@@ -36,18 +35,12 @@ class FlickrSetTypeCreator extends TypeCreator
             'FlickrPhotos' => [
                 'type' => $photosConnection->toType(),
                 'args' => $photosConnection->args(),
-                'resolve' => function($flickrSet, array $args, $context, ResolveInfo $info) use ($photosConnection) {
-                    return $photosConnection->resolveList(
-                        $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
-                        $args,
-                        $context
-                    );
-                }
-            ]
+                'resolve' => static fn ($flickrSet, array $args, $context, ResolveInfo $info) => $photosConnection->resolveList(
+                    $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
+                    $args,
+                    $context,
+                ),
+            ],
         ];
     }
-
-
-
-
 }

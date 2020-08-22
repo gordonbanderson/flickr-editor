@@ -1,6 +1,6 @@
-<?php
-namespace Suilven\Flickr\GraphQL\Type;
+<?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\GraphQL\Type;
 
 use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\TypeCreator;
@@ -10,9 +10,10 @@ class FlickrPhotoTypeCreator extends TypeCreator
     public function attributes()
     {
         return [
-            'name' => 'flickrphoto'
+            'name' => 'flickrphoto',
         ];
     }
+
 
     public function fields()
     {

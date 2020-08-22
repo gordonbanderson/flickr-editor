@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -14,7 +15,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
-
 class ImportSetTask extends BuildTask
 {
 
@@ -22,9 +22,9 @@ class ImportSetTask extends BuildTask
 
     protected $description = 'Import a flickr set';
 
-    private static $segment = 'import-flickr-set';
-
     protected $enabled = true;
+
+    private static $segment = 'import-flickr-set';
 
 
     public function run($request)
@@ -40,12 +40,4 @@ class ImportSetTask extends BuildTask
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSetHelper->importSet($flickrSetID);
     }
-
-
-
-
-
-
-
-
 }

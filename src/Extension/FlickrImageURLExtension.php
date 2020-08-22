@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Extension;
 
 use SilverStripe\Core\Extension;
@@ -11,13 +12,13 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
  */
 class FlickrImageURLExtension extends Extension
 {
-    public function getFlickrURLFromID($flickrID, $size='l')
+    public function getFlickrURLFromID($flickrID, $size = 'l')
     {
-        /** @var FlickrPhoto $flickrImage */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrImage */
         $flickrImage = FlickrPhoto::get()->filter(['FlickrID' => $flickrID])->first();
 
         // @todo configurable size
-        switch($size) {
+        switch ($size) {
             case 's':
                 return $flickrImage->SmallURL;
             case 'sq':

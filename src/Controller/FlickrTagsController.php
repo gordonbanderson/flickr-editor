@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
 use SilverStripe\Control\Director;
@@ -7,15 +8,14 @@ use SilverStripe\ORM\DB;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrTagsController
- *
  */
 class FlickrTagsController extends \PageController
 {
-    private static $allowed_actions = array(
-        'index',
-        'photo',
-        'photos'
-    );
+    private static $allowed_actions = [
+        'index';
+    private 'photo';
+    private 'photos'
+    ];
 
 
     public function ColumnLayout()
@@ -23,16 +23,18 @@ class FlickrTagsController extends \PageController
         return 'layout1col';
     }
 
-    public function init()
+
+    public function init(): void
     {
         parent::init();
 
         // Requirements, etc. here
     }
 
+
     public function index()
     {
-        return array();
+        return [];
     }
 
 
@@ -47,19 +49,19 @@ class FlickrTagsController extends \PageController
         $this->TagValue = $tagValue;
         $this->Tag = $tag;
 
-        $result = array();
+        $result = [];
         if ($tag) {
             $result = $tag->FlickrPhotos();
             $this->FlickrPhotos = $tag->FlickrPhotos();
         }
 
-        return array();
+        return [];
     }
+
 
     public function PhotoKey()
     {
-        $key ='tagphoto_'.$ID;
-        return $key;
+        return'tagphoto_'.$ID;
     }
 
 
@@ -70,7 +72,7 @@ class FlickrTagsController extends \PageController
         $this->Tags = DataObject::get('Tag');
         $this->Title = 'Tags for photos';
 
-        $maxCount  = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by TagID Order by ct desc limit 1")->value();
+        $maxCount = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by TagID Order by ct desc limit 1")->value();
 
         $sql = "select t.ID, t.ClassName, count(TagID) as Amount, t.Value
 				From FlickrPhoto_FlickrTags ft
@@ -82,13 +84,14 @@ class FlickrTagsController extends \PageController
 
         $result = DB::query($sql);
 
-        $tagCloud = singleton('Tag')->buildDataObjectSet($result);
+        $tagCloud = \singleton('Tag')->buildDataObjectSet($result);
         foreach ($tagCloud as $tagV) {
             // font size in pixels
-            $tagV->Amount= 10 + round(32*$tagV->Amount / $maxCount);
+            $tagV->Amount= 10 + \round(32*$tagV->Amount / $maxCount);
         }
 
         $this->TagCloud = $tagCloud;
-        return array();
+
+        return [];
     }
 }

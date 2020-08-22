@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Site;
 
 use SilverStripe\Assets\Image;
@@ -15,7 +16,7 @@ use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
  *
  * @property int $TimeShiftHours
  * @property string $Description
- * @property boolean $IsDirty
+ * @property bool $IsDirty
  * @property string $FirstPictureTakenAt
  * @property int $FlickrSetForPageID
  * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSetForPage()
@@ -25,7 +26,7 @@ class FlickrSetPage extends \Page
     private static $table_name = 'FlickrSetPage';
 
     private static $has_one = [
-        'FlickrSetForPage' => FlickrSet::class
+        'FlickrSetForPage' => FlickrSet::class,
     ];
 
     private static $db = [
@@ -35,13 +36,14 @@ class FlickrSetPage extends \Page
         'IsDirty' => DBBoolean::class,
 
         //FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
-        'FirstPictureTakenAt' => 'Datetime'
+        'FirstPictureTakenAt' => 'Datetime',
     ];
 
     public function getFlickrImageCollectionForPage()
     {
         return $this->FlickrSetForPage();
     }
+
 
     public function getPortletTitle()
     {
@@ -51,14 +53,13 @@ class FlickrSetPage extends \Page
 
     /**
      * An accessor method for an image for a portlet
+     *
      * @example
      * <code>
      *  return $this->NewsItemImage;
      * </code>
-     *
-     * @return string
      */
-    public function getPortletImage()
+    public function getPortletImage(): string
     {
         return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
     }
@@ -66,17 +67,17 @@ class FlickrSetPage extends \Page
 
     /**
      * An accessor for text associated with the portlet
+     *
      * @example
      * <code>
      * return $this->Summary
      * </code>
-     *
-     * @return string
      */
-    public function getPortletCaption()
+    public function getPortletCaption(): string
     {
         return $this->Descripton;
     }
+
 
     public function ColumnLayout()
     {
@@ -91,6 +92,7 @@ class FlickrSetPage extends \Page
     {
         $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
+
         return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
     }
 
@@ -117,14 +119,13 @@ class FlickrSetPage extends \Page
         */
 
         $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(new GridFieldSortableRows('SortOrder'));
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array( 'URL', 'Title', 'Description' ));
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([ 'URL', 'Title', 'Description' ]);
         //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
         //$fields->addFieldToTab( "Root.Links", $gridField );
 
 
         $fields->addFieldToTab('Root.Main', new HTMLEditorField('Description', 'Description'), 'Content');
         //fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
-
 
         //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
         /*
@@ -137,7 +138,7 @@ class FlickrSetPage extends \Page
     }
 
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
 
@@ -149,5 +150,4 @@ class FlickrSetPage extends \Page
         // FIXME
         $this->Dirty = true;
     }
-
 }

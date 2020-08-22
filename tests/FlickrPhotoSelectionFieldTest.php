@@ -1,37 +1,51 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrPhotoSelectionFieldTest extends \SilverStripe\Dev\SapphireTest {
-	public function test__construct() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testGetFlickrTitle() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testGetFlickrID() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testGetMediumURL() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testSetMaxLength() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testGetMaxLength() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testGetAttributes() {
-		$this->markTestSkipped('TODO');
-	}
-
-	public function testInternallyLabelledField() {
-		$this->markTestSkipped('TODO');
-	}
+class FlickrPhotoSelectionFieldTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function test__construct(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
 
+    public function testGetFlickrTitle(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testGetFlickrID(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testGetMediumURL(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testSetMaxLength(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testGetMaxLength(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testGetAttributes(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testInternallyLabelledField(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

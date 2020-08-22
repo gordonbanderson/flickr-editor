@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -12,9 +13,6 @@ use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
-use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
-use Suilven\Flickr\Helper\FlickrSetHelper;
-
 
 class RoutesDump extends BuildTask
 {
@@ -23,9 +21,9 @@ class RoutesDump extends BuildTask
 
     protected $description = 'Dump configured routes';
 
-    private static $segment = 'routes-dump';
-
     protected $enabled = true;
+
+    private static $segment = 'routes-dump';
 
 
 
@@ -39,9 +37,6 @@ class RoutesDump extends BuildTask
 
         $routes = Director::config()->get('rules');
 
-        error_log(print_r($routes, 1));
+        \error_log(\print_r($routes, 1));
     }
-
-
-
 }

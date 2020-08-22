@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Site;
 
 use Suilven\Flickr\Model\Flickr\FlickrGallery;
@@ -14,7 +15,7 @@ class FlickrGalleryPage extends FlickrSetPage
     private static $table_name = 'FlickrGalleryPage';
 
     private static $has_one = [
-        'FlickrGalleryForPage' => FlickrGallery::class
+        'FlickrGalleryForPage' => FlickrGallery::class,
     ];
 
     public function getFlickrImageCollectionForPage()

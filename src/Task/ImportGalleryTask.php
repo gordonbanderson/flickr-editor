@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -14,7 +15,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrGalleryHelper;
 
-
 class ImportGalleryTask extends BuildTask
 {
 
@@ -22,9 +22,9 @@ class ImportGalleryTask extends BuildTask
 
     protected $description = 'Import a flickr gallery';
 
-    private static $segment = 'import-flickr-gallery';
-
     protected $enabled = true;
+
+    private static $segment = 'import-flickr-gallery';
 
 
     public function run($request)
@@ -40,12 +40,4 @@ class ImportGalleryTask extends BuildTask
         $flickrGalleryHelper = new FlickrGalleryHelper();
         $flickrGalleryHelper->importGallery($flickrGalleryID);
     }
-
-
-
-
-
-
-
-
 }

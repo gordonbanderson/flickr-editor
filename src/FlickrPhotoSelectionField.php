@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr;
 
 use SilverStripe\Forms\HiddenField;
@@ -13,9 +14,7 @@ use SilverStripe\View\Requirements;
 class FlickrPhotoSelectionField extends HiddenField
 {
 
-    /**
-     * @var int
-     */
+    /** @var int */
     protected $maxLength;
 
     protected $flickrTitle;
@@ -40,66 +39,68 @@ class FlickrPhotoSelectionField extends HiddenField
 
         $this->addExtraClass('flickrPhotoSelectionField');
 
-
         parent::__construct($name, $title, $value, $form);
     }
+
 
     public function getFlickrTitle()
     {
         return $this->flickrTitle;
     }
 
+
     public function getFlickrID()
     {
         return $this->flickrID;
     }
+
 
     public function getMediumURL()
     {
         return $this->mediumURL;
     }
 
-    /**
-     * @param int $length
-     */
-    public function setMaxLength($length)
+
+    public function setMaxLength(int $length)
     {
         $this->maxLength = $length;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxLength()
+
+    public function getMaxLength(): int
     {
         return $this->maxLength;
     }
 
+
     public function getAttributes()
     {
-        return array_merge(
+        return \array_merge(
             parent::getAttributes(),
-            array(
+            [
                 'maxlength' => $this->getMaxLength(),
-                'size' => ($this->getMaxLength()) ? min($this->getMaxLength(), 30) : null
-            )
+                'size' => ($this->getMaxLength()) ? \min($this->getMaxLength(), 30) : null
+            ],
         );
     }
+
 
     public function InternallyLabelledField()
     {
         if (!$this->value) {
             $this->value = $this->Title();
         }
+
         return $this->Field();
     }
 
 
-    public function FieldHolder($properties = array())
+    public function FieldHolder($properties = [])
     {
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
+
         return parent::FieldHolder();
     }
 }

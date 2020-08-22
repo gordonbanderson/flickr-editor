@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use OAuth\Common\Storage\Memory;
@@ -8,13 +9,9 @@ use Samwilson\PhpFlickr\PhotosetsApi;
 use Samwilson\PhpFlickr\PhpFlickr;
 use SilverStripe\Core\Environment;
 
-
 class FlickrHelper
 {
-    /**
-     * @return PhpFlickr
-     */
-    public function getPhpFlickr()
+    public function getPhpFlickr(): PhpFlickr
     {
         $apiKey = Environment::getEnv('FLICKR_API_KEY');
         $apiSecret = Environment::getEnv('FLICKR_API_SECRET');
@@ -35,24 +32,31 @@ class FlickrHelper
         $phpFlickr = new PhpFlickr($apiKey, $apiSecret);
 // Give PhpFlickr the storage containing the access token.
         $phpFlickr->setOauthStorage($storage);
+
         return $phpFlickr;
     }
+
 
     public function getPhotosHelper()
     {
         $phpFlickr = $this->getPhpFlickr();
+
         return new PhotosApi($phpFlickr);
     }
+
 
     public function getPhotosAPIHelper()
     {
         $phpFlickr = $this->getPhpFlickr();
+
         return new PhotosApi($phpFlickr);
     }
+
 
     public function getPhotoSetsHelper()
     {
         $phpFlickr = $this->getPhpFlickr();
+
         return new PhotosetsApi($phpFlickr);
     }
 }

@@ -1,48 +1,69 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrSetPageTest extends \SilverStripe\Dev\SapphireTest {
-	public function testGetPortletTitle() {
-		$this->markTestSkipped('TODO');
-	}
+class FlickrSetPageTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testGetPortletTitle(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testGetPortletImage() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testGetPortletCaption() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testGetPortletImage(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testColumnLayout() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testMainImage() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testGetPortletCaption(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testGetCMSFields() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testOnBeforeWrite() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testColumnLayout(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testBasicMap() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testFlickrPhotos() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testMainImage(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testIdToUrlJson() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testHasGeo() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testGetCMSFields(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
+
+    public function testOnBeforeWrite(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testBasicMap(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testFlickrPhotos(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testIdToUrlJson(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testHasGeo(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

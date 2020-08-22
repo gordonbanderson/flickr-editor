@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrSetAdminTest extends \SilverStripe\Dev\SapphireTest {
+class FlickrSetAdminTest extends \SilverStripe\Dev\SapphireTest
+{
 }

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -14,7 +15,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
-
 class UpdateSetMetaTask extends BuildTask
 {
 
@@ -22,9 +22,9 @@ class UpdateSetMetaTask extends BuildTask
 
     protected $description = 'Updates Flickr metadata from edits made in SilverStripe';
 
-    private static $segment = 'update-flickr-set-metadata';
-
     protected $enabled = true;
+
+    private static $segment = 'update-flickr-set-metadata';
 
 
     public function run($request)
@@ -36,16 +36,8 @@ class UpdateSetMetaTask extends BuildTask
         }
 
         $flickrSetID = $_GET['id'];
-        /** @var FlickrSet $flickrSet */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
         $flickrSet = FlickrSet::get()->filter(['FlickrID' => $flickrSetID])->first();
         $flickrSet->writeToFlickr();
     }
-
-
-
-
-
-
-
-
 }

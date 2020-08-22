@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Suilven\Flickr\Model\Flickr;
 
@@ -11,13 +11,10 @@ use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldPaginator;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Security\SecurityToken;
@@ -32,8 +29,8 @@ use SilverStripe\View\Requirements;
  * @property string $FlickrID
  * @property string $Description
  * @property string $FirstPictureTakenAt
- * @property boolean $IsDirty
- * @property boolean $LockGeo
+ * @property bool $IsDirty
+ * @property bool $LockGeo
  * @property string $BatchTags
  * @property string $BatchTitle
  * @property string $BatchDescription
@@ -44,8 +41,8 @@ use SilverStripe\View\Requirements;
  * @property int $PrimaryFlickrPhotoID
  * @method \SilverStripe\Assets\Folder AssetFolder()
  * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto PrimaryFlickrPhoto()
- * @method \SilverStripe\ORM\DataList|\Suilven\Flickr\Model\Flickr\FlickrBucket[] FlickrBuckets()
- * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrPhoto[] FlickrPhotos()
+ * @method \SilverStripe\ORM\DataList|array<\Suilven\Flickr\Model\Flickr\FlickrBucket> FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrPhoto> FlickrPhotos()
  */
 class FlickrSet extends DataObject
 {
@@ -64,37 +61,33 @@ class FlickrSet extends DataObject
         'BatchDescription' => 'HTMLText',
         'ImageFooter' => 'Text',
         'SpriteCSS' => 'Text',
-        'SortOrder' => "Enum('TakenAt,UploadUnixTimeStamp', 'UploadUnixTimeStamp')"
+        'SortOrder' => "Enum('TakenAt,UploadUnixTimeStamp', 'UploadUnixTimeStamp')",
     ];
 
     private static $defaults = [
-        'LockGeo' => true
+        'LockGeo' => true,
     ];
-
 
     private static $many_many = [
-        'FlickrPhotos' => FlickrPhoto::class
+        'FlickrPhotos' => FlickrPhoto::class,
     ];
-
 
     // this is the assets folder
     private static $has_one = [
         'AssetFolder' => Folder::class,
-        'PrimaryFlickrPhoto' => FlickrPhoto::class
+        'PrimaryFlickrPhoto' => FlickrPhoto::class,
     ];
 
     private static $has_many = [
-        'FlickrBuckets' => FlickrBucket::class
+        'FlickrBuckets' => FlickrBucket::class,
     ];
-
 
     /// model admin
     private static $summary_fields = [
         'Title',
         'Description',
-        'FlickrID'
+        'FlickrID',
     ];
-
 
     private static $default_sort = 'FirstPictureTakenAt DESC';
 
@@ -109,14 +102,16 @@ class FlickrSet extends DataObject
         $fields = new FieldList();
 
         $fields->push(new TabSet("Root", $mainTab = new Tab("Main")));
-        $mainTab->setTitle(_t('SiteTree.TABMAIN', "Main"));
+        $mainTab->setTitle(\_t('SiteTree.TABMAIN', "Main"));
 
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
         $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
 
-        $fields->addFieldsToTab('Root.Main',
-            DropdownField::create( 'SortOrder', 'Sort Order', singleton(FlickrSet::class)->
-            dbObject('SortOrder')->enumValues()));
+        $fields->addFieldsToTab(
+            'Root.Main',
+            DropdownField::create('SortOrder', 'Sort Order', \singleton(FlickrSet::class)->
+            dbObject('SortOrder')->enumValues()),
+        );
 
         $fields->addFieldToTab('Root.Main', new TextField('ImageFooter', 'Text to be added to each image in this album when saving'));
         $fields->addFieldToTab('Root.Main', new CheckboxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
@@ -135,7 +130,7 @@ class FlickrSet extends DataObject
         $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
         $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
-        /** @var DataList $bucketsByDate */
+        /** @var \SilverStripe\ORM\DataList $bucketsByDate */
         $bucketsByDate = $this->FlickrBucketsByDate();
 
         /*
@@ -153,7 +148,7 @@ class FlickrSet extends DataObject
         $forTemplate = new ArrayData([
             'Title' => $this->Title,
             'ID' => $this->ID,
-            'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket()
+            'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket(),
         ]);
         $html = $forTemplate->renderWith('Includes/ReactFlickrBuckets');
         $lfImage = new LiteralField('BucketEdit', $html);
@@ -165,7 +160,7 @@ class FlickrSet extends DataObject
 
         $templateData = new ArrayData([
             'FlickrSet' => $this,
-            'SecurityToken' => SecurityToken::inst()->getValue()
+            'SecurityToken' => SecurityToken::inst()->getValue(),
         ]);
         $html = $forTemplate->renderWith('Includes/VisibleImageSelector', $templateData);
         $lfImage = new LiteralField('VisibleImagesField', $html);
@@ -186,13 +181,11 @@ class FlickrSet extends DataObject
 
         // unix commands
         $forTemplate = new ArrayData([
-            'ID' => $this->FlickrID
+            'ID' => $this->FlickrID,
         ]);
         $html = $forTemplate->renderWith('Includes/UNIXCommands');
         $lfCommands = new LiteralField('Commands', $html);
         $fields->addFieldToTab('Root.Commands', $lfCommands);
-
-
 
         return $fields;
     }
@@ -207,13 +200,17 @@ class FlickrSet extends DataObject
     /*
     Mark image as dirty upon a save
     */
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
-        if (!$this->KeepClean) {
-            $this->IsDirty = true;
+
+        if ($this->KeepClean) {
+            return;
         }
+
+        $this->IsDirty = true;
     }
+
 
     public function FlickrPhotosNotInBucket()
     {
@@ -223,21 +220,16 @@ class FlickrSet extends DataObject
     }
 
 
-    /**
-     * @return ArrayList
-     */
-    public function FlickrBucketsByDate()
+    public function FlickrBucketsByDate(): ArrayList
     {
         // adding in a sort field of TakenAt results in duplicates.  If one uses UploadUnixTimeStamp
         // the issue is worse, a unique row is being created for each unique UploadUnixTimeStamp,
         // so for now, use Title
-        $buckets = FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
+        return FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
             innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
             innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')
             ->sort('Title')
             ;
-
-        return $buckets;
     }
 
 
@@ -247,6 +239,7 @@ class FlickrSet extends DataObject
     public function HasGeo()
     {
         $ct = $this->FlickrPhotos()->where('Lat != 0 OR Lon != 0')->count();
+
         return $ct > 0;
     }
 
@@ -257,8 +250,9 @@ class FlickrSet extends DataObject
     public function BasicMap()
     {
         $photosWithLocation = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0');
-        if ($photosWithLocation->count() == 0) {
-            return ''; // don't render a map
+        if ($photosWithLocation->count() === 0) {
+            // don't render a map
+            return '';
         }
 
         //$photosWithLocation->setRenderMarkers(false);
@@ -295,12 +289,14 @@ class FlickrSet extends DataObject
                         $layericon = null;
                     }
                     foreach ($layer->PointsOfInterest() as $poi) {
-                        if ($poi->MapPinEdited) {
-                            if ($poi->MapPinIconID == 0) {
-                                $poi->CachedMapPin = $layericon;
-                            }
-                            $map->addMarkerAsObject($poi);
+                        if (!$poi->MapPinEdited) {
+                            continue;
                         }
+
+                        if ($poi->MapPinIconID === 0) {
+                            $poi->CachedMapPin = $layericon;
+                        }
+                        $map->addMarkerAsObject($poi);
                     }
                 }
             }
@@ -318,7 +314,7 @@ class FlickrSet extends DataObject
     }
 
 
-    public function writeToFlickr()
+    public function writeToFlickr(): void
     {
         $siteConfig = SiteConfig::current_site_config();
         $suffix = $this->ImageFooter . "\n\n" . $siteConfig->ImageFooter;
@@ -328,7 +324,7 @@ class FlickrSet extends DataObject
 
         /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $fp */
         foreach ($imagesToUpdate as $fp) {
-            error_log($ctr . '/' . $amount . ' [' . $fp->FlickrID . ']  - UPDATING:' . $fp->Title);
+            \error_log($ctr . '/' . $amount . ' [' . $fp->FlickrID . ']  - UPDATING:' . $fp->Title);
             $fp->writeToFlickr($suffix);
             $ctr++;
         }

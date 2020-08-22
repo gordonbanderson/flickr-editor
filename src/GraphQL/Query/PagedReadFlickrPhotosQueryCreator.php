@@ -1,6 +1,6 @@
-<?php
-namespace Suilven\Flickr\GraphQL\Query;
+<?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\GraphQL\Query;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -15,9 +15,10 @@ class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
     public function args()
     {
         return [
-            'FlickrSetID' => ['type' => Type::int()]
+            'FlickrSetID' => ['type' => Type::int()],
         ];
     }
+
 
     public function createConnection()
     {
@@ -25,20 +26,20 @@ class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
             ->setConnectionType($this->manager->getType('flickrphoto'))
             ->setArgs([
                 'FlickrSet' => [
-                    'type' => Type::string()
-                ]
+                    'type' => Type::string(),
+                ],
             ])
             ->setSortableFields(['ID', 'Title', 'FlickrID'])
-            ->setConnectionResolver(function ($object, array $args, $context, ResolveInfo $info) {
+            ->setConnectionResolver(static function ($object, array $args, $context, ResolveInfo $info) {
                 if (!isset($args['FlickrSetID'])) {
                     throw new \InvalidArgumentException('FlickrSetID parameter is required');
                 }
 
                 $member = Member::singleton();
                 if (!$member->canView($context['currentUser'])) {
-                    throw new \InvalidArgumentException(sprintf(
+                    throw new \InvalidArgumentException(\sprintf(
                         '%s view access not permitted',
-                        Member::class
+                        Member::class,
                     ));
                 }
 

@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Site;
 
 use SilverStripe\Forms\CheckboxField;
@@ -9,7 +10,7 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 /**
  * Defines the FlickrSetFolder page type
  *
- * @property boolean $PromoteToHomePage
+ * @property bool $PromoteToHomePage
  * @property int $MainFlickrPhotoID
  * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto MainFlickrPhoto()
  */
@@ -20,15 +21,15 @@ class FlickrSetFolder extends \Page
     private static $allowed_children = [
         FlickrSetPage::class,
         FlickrSetFolder::class,
-        FlickrSearchPage::class
+        FlickrSearchPage::class,
     ];
 
     private static $db = [
-    'PromoteToHomePage' => DBBoolean::class
+    'PromoteToHomePage' => DBBoolean::class,
      ];
 
     private static $has_one = [
-        'MainFlickrPhoto' => FlickrPhoto::class
+        'MainFlickrPhoto' => FlickrPhoto::class,
     ];
 
 
@@ -53,14 +54,13 @@ class FlickrSetFolder extends \Page
 
     /**
      * An accessor method for an image for a portlet
+     *
      * @example
      * <code>
      *  return $this->NewsItemImage;
      * </code>
-     *
-     * @return string
      */
-    public function getPortletImage()
+    public function getPortletImage(): string
     {
         return $this->MainFlickrPhoto();
     }
@@ -68,14 +68,13 @@ class FlickrSetFolder extends \Page
 
     /**
      * An accessor for text associated with the portlet
+     *
      * @example
      * <code>
      * return $this->Summary
      * </code>
-     *
-     * @return string
      */
-    public function getPortletCaption()
+    public function getPortletCaption(): string
     {
         return $this->Title;
     }

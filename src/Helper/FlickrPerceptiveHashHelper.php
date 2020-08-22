@@ -1,17 +1,13 @@
-<?php
-namespace Suilven\Flickr\Helper;
+<?php declare(strict_types = 1);
 
-use Suilven\Flickr\Model\Flickr\FlickrSet;
+namespace Suilven\Flickr\Helper;
 
 class FlickrPerceptiveHashHelper extends FlickrHelper
 {
-    /**
-     * @param FlickrSet $flickrSet
-     */
-    public function findSequences($flickrSet)
+    public function findSequences(FlickrSet $flickrSet)
     {
         $hashes = [];
-        error_log($flickrSet->Title);
+        \error_log($flickrSet->Title);
 
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $pair = [
@@ -23,11 +19,11 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
                 'URL' => $flickrPhoto->LargeURL2048,
 
                 'SmallURL' => $flickrPhoto->SmallURL,
-                'Rotated' => $flickrPhoto->Orientation == 90
+                'Rotated' => $flickrPhoto->Orientation === 90,
             ];
             $hashes[] = $pair;
 
-            print_r($pair);
+            \print_r($pair);
         }
 
         $tolerance = 34;
@@ -38,12 +34,12 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
 
         $currentBucket = [];
         $buckets = [];
-        for ($i = 1; $i < count($hashes) - 1; $i++) {
+        for ($i = 1; $i < \count($hashes) - 1; $i++) {
             // if the bucket is empty, start with the current image
             if (empty($currentBucket)) {
                 $currentBucket[] = [
                     'url' => $hashes[$i]['URL'],
-                    'rotated' => $hashes[$i]['Rotated']
+                    'rotated' => $hashes[$i]['Rotated'],
                 ];
             }
             $hash0 = $hashes[$i]['pHash'];
@@ -55,26 +51,26 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
             if ($distance < $tolerance) {
                 $currentBucket[] = [
                     'url' => $hashes[$i]['URL'],
-                    'rotated' => $hashes[$i]['Rotated']
+                    'rotated' => $hashes[$i]['Rotated'],
                 ];
             } else {
                 // we need to save the current bucket if it's long enough
-                if (sizeof($currentBucket) < $minLength) {
-                    error_log('Bucket created but is too short');
+                if (\sizeof($currentBucket) < $minLength) {
+                    \error_log('Bucket created but is too short');
                 } else {
-                    error_log('Adding bucket');
+                    \error_log('Adding bucket');
                     $buckets[] = $currentBucket;
                 }
                 $currentBucket = [];
             }
-            error_log('H:' . $id . '    ' . $this->hammingDist($hash0, $hash1) . '     ' . $hashes[$i + 1]['URL']);
+            \error_log('H:' . $id . '    ' . $this->hammingDist($hash0, $hash1) . '     ' . $hashes[$i + 1]['URL']);
         }
 
         // add the last bucket if it's long enough
-        if (sizeof($currentBucket) < $minLength) {
-            error_log('Bucket created but is too short');
+        if (\sizeof($currentBucket) < $minLength) {
+            \error_log('Bucket created but is too short');
         } else {
-            error_log('Adding bucket');
+            \error_log('Adding bucket');
             $buckets[] = $currentBucket;
         }
 
@@ -93,13 +89,16 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
 
         $i = 0;
         $count = 0;
-        while (isset($binaryHash1[$i]) != '') {
-            if ($binaryHash1[$i] != $binaryHash2[$i])
+        while (isset($binaryHash1[$i]) !== '') {
+            if ($binaryHash1[$i] !== $binaryHash2[$i]) {
                 $count++;
+            }
             $i++;
         }
+
         return $count;
     }
+
 
     /**
      * @param $hash
@@ -107,23 +106,23 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
      */
     private function hexHashToBinary($hash)
     {
-        $binaryHash = str_replace('0', '0000', $hash);
-        $binaryHash = str_replace('1', '0001', $binaryHash);
-        $binaryHash = str_replace('2', '0010', $binaryHash);
-        $binaryHash = str_replace('3', '0011', $binaryHash);
-        $binaryHash = str_replace('4', '0100', $binaryHash);
-        $binaryHash = str_replace('5', '0101', $binaryHash);
-        $binaryHash = str_replace('6', '0110', $binaryHash);
-        $binaryHash = str_replace('7', '0111', $binaryHash);
-        $binaryHash = str_replace('8', '1000', $binaryHash);
-        $binaryHash = str_replace('9', '1001', $binaryHash);
-        $binaryHash = str_replace('a', '1010', $binaryHash);
-        $binaryHash = str_replace('b', '1011', $binaryHash);
-        $binaryHash = str_replace('c', '1100', $binaryHash);
-        $binaryHash = str_replace('d', '1101', $binaryHash);
-        $binaryHash = str_replace('e', '1110', $binaryHash);
-        $binaryHash = str_replace('f', '1111', $binaryHash);
+        $binaryHash = \str_replace('0', '0000', $hash);
+        $binaryHash = \str_replace('1', '0001', $binaryHash);
+        $binaryHash = \str_replace('2', '0010', $binaryHash);
+        $binaryHash = \str_replace('3', '0011', $binaryHash);
+        $binaryHash = \str_replace('4', '0100', $binaryHash);
+        $binaryHash = \str_replace('5', '0101', $binaryHash);
+        $binaryHash = \str_replace('6', '0110', $binaryHash);
+        $binaryHash = \str_replace('7', '0111', $binaryHash);
+        $binaryHash = \str_replace('8', '1000', $binaryHash);
+        $binaryHash = \str_replace('9', '1001', $binaryHash);
+        $binaryHash = \str_replace('a', '1010', $binaryHash);
+        $binaryHash = \str_replace('b', '1011', $binaryHash);
+        $binaryHash = \str_replace('c', '1100', $binaryHash);
+        $binaryHash = \str_replace('d', '1101', $binaryHash);
+        $binaryHash = \str_replace('e', '1110', $binaryHash);
+        $binaryHash = \str_replace('f', '1111', $binaryHash);
+
         return $binaryHash;
     }
-
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 
 namespace Suilven\Flickr\Model\Flickr;
 
@@ -27,8 +27,8 @@ use Suilven\Flickr\Helper\FlickrTagHelper;
  * @property string $TagsCSV
  * @property int $FlickrSetID
  * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSet()
- * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrTag[] FlickrTags()
- * @method \SilverStripe\ORM\ManyManyList|\Suilven\Flickr\Model\Flickr\FlickrPhoto[] FlickrPhotos()
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrTag> FlickrTags()
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrPhoto> FlickrPhotos()
  */
 class FlickrBucket extends DataObject
 {
@@ -52,7 +52,7 @@ class FlickrBucket extends DataObject
 
     private static $belongs_many_many = [
         'FlickrPhotos' => FlickrPhoto::class,
-        'FlickrTags' => FlickrTag::class
+        'FlickrTags' => FlickrTag::class,
     ];
 
     private static $many_many = ['FlickrTags' => FlickrTag::class];
@@ -63,7 +63,7 @@ class FlickrBucket extends DataObject
         $fields = new FieldList();
 
         $fields->push(new TabSet("Root", $mainTab = new Tab("Main")));
-        $mainTab->setTitle(_t('SiteTree.TABMAIN', "Main"));
+        $mainTab->setTitle(\_t('SiteTree.TABMAIN', "Main"));
 
         $lf = new LiteralField('<p>Instructions', 'All of the images in this bucket will have the same information that you enter here</p>');
         $fields->push($lf);
@@ -84,22 +84,24 @@ class FlickrBucket extends DataObject
             $mapField = new LatLongField([
                 new TextField('Lat', 'Latitude'),
                 new TextField('Lon', 'Longitude'),
-                new TextField('ZoomLevel', 'Zoom')
+                new TextField('ZoomLevel', 'Zoom'),
             ], [
-                'Address'
+                'Address',
             ]);
 
             $guidePoints = [];
             foreach ($this->FlickrSet()->FlickrPhotos()->where('Lat != 0 and Lon != 0') as $fp) {
-                if (($fp->Lat != 0) && ($fp->Lon != 0)) {
-                    array_push($guidePoints, [
-                        'latitude' => $fp->Lat,
-                        'longitude' => $fp->Lon
-                    ]);
+                if (($fp->Lat === 0) || ($fp->Lon === 0)) {
+                    continue;
                 }
+
+                \array_push($guidePoints, [
+                    'latitude' => $fp->Lat,
+                    'longitude' => $fp->Lon,
+                ]);
             }
 
-            if (count($guidePoints) > 0) {
+            if (\count($guidePoints) > 0) {
                 $mapField->setGuidePoints($guidePoints);
             }
 
@@ -110,10 +112,11 @@ class FlickrBucket extends DataObject
         }
 
 
-        $gridConfig = GridFieldConfig_RelationEditor::create(); //->addComponent( new GridFieldSortableRows( 'Value' ) );
+        //->addComponent( new GridFieldSortableRows( 'Value' ) );
+        $gridConfig = GridFieldConfig_RelationEditor::create();
         $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([
             'Value',
-            'RawValue'
+            'RawValue',
         ]);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
 
@@ -132,6 +135,7 @@ class FlickrBucket extends DataObject
             foreach ($fp->FlickrSets() as $set) {
                 if ($set->LockGeo) {
                     $lockgeo = true;
+
                     break;
                 }
             }
@@ -139,6 +143,7 @@ class FlickrBucket extends DataObject
                 break;
             }
         }
+
         return $lockgeo;
     }
 
@@ -147,25 +152,27 @@ class FlickrBucket extends DataObject
     {
         $html = '<div class="imageStrip">';
         foreach ($this->FlickrPhotos() as $key => $photo) {
-            $html = $html . '<img class="flickrThumbnail" ';
+            $html .= '<img class="flickrThumbnail" ';
             $html .= 'src="' . $photo->ThumbnailURL . '" ';
             $html .= 'data-flickr-thumbnail-url="' . $photo->ThumbnailURL . '" ';
             $html .= 'data-flickr-medium-url="' . $photo->MediumURL . '"/>';
         }
-        $html = $html . "</div>";
+        $html .= "</div>";
+
         return DBField::create_field('HTMLText', $html);
     }
 
 
-    public function onBeforeWrite()
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
+
         $tagHelper = new FlickrTagHelper();
         $quickTags = $tagHelper->createOrFindTags($this->QuickTags);
         $this->FlickrTags()->addMany($quickTags);
 
         if ($this->ID && ($this->FlickrPhotos()->count() > 0)) {
-            if ($this->Title == '') {
+            if ($this->Title === '') {
                 $this->Title = $this->FlickrPhotos()->first()->TakenAt . ' - ' . $this->FlickrPhotos()->last()->TakenAt;
             }
         } else {
@@ -177,13 +184,13 @@ class FlickrBucket extends DataObject
     /*
     Update all the photographs in the bucket with the details of the bucket
     */
-    public function onAfterWrite()
+    public function onAfterWrite(): void
     {
         parent::onAfterWrite();
 
         // if the title is blank resave in order to create a time from / time to title
         // this needs checked here as on before write cannot do this when the bucket has not been saved
-        if ($this->Title == '' && !isset($this->Virginal)) {
+        if ($this->Title === '' && !isset($this->Virginal)) {
             $this->write();
         }
 
@@ -194,19 +201,19 @@ class FlickrBucket extends DataObject
             $description = $this->Description;
             //$description = $description ."\n\n".$this->FlickrSet()->ImageFooter;
             //$description = $description ."\n\n".Controller::curr()->SiteConfig()->ImageFooter;
-            $year = substr('' . $fp->TakenAt, 0, 4);
-            $description = str_replace('$Year', $year, $description);
+            $year = \substr('' . $fp->TakenAt, 0, 4);
+            $description = \str_replace('$Year', $year, $description);
             $fp->Description = $description;
 
             if (!$lockgeo) {
                 $fp->Lat = $this->Lat;
                 $fp->Lon = $this->Lon;
 
-                if ($this->Lat == null) {
+                if ($this->Lat === null) {
                     $fp->Lat = 0;
                 }
 
-                if ($this->Lon == null) {
+                if ($this->Lon === null) {
                     $fp->Lon = 0;
                 }
             }

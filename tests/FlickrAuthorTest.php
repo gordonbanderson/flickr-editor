@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrAuthorTest extends \SilverStripe\Dev\SapphireTest {
+class FlickrAuthorTest extends \SilverStripe\Dev\SapphireTest
+{
 }

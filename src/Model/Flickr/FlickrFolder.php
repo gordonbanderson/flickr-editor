@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -17,7 +18,7 @@ class FlickrFolder extends \Page
 
     private static $allowed_children = [
         FlickrSetPage::class,
-        FlickrFolder::class
+        FlickrFolder::class,
     ];
 
     private static $has_one = [
@@ -32,7 +33,6 @@ class FlickrFolder extends \Page
 
 
         $fields->renameField("Content", "Brief Description");
-
 
         /*
         $fields->addFieldToTab('Root.Content.Main', new CalendarDateField('Date'), 'Content');

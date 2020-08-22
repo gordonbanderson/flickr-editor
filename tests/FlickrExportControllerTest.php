@@ -1,12 +1,15 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrExportControllerTest extends \SilverStripe\Dev\SapphireTest {
-	public function testIndex() {
-		$this->markTestSkipped('TODO');
-	}
+class FlickrExportControllerTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testIndex(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testToJson() {
-		$this->markTestSkipped('TODO');
-	}
 
+    public function testToJson(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

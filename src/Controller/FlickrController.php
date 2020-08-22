@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
 use SilverStripe\Assets\Folder;
@@ -23,37 +24,36 @@ use Symfony\Component\Yaml\Dumper;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrController
- *
  */
 class FlickrController extends \PageController implements PermissionProvider
 {
-    private static $allowed_actions = array(
-        'index',
-        'importSet',
-        'editprofile',
-        'sets',
-        'primeBucketsTest',
-        'createBucket',
-        'fixSetPhotoManyMany',
-        'fixSetMainImages',
-        'PublishAllFlickrSetPages',
-        'batchUpdateSet',
-        'ajaxSearchForPhoto',
-        'fixArticles',
-        'fixDateSetTaken',
-        'fixArticleDates',
-        'fixPhotoTitles',
-        'ajaxSearchForPhoto',
-        'updateEditedImagesToFlickr',
-        'dumpSetAsJson',
-        'primeFlickrSetFolderImages',
-        'moveXperiaPics',
-        'changeFlickrSetMainImage',
-        'fixFocalLength35',
-        'fixDescriptions',
-        'importFromSearch',
-        'importSearchToYML'
-    );
+    private static $allowed_actions = [
+        'index';
+    private 'importSet';
+    private 'editprofile';
+    private 'sets';
+    private 'primeBucketsTest';
+    private 'createBucket';
+    private 'fixSetPhotoManyMany';
+    private 'fixSetMainImages';
+    private 'PublishAllFlickrSetPages';
+    private 'batchUpdateSet';
+    private 'ajaxSearchForPhoto';
+    private 'fixArticles';
+    private 'fixDateSetTaken';
+    private 'fixArticleDates';
+    private 'fixPhotoTitles';
+    private 'ajaxSearchForPhoto';
+    private 'updateEditedImagesToFlickr';
+    private 'dumpSetAsJson';
+    private 'primeFlickrSetFolderImages';
+    private 'moveXperiaPics';
+    private 'changeFlickrSetMainImage';
+    private 'fixFocalLength35';
+    private 'fixDescriptions';
+    private 'importFromSearch';
+    private 'importSearchToYML'
+    ];
 
 
     /*
@@ -98,6 +98,7 @@ class FlickrController extends \PageController implements PermissionProvider
         }
     }
 
+
     public function fixFocalLength35()
     {
         $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
@@ -108,9 +109,9 @@ class FlickrController extends \PageController implements PermissionProvider
         $finished = false;
 
         while (!$finished) {
-            $photos = FlickrPhoto::get()->filter(array('FocalLength35mm' =>0,'IsPublic' => 1))->limit(50);
+            $photos = FlickrPhoto::get()->filter(['FocalLength35mm' =>0,'IsPublic' => 1])->limit(50);
 
-            if (count($photos) == 0) {
+            if (\count($photos) === 0) {
                 $finished = true;
             }
 
@@ -119,21 +120,21 @@ class FlickrController extends \PageController implements PermissionProvider
                 $modelExif = $photo->Exifs()->filter('Tag', 'Model')->first();
 
                 //foreach ($photo->Exifs() as $exif) {
-                //	echo ' - '.$exif->Tag.' => '.$exif->Raw."\n";
+                //  echo ' - '.$exif->Tag.' => '.$exif->Raw."\n";
                 //}
 
                 if (isset($modelExif)) {
                     $model = $modelExif->Raw;
                     $focalLengthExif = $photo->Exifs()->filter('Tag', 'FocalLength')->first();
-                    $mm = (int) str_replace(' mm', '', $focalLengthExif->Raw);
+                    $mm = (int) \str_replace(' mm', '', $focalLengthExif->Raw);
 
                     if ($model === 'Canon IXUS 220 HS') {
-                        $f35 = round($mm * 5.58139534884);
+                        $f35 = \round($mm * 5.58139534884);
                         $photo->FocalLength35mm = $f35;
                     } elseif ($model === 'C6602') {
                         $photo->FocalLength35mm = 28;
                     } elseif ($model === 'Canon EOS 450D') {
-                        $f35 = round($mm * 1.61428571429);
+                        $f35 = \round($mm * 1.61428571429);
                         $photo->FocalLength35mm = $f35;
                     }
 
@@ -149,10 +150,12 @@ class FlickrController extends \PageController implements PermissionProvider
             }
         }
 
-        die; // abort rendering
+        // abort rendering
+        die;
     }
 
-    public function fixArticleDates()
+
+    public function fixArticleDates(): void
     {
         $articles = DataList::create('Article')->where('StartTime is null');
         foreach ($articles->getIterator() as $article) {
@@ -164,13 +167,13 @@ class FlickrController extends \PageController implements PermissionProvider
 
     public function providePermissions()
     {
-        return array(
+        return [
             "FLICKR_EDIT" => "Able to import and edit flickr data"
-        );
+        ];
     }
 
 
-    public function primeFlickrSetFolderImages()
+    public function primeFlickrSetFolderImages(): void
     {
         $folders = DataList::create('FlickrSetFolder')->where('MainFlickrPhotoID = 0');
 
@@ -178,81 +181,81 @@ class FlickrController extends \PageController implements PermissionProvider
             foreach ($folder->Children() as $folderOrSet) {
                 $cname = $folderOrSet->ClassName;
                 // we want to find a flickr set page we can use the image from
-                if ($cname == 'FlickrSetPage') {
-                    $flickrImage = $folderOrSet->getPortletImage();
-                    //error_log("FI:".$flickrImage>" ID=".$flickrImage->ID);
-                    if ($flickrImage->ID != 0) {
-                        $folder->MainFlickrPhotoID = $flickrImage->ID;
-                        $folder->write();
-                        continue;
-                    }
+                if ($cname !== 'FlickrSetPage') {
+                    continue;
+                }
+
+                $flickrImage = $folderOrSet->getPortletImage();
+                //error_log("FI:".$flickrImage>" ID=".$flickrImage->ID);
+                if ($flickrImage->ID !== 0) {
+                    $folder->MainFlickrPhotoID = $flickrImage->ID;
+                    $folder->write();
+
+                    continue;
                 }
             }
         }
     }
 
 
-    public function dumpSetAsJson()
+    public function dumpSetAsJson(): void
     {
         die;
     }
 
 
-    public function setToJson()
+    public function setToJson(): void
     {
         $flickrSetID = $this->request->param('ID');
         $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
-        $images = array();
+        $images = [];
         foreach ($flickrSet->FlickrPhotos() as $fp) {
-            $image = array();
+            $image = [];
             $image['MediumURL'] = $fp-> MediumURL;
             $image['BatchTitle'] = $fp-> Title;
         }
     }
 
 
-    public function updateEditedImagesToFlickr()
+    public function updateEditedImagesToFlickr(): void
     {
         $flickrSetID = $this->request->param('ID');
-        $flickrSet = FlickrSet::get()->filter(array('FlickrID' => $flickrSetID))->first();
+        $flickrSet = FlickrSet::get()->filter(['FlickrID' => $flickrSetID])->first();
         $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
 
         if ($flickrSet) {
             $flickrSet->writeToFlickr();
         } else {
-            error_log('Flickr set could not be found');
+            \error_log('Flickr set could not be found');
         }
     }
 
 
-
-
-
-    public function fixArticles()
+    public function fixArticles(): void
     {
         $articles = DataList::create('Article')->sort('Title');
 //        $articles->where('Article_Live.ID=32469');
         foreach ($articles as $article) {
             $content = $article->Content;
-            $sections = explode('FLICKRPHOTO_', $content);
+            $sections = \explode('FLICKRPHOTO_', $content);
             $alteredContent = '';
             foreach ($sections as $section) {
                 //$splits2 = split(' ', $section);
                 //$flickrIDwithCrud = array_shift($splits2);
                 $flickrID = '';
-                for ($i=0;  $i<strlen($section);$i++) {
-                    if (is_numeric($section[$i])) {
-                        $flickrID .= $section[$i];
-                    } else {
+                for ($i=0; $i<\strlen($section); $i++) {
+                    if (!\is_numeric($section[$i])) {
                         break;
                     }
+
+                    $flickrID .= $section[$i];
                 }
 
 //                $restOfCrud = str_replace($flickrID, '', $flickrIDwithCrud);
-                $section = str_replace($flickrID, '', $section);
+                $section = \str_replace($flickrID, '', $section);
                 $section = '[FlickrPhoto id='.$flickrID.']'. $section;
 
-                $section = str_replace('<p> </p>', '', $section);
+                $section = \str_replace('<p> </p>', '', $section);
                 $alteredContent .= $section;
             }
 
@@ -262,12 +265,11 @@ class FlickrController extends \PageController implements PermissionProvider
                 $article->write();
                 $article->publish("Live", "Stage");
             } catch (Exception $e) {
-                error_log("Unable to write article ".$article->ID);
-                error_log($e);
+                \error_log("Unable to write article ".$article->ID);
+                \error_log($e);
             }
         }
     }
-
 
 
     public function ajaxSearchForPhoto()
@@ -279,9 +281,9 @@ class FlickrController extends \PageController implements PermissionProvider
         $flickrPhoto = DataList::create('FlickrPhoto')->where('FlickrID='.$flickrPhotoID)->first();
         $not_found = !$flickrPhoto ;
 
-        $result = array(
+        $result = [
             'found' => !$not_found
-        );
+        ];
 
         if ($flickrPhoto) {
             $result['title'] = $flickrPhoto->Title;
@@ -291,7 +293,7 @@ class FlickrController extends \PageController implements PermissionProvider
             $result['description'] = $flickrPhoto->Description;
         }
 
-        return json_encode($result);
+        return \json_encode($result);
     }
 
 
@@ -302,17 +304,17 @@ class FlickrController extends \PageController implements PermissionProvider
         $flickrSetID = Convert::raw2sql($this->request->param('ID'));
         $batchTitle = Convert::raw2sql($_POST['BatchTitle']);
         $batchDescription = Convert::raw2sql($_POST['BatchDescription']);
-        $batchTags = str_getcsv(Convert::raw2sql($_POST['BatchTags']));
+        $batchTags = \str_getcsv(Convert::raw2sql($_POST['BatchTags']));
 
         $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
         $helper = new FlickrBatchHelper();
         $result = $helper->batchUpdateSet($flickrSet, $batchTitle, $batchDescription, $batchTags);
 
-        return json_encode($result);
+        return \json_encode($result);
     }
 
 
-    public function PublishAllFlickrSetPages()
+    public function PublishAllFlickrSetPages(): void
     {
         $pages = DataList::create('FlickrSetPage');
         foreach ($pages as $fsp) {
@@ -326,7 +328,7 @@ class FlickrController extends \PageController implements PermissionProvider
     }
 
 
-    public function fixPhotoTitles()
+    public function fixPhotoTitles(): void
     {
         $sets = DataList::create('FlickrSet');
         foreach ($sets as $set) {
@@ -342,10 +344,10 @@ class FlickrController extends \PageController implements PermissionProvider
                     'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
                     null,
                     500,
-                    $pageCtr
+                    $pageCtr,
                 );
 
-                $pageCtr = $pageCtr+1;
+                $pageCtr +=1;
 
 
 
@@ -353,18 +355,18 @@ class FlickrController extends \PageController implements PermissionProvider
                 $photoset = $photos['photoset'];
                 $page = $photoset['page'];
                 $pages = $photoset['pages'];
-                $allPagesRead = ($page == $pages);
+                $allPagesRead = ($page === $pages);
 
 
                 foreach ($photoset['photo'] as $key => $photo) {
                     $fp = DataList::create('FlickrPhoto')->where('FlickrID = '.$photo['id'])->first();
 
-                    if ($fp == null) {
+                    if ($fp === null) {
                         continue;
                     }
 
                     $title = $photo['title'];
-                    if (strlen($title) > 48) {
+                    if (\strlen($title) > 48) {
                         $fp->Title = $title;
                         $fp->write();
                         //error_log($fp->FlickrID . '==' . $photo['id']. '??');
@@ -378,16 +380,16 @@ class FlickrController extends \PageController implements PermissionProvider
 
 
     /* Fix the many many relationships, previously FlickrSetPhoto pages which have now been deleted */
-    public function fixSetPhotoManyMany()
+    public function fixSetPhotoManyMany(): void
     {
         $flickrSetID = Convert::raw2sql($this->request->param('ID'));
         $flickrSets = DataList::create('FlickrSet')->where("FlickrID=".$flickrSetID);
 
         $allPagesRead = false;
-        $flickrPhotoIDs = array();
+        $flickrPhotoIDs = [];
 
 
-        if ($flickrSets->count() == 1) {
+        if ($flickrSets->count() === 1) {
             $flickrSet = $flickrSets->first();
 
             $pageCtr = 1;
@@ -398,10 +400,10 @@ class FlickrController extends \PageController implements PermissionProvider
                     'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
                     null,
                     500,
-                    $pageCtr
+                    $pageCtr,
                 );
 
-                $pageCtr = $pageCtr+1;
+                $pageCtr +=1;
 
 
 
@@ -409,37 +411,38 @@ class FlickrController extends \PageController implements PermissionProvider
                 $photoset = $photos['photoset'];
                 $page = $photoset['page'];
                 $pages = $photoset['pages'];
-                $allPagesRead = ($page == $pages);
+                $allPagesRead = ($page === $pages);
 
 
                 foreach ($photoset['photo'] as $key => $photo) {
-                    array_push($flickrPhotoIDs, $photo['id']);
+                    \array_push($flickrPhotoIDs, $photo['id']);
                 }
             }
 
-            $flickrPhotos = DataList::create('FlickrPhoto')->where("FlickrID in (".implode(',', $flickrPhotoIDs).")");
+            $flickrPhotos = DataList::create('FlickrPhoto')->where("FlickrID in (".\implode(',', $flickrPhotoIDs).")");
             $flickrSet->FlickrPhotos()->removeAll();
             $flickrSet->FlickrPhotos()->addMany($flickrPhotos);
             $flickrSet->write();
         } else {
             // no flickr set found for the given ID
-            error_log("Flickr set not found for id ".$flickrSetID);
+            \error_log("Flickr set not found for id ".$flickrSetID);
         }
     }
 
 
-    public function primeBucketsTest()
+    public function primeBucketsTest(): void
     {
         $fset = DataList::create('FlickrSet')->last();
         $bucket = new FlickrBucket();
-        $bucket->write();// get an ID
+        // get an ID
+        $bucket->write();
         $photos = $fset->FlickrPhotos();
 
         $bucketPhotos = $bucket->FlickrPhotos();
         $ctr = 0;
         foreach ($photos as $key => $value) {
             $bucketPhotos->add($value);
-            $ctr = $ctr + 1;
+            $ctr += 1;
             if ($ctr > 7) {
                 break;
             }
@@ -449,8 +452,7 @@ class FlickrController extends \PageController implements PermissionProvider
     }
 
 
-
-    public function createBucket()
+    public function createBucket(): void
     {
         $flickrPhotoIDs = $this->request->param('OtherID');
         $flickrPhotoIDs = Convert::raw2sql($flickrPhotoIDs);
@@ -460,21 +462,19 @@ class FlickrController extends \PageController implements PermissionProvider
         $bucketHelper = new FlickrBucketHelper();
         $bucket = $bucketHelper->createBucket($flickrSetID, $flickrPhotoIDs);
 
-        $result = array(
+        $result = [
             'bucket_id' => $bucket->ID,
             'flickr_set_id' => $flickrSetID,
             'ajax_bucket_row' => $ajax_bucket_row
-        );
+        ];
 
-        echo json_encode($result);
-        die; // abort render
+        echo \json_encode($result);
+        // abort render
+        die;
     }
 
 
-
-
-
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -501,13 +501,15 @@ class FlickrController extends \PageController implements PermissionProvider
         // Requirements, etc. here
     }
 
+
     public function index()
     {
         // Code for the index action here
-        return array();
+        return [];
     }
 
-    public function sets()
+
+    public function sets(): void
     {
         $sets = $this->f->photosets_getList('45224965@N04');
 
@@ -524,7 +526,7 @@ class FlickrController extends \PageController implements PermissionProvider
     }
 
 
-    public function splitMoblog()
+    public function splitMoblog(): void
     {
 
         /*
@@ -537,9 +539,9 @@ class FlickrController extends \PageController implements PermissionProvider
 
         // var_dump($photo_response);
 
-        $dateToImages = array();
+        $dateToImages = [];
 
-        $photos = array();
+        $photos = [];
 
 
         $page = 1;
@@ -554,23 +556,23 @@ class FlickrController extends \PageController implements PermissionProvider
             $page++;
 
             $photos = $photo_response['photoset']['photo'];
-            $completed = (count($photos) != 500);
+            $completed = (\count($photos) !== 500);
 
 
-            echo "COUNT:".count($photos);
+            echo "COUNT:".\count($photos);
             echo "COMPLETED?:".$completed;
 
             foreach ($photos as $key => $photo) {
                 $title = $photo['title'];
                 $takenAt = $photo['datetaken'];
-                $dateParts = split(' ', $takenAt);
+                $dateParts = \split(' ', $takenAt);
                 $date = $dateParts[0];
 
                 if (!isset($dateToImages[$date])) {
-                    $dateToImages[$date] = array();
+                    $dateToImages[$date] = [];
                 }
 
-                array_push($dateToImages[$date], $photo);
+                \array_push($dateToImages[$date], $photo);
 
 
 
@@ -587,7 +589,7 @@ class FlickrController extends \PageController implements PermissionProvider
             $firstPic = $dateToImages[$date][0]['id'];
 
             $set = $this->f->photosets_create('Moblog '.$date, 'Mobile photos for '.$date, $firstPic);
-            var_dump($set);
+            \var_dump($set);
 
             $setId = $set['id'];
 
@@ -623,33 +625,33 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
 */
 
-    public function importSearchToYML()
+    public function importSearchToYML(): void
     {
-        $searchParams = array();
+        $searchParams = [];
 
         $query = $_GET['q'];
         $searchParams['text'] = $query;
         $searchParams['license'] = 7;
         $searchParams['per_page'] = 100;
         $searchParams['extras'] = 'description, license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o';
-        $searchParams['sort'] = 'relevance'; // 'interestingness-desc'; // also try relevance
+        // 'interestingness-desc'; // also try relevance
+        $searchParams['sort'] = 'relevance';
 
         $data = $this->f->photos_search($searchParams);
 
         $dumper = new Dumper();
-        $fixtures = array();
+        $fixtures = [];
         $ctr = 1;
 
-        $apertures = array('2.8', '5.6', '11', '16', '22');
-        $shutterSpeeds = array('1/100', '1/30', '1/15', '1/2', '2', '6', '2/250');
-        $isos = array(64,100,200,400,800,1600,2000,3200);
-        $focalLengths = array(24,50,80,90,120,150,200);
+        $apertures = ['2.8', '5.6', '11', '16', '22'];
+        $shutterSpeeds = ['1/100', '1/30', '1/15', '1/2', '2', '6', '2/250'];
+        $isos = [64,100,200,400,800,1600,2000,3200];
+        $focalLengths = [24,50,80,90,120,150,200];
 
         foreach ($data['photo'] as $photo) {
             // the image URL becomes somthing like
             // http://farm{farm-id}.static.flickr.com/{server-id}/{id}_{secret}.jpg
-            //
-            $photoid = str_pad("$ctr", 4, '0', STR_PAD_LEFT);
+            $photoid = \str_pad("$ctr", 4, '0', \STR_PAD_LEFT);
             /*
             FlickrPhoto:
               photo0001:
@@ -670,15 +672,15 @@ Rows matched: 53  Changed: 53  Warnings: 0
                 sudo -u www-data framework/sake flickr/importSearch q='Bangkok Thailand' | sed s/\{\ \_content\:\ // | sed s/\ \}// > /home/gordon/work/git/weboftalent/moduletest/www/elastica/tests/lotsOfPhotos.yml
 
              */
-            $currentFixture = array();
-            $currentFixture['FlickrID'] = intval($photo['id']);
+            $currentFixture = [];
+            $currentFixture['FlickrID'] = \intval($photo['id']);
             $currentFixture['Title'] = $photo['title'];
             $descBlob = $photo['description']['_content'];
             $description = '';
 
 
 
-            $splits = preg_split('/$\R?^/m', $descBlob);
+            $splits = \preg_split('/$\R?^/m', $descBlob);
 
             foreach ($splits as $line) {
                 $description .= "<p>";
@@ -687,10 +689,10 @@ Rows matched: 53  Changed: 53  Warnings: 0
             }
 
             $currentFixture['Description'] = $description;
-            $currentFixture['Aperture'] = $apertures[array_rand($apertures)];
-            $currentFixture['ShutterSpeed'] = $shutterSpeeds[array_rand($shutterSpeeds)];
-            $currentFixture['FocalLength35mm'] = $focalLengths[array_rand($focalLengths)];
-            $currentFixture['ISO'] = $isos[array_rand($isos)];
+            $currentFixture['Aperture'] = $apertures[\array_rand($apertures)];
+            $currentFixture['ShutterSpeed'] = $shutterSpeeds[\array_rand($shutterSpeeds)];
+            $currentFixture['FocalLength35mm'] = $focalLengths[\array_rand($focalLengths)];
+            $currentFixture['ISO'] = $isos[\array_rand($isos)];
             $currentFixture['IndexingOff'] = true;
 
 
@@ -718,21 +720,20 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $ctr++;
             $url = "https://www.flickr.com/photos/{$photo['owner']}/{$photo["id"]}/";
         }
-        $fixtures = array('FlickrPhoto' => $fixtures);
+        $fixtures = ['FlickrPhoto' => $fixtures];
         $yaml = $dumper->dump($fixtures, 3);
         echo $yaml;
-        file_put_contents('/tmp/test.yml', $yaml);
-        $cmd = 'cat elastica/tests/lotsOfPhotos.yml | sed s/\{\ \_content\:\ // | sed s/\ \}//';//.
+        \file_put_contents('/tmp/test.yml', $yaml);
+        //.
+        $cmd = 'cat elastica/tests/lotsOfPhotos.yml | sed s/\{\ \_content\:\ // | sed s/\ \}//';
                     //' > /home/gordon/work/git/weboftalent/moduletest/www/elastica/tests/lotsOfPhotos.yml';
         //exec($cmd);
     }
 
 
-
-
-    public function importFromSearch()
+    public function importFromSearch(): void
     {
-        $searchParams = array();
+        $searchParams = [];
 
         //any high number
         $nPages = 1e7;
@@ -749,18 +750,19 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $searchParams['per_page'] = 500;
             $searchParams['page'] = $page;
             $searchParams['extras'] = 'description, license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_q, url_m, url_n, url_z, url_c, url_l, url_o';
-            $searchParams['sort'] = 'relevance'; // 'interestingness-desc'; // also try relevance
+            // 'interestingness-desc'; // also try relevance
+            $searchParams['sort'] = 'relevance';
 
             $data = $this->f->photos_search($searchParams);
             $nPages = $data['pages'];
             $totalImages = $data['total'];
 
             echo "Found $nPages pages\n";
-            echo "n photos returned ".sizeof($data['photo']);
+            echo "n photos returned ".\sizeof($data['photo']);
 
 
             foreach ($data['photo'] as $photo) {
-                print_r($photo);
+                \print_r($photo);
 
                 echo "Import photo $ctr / $totalImages, page $page / $nPages\n";
                 $flickrPhoto = $this->createFromFlickrArray($photo);
@@ -771,7 +773,6 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $page++;
         }
     }
-
 
 
     public function importSet()
@@ -794,7 +795,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
         $flickrSetID = $this->request->param('ID');
         $path = $_GET['path'];
         $parentNode = SiteTree::get_by_link($path);
-        if ($parentNode == null) {
+        if ($parentNode === null) {
             echo "ERROR: Path ".$path." cannot be found in this site\n";
             die;
         }
@@ -805,7 +806,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
             $flickrSetID,
             'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
             null,
-            500
+            500,
         );
 
         $photoset = $photos['photoset'];
@@ -821,15 +822,15 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
         echo "Title set to : ".$flickrSet->Title;
 
-        if ($flickrSet->Title == null) {
-            echo("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?");
+        if ($flickrSet->Title === null) {
+            echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
             die;
         }
 
-        $datetime = explode(' ', $flickrSet->FirstPictureTakenAt);
+        $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
         $datetime = $datetime[0];
 
-        list($year, $month, $day) = explode('-', $datetime);
+        list($year, $month, $day) = \explode('-', $datetime);
         echo "Month: $month; Day: $day; Year: $year<br />\n";
 
         // now try and find a flickr set page
@@ -852,7 +853,7 @@ Rows matched: 53  Changed: 53  Warnings: 0
         $flickrSetPage->publish("Live", "Stage");
 
         $flickrSetPageID = $flickrSetPage->ID;
-        gc_enable();
+        \gc_enable();
 
         $f1 = Folder::find_or_make("flickr/$year");
         $f1->Title = $year;
@@ -866,36 +867,36 @@ Rows matched: 53  Changed: 53  Warnings: 0
         $f1->Title = $day;
         $f1->write();
 
-        exec("chmod 775 ../assets/flickr/$year");
-        exec("chmod 775 ../assets/flickr/$year/$month");
-        exec("chmod 775 ../assets/flickr/$year/$month/$day");
-        exec("chown gordon:www-data ../assets/flickr/$year");
+        \exec("chmod 775 ../assets/flickr/$year");
+        \exec("chmod 775 ../assets/flickr/$year/$month");
+        \exec("chmod 775 ../assets/flickr/$year/$month/$day");
+        \exec("chown gordon:www-data ../assets/flickr/$year");
         ;
-        exec("chown gordon:www-data ../assets/flickr/$year/$month");
+        \exec("chown gordon:www-data ../assets/flickr/$year/$month");
         ;
-        exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
+        \exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
         ;
 
 
         $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);
 
         $cmd = "chown gordon:www-data ../assets/flickr";
-        exec($cmd);
+        \exec($cmd);
 
-        exec('chmod 775 ../assets/flickr');
+        \exec('chmod 775 ../assets/flickr');
 
 
         // new folder case
-        if ($flickrSet->AssetFolderID == 0) {
+        if ($flickrSet->AssetFolderID === 0) {
             $flickrSet->AssetFolderID = $folder->ID;
             $folder->Title = $flickrSet->Title;
             $folder->write();
 
             $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
-            exec($cmd);
+            \exec($cmd);
 
             $cmd = "chmod 775 ../assets/flickr/$year/$month/$day/".$flickrSetID;
-            exec($cmd);
+            \exec($cmd);
         }
 
         $flickrSetAssetFolderID = $flickrSet->AssetFolderID;
@@ -906,14 +907,14 @@ Rows matched: 53  Changed: 53  Warnings: 0
         //$flickrSet = NULL;
         $flickrSetPage = null;
 
-        $numberOfPics = count($photoset['photo']);
+        $numberOfPics = \count($photoset['photo']);
         $ctr = 1;
         foreach ($photoset['photo'] as $key => $value) {
             echo "Importing photo {$ctr}/${numberOfPics}\n";
 
             $flickrPhoto = $this->createFromFlickrArray($value);
 
-            if ($value['isprimary'] == 1) {
+            if ($value['isprimary'] === 1) {
                 $flickrSet->MainImage = $flickrPhoto;
             }
 
@@ -922,18 +923,16 @@ Rows matched: 53  Changed: 53  Warnings: 0
 
             $flickrPhoto->write();
             $flickrSet->FlickrPhotos()->add($flickrPhoto);
-            gc_collect_cycles();
+            \gc_collect_cycles();
 
             $flickrPhoto->write();
-            gc_collect_cycles();
+            \gc_collect_cycles();
 
             if (!$flickrPhoto->LocalCopyOfImage) {
-
-
                 //mkdir appears to be relative to teh sapphire dir
                 $structure = "../assets/flickr/$year/$month/$day/".$flickrSetID;
 
-                if (!file_exists('../assets/flickr')) {
+                if (!\file_exists('../assets/flickr')) {
                     echo "Creating path:".$structure;
 
                     /*
@@ -974,23 +973,23 @@ Rows matched: 53  Changed: 53  Warnings: 0
                     $fpid = $flickrPhoto->FlickrID;
 
                     $cmd = "wget -O $structure/$fpid.jpg $largeURL";
-                    exec($cmd);
+                    \exec($cmd);
 
                     $cmd = "chown  gordon:www-data $structure/$fpid.jpg";
                     // $cmd = "pwd";
-                    echo "EXECCED:".exec($cmd);
+                    echo "EXECCED:".\exec($cmd);
 
                     $image = new Image();
                     $image->Name = $this->Title;
                     $image->Title = $this->Title;
-                    $image->Filename = str_replace('../', '', $structure.'/'.$fpid.".jpg");
+                    $image->Filename = \str_replace('../', '', $structure.'/'.$fpid.".jpg");
                     $image->Title = $flickrPhoto->Title;
                     //$image->Name = $flickrPhoto->Title;
                     $image->ParentID = $flickrSetAssetFolderID;
-                    gc_collect_cycles();
+                    \gc_collect_cycles();
 
                     $image->write();
-                    gc_collect_cycles();
+                    \gc_collect_cycles();
 
                     $flickrPhoto->LocalCopyOfImageID = $image->ID;
                     $flickrPhoto->write();
@@ -1024,19 +1023,14 @@ Rows matched: 53  Changed: 53  Warnings: 0
         $this->fixSetMainImages();
         $this->fixDateSetTaken();
 
-        die(); // abort rendering
+        // abort rendering
+        die;
     }
-
-
-
-
-
-
 
 
     public function editprofile()
     {
         // Code for the editprofile action here
-        return array();
+        return [];
     }
 }

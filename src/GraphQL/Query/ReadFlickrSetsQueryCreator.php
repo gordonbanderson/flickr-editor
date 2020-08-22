@@ -1,6 +1,6 @@
-<?php
-namespace Suilven\Flickr\GraphQL\Query;
+<?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\GraphQL\Query;
 
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
@@ -14,25 +14,26 @@ class ReadFlickrSetsQueryCreator extends QueryCreator implements OperationResolv
     public function attributes()
     {
         return [
-            'name' => 'readFlickrSets'
+            'name' => 'readFlickrSets',
         ];
     }
+
 
     public function args()
     {
         return [
-            'ID' => ['type' => Type::int()]
+            'ID' => ['type' => Type::int()],
         ];
     }
+
 
     public function type()
     {
         return Type::listOf($this->manager->getType('flickrset'));
     }
 
-    /**
-     * @inheritDoc
-     */
+
+    /** @inheritDoc */
     public function resolve($object, array $args, $context, ResolveInfo $info)
     {
         $sets = FlickrSet::get();

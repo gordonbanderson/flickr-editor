@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\ShortCode;
 
 use SilverStripe\Core\Convert;
@@ -9,21 +10,15 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 class FlickrPhotoShortCodeHandler
 {
-    /**
-     *
-     * @param unknown $arguments
-     * @param string $caption
-     * @param unknown $parser
-     * @return void|string|\SilverStripe\ORM\FieldType\DBHTMLText
-     */
-    public static function parse_flickr($arguments, $caption = null, $parser = null)
+    /** @return void|string|\SilverStripe\ORM\FieldType\DBHTMLText */
+    public static function parse_flickr(unknown $arguments, ?string $caption = null, ?unknown $parser = null)
     {
 
         if (empty($arguments['id'])) {
             return;
         }
 
-        $customise = array();
+        $customise = [];
 
         /*** SET DEFAULTS ***/
         $fp = DataList::create(FlickrPhoto::class)->filter(['FlickrID' => $arguments['id']])->first();
@@ -44,18 +39,24 @@ class FlickrPhotoShortCodeHandler
         }
 
 
-        $customise['Caption'] = $caption ? Convert::raw2xml($caption) : $fp->Title ;
-        $customise['Position'] = !empty($arguments['position']) ? $arguments['position'] : 'center';
-        $customise['HideExif'] = !empty($arguments['exif']) ? $arguments['exif'] : false;
+        $customise['Caption'] = $caption
+            ? Convert::raw2xml($caption)
+            : $fp->Title ;
+        $customise['Position'] = !empty($arguments['position'])
+            ? $arguments['position']
+            : 'center';
+        $customise['HideExif'] = !empty($arguments['exif'])
+            ? $arguments['exif']
+            : false;
         $customise['Small'] = true;
-        if ($customise['Position'] == 'center') {
+        if ($customise['Position'] === 'center') {
             $customise['Small'] = false;
         }
 
         $fp = null;
 
         //overide the defaults with the arguments supplied
-        $customise = array_merge($customise, $arguments);
+        $customise = \array_merge($customise, $arguments);
 
         //get our YouTube template
         $template = new SSViewer('Includes/ShortCodeFlickrPhoto');

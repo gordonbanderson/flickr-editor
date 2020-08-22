@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 /**
  * Created by PhpStorm.
  * User: gordon
@@ -14,7 +15,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
-
 class DownloadImagesTask extends BuildTask
 {
 
@@ -22,64 +22,10 @@ class DownloadImagesTask extends BuildTask
 
     protected $description = 'Download thumbs from a Flickr set for the purposes of either self hosting or sprite generation';
 
-    private static $segment = 'download-flickr-set-thumbs';
-
     protected $enabled = true;
 
+    private static $segment = 'download-flickr-set-thumbs';
 
-    private function mkdir_if_required($dir)
-    {
-        if (!file_exists($dir) && !is_dir($dir)) {
-            mkdir($dir);
-        }
-    }
-
-    private function downloadSet($flickrSet, $targetDir, $size)
-    {
-        error_log('SIZE: ' . $size);
-        foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {
-            $imageURL = $flickrPhoto->SmallURL;
-            switch($size) {
-                case 'original':
-                    $imageURL = $flickrPhoto->OriginalURL;
-                    break;
-                case 'small':
-                    $imageURL = $flickrPhoto->SmallURL;
-                    break;
-                case 'medium':
-                    $imageURL = $flickrPhoto->MediumURL;
-                    break;
-                case 'large':
-                    $imageURL = $flickrPhoto->LargeURL;
-                    break;
-                case 'large1600':
-                    $imageURL = $flickrPhoto->LargeURL1600;
-                    break;
-                case 'large2048':
-                    $imageURL = $flickrPhoto->LargeURL2048;
-                    break;
-                default:
-                    // url already defaulted
-            }
-            error_log('Downloading ' . $imageURL);
-            $ch = curl_init($imageURL);
-
-            $filename = basename($imageURL);
-            $complete_save_loc = trim($targetDir) .'/' . trim($filename);
-            $complete_save_loc = str_replace(' ', '', $complete_save_loc);
-
-            error_log('CSL: ' . $complete_save_loc);
-
-            $fp = fopen($complete_save_loc, 'wb');
-
-            curl_setopt($ch, CURLOPT_FILE, $fp);
-            curl_setopt($ch, CURLOPT_HEADER, 0);
-            curl_exec($ch);
-            curl_close($ch);
-            fclose($fp);
-        }
-
-    }
 
     public function run($request)
     {
@@ -89,7 +35,7 @@ class DownloadImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = $_GET['size'] ? $_GET['size'] : 'small';
+        $size = $_GET['size'] ?: 'small';
 
         $flickrSetID = $_GET['id'];
 
@@ -102,14 +48,68 @@ class DownloadImagesTask extends BuildTask
         $this->mkdir_if_required($targetDir);
 
         $this->downloadSet($flickrSet, $targetDir, $size);
-
     }
 
 
+    private function mkdir_if_required($dir): void
+    {
+        if (\file_exists($dir) || \is_dir($dir)) {
+            return;
+        }
+
+        \mkdir($dir);
+    }
 
 
+    private function downloadSet($flickrSet, $targetDir, $size): void
+    {
+        \error_log('SIZE: ' . $size);
+        foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {
+            $imageURL = $flickrPhoto->SmallURL;
+            switch ($size) {
+                case 'original':
+                    $imageURL = $flickrPhoto->OriginalURL;
 
+                    break;
+                case 'small':
+                    $imageURL = $flickrPhoto->SmallURL;
 
+                    break;
+                case 'medium':
+                    $imageURL = $flickrPhoto->MediumURL;
 
+                    break;
+                case 'large':
+                    $imageURL = $flickrPhoto->LargeURL;
 
+                    break;
+                case 'large1600':
+                    $imageURL = $flickrPhoto->LargeURL1600;
+
+                    break;
+                case 'large2048':
+                    $imageURL = $flickrPhoto->LargeURL2048;
+
+                    break;
+                default:
+                    // url already defaulted
+            }
+            \error_log('Downloading ' . $imageURL);
+            $ch = \curl_init($imageURL);
+
+            $filename = \basename($imageURL);
+            $complete_save_loc = \trim($targetDir) .'/' . \trim($filename);
+            $complete_save_loc = \str_replace(' ', '', $complete_save_loc);
+
+            \error_log('CSL: ' . $complete_save_loc);
+
+            $fp = \fopen($complete_save_loc, 'wb');
+
+            \curl_setopt($ch, \CURLOPT_FILE, $fp);
+            \curl_setopt($ch, \CURLOPT_HEADER, 0);
+            \curl_exec($ch);
+            \curl_close($ch);
+            \fclose($fp);
+        }
+    }
 }

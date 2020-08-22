@@ -1,9 +1,9 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetPageController
- *
  */
 class FlickrSetPageController extends \PageController
 {
@@ -25,12 +25,12 @@ class FlickrSetPageController extends \PageController
     */
     public function IdToUrlJson()
     {
-        $result = array();
+        $result = [];
         foreach ($this->FlickrPhotos() as $fp) {
             $result[$fp->ID] = $fp->LargeURL;
         }
 
-        return json_encode($result);
+        return \json_encode($result);
     }
 
 

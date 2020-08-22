@@ -1,13 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\ShortCode;
 
 use SilverStripe\Core\Convert;
 use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
 class FlickrPhotoSequenceShortCodeHandler
@@ -22,16 +20,17 @@ class FlickrPhotoSequenceShortCodeHandler
             return '<div style="color: red">Please provide these parameters - setid, photoid, nframes</div>';
         }
 
-        $customise = array();
+        $customise = [];
 
         $images = new ArrayList();
-        $setID =  $arguments['setid'];
+        $setID = $arguments['setid'];
         $startPhotoID = $arguments['photoid'];
 
         $frames = $arguments['nframes'];
 
-        /** @var FlickrSet $set */
-        $set = FlickrSet::get()->filter('FlickrID', $setID)->first(); // flickr set IDs are unique
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $set */
+        // flickr set IDs are unique
+        $set = FlickrSet::get()->filter('FlickrID', $setID)->first();
         $startPhoto = $set->FlickrPhotos()->filter('FlickrID', $startPhotoID)->first();
         //         $startPhoto = FlickrPhoto::get()->filter('FlickrID', $startPhotoID)->first();
         $sortField = $set->SortOrder;
@@ -46,13 +45,15 @@ class FlickrPhotoSequenceShortCodeHandler
                 break;
             }
 
-            if ($photo->FlickrID == $startPhotoID ) {
+            if ($photo->FlickrID === $startPhotoID) {
                 $adding = true;
             }
-            if ($adding) {
-                $images->add($photo);
-                $ctr++;
+            if (!$adding) {
+                continue;
             }
+
+            $images->add($photo);
+            $ctr++;
         }
 
 
@@ -67,11 +68,13 @@ class FlickrPhotoSequenceShortCodeHandler
         }
 
 
-        $customise['Caption'] = $caption ? Convert::raw2xml($caption) : $startPhoto->Title ;
+        $customise['Caption'] = $caption
+            ? Convert::raw2xml($caption)
+            : $startPhoto->Title ;
 
 
         //overide the defaults with the arguments supplied
-        $customise = array_merge($customise, $arguments);
+        $customise = \array_merge($customise, $arguments);
 
         //get our YouTube template
         $template = new SSViewer('Includes/ShortCodeFlickrPhotoSequence');

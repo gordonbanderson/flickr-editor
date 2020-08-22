@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use SilverStripe\ORM\ArrayList;
@@ -10,23 +11,24 @@ class FlickrTagHelper extends FlickrHelper
     {
         $result = new ArrayList();
 
-        if (trim($csv) == '') {
-            return $result; // ie empty array
+        if (\trim($csv) === '') {
+            // ie empty array
+            return $result;
         }
 
-        $tags = explode(',', $csv);
+        $tags = \explode(',', $csv);
         foreach ($tags as $tagName) {
-            $tagName = trim($tagName);
+            $tagName = \trim($tagName);
             if (!$tagName) {
                 continue;
             }
 
             // search for an existing tag, if there is not one create it
-            $ftag = FlickrTag::get()->filter(['Value' => strtolower($tagName)])->first();
+            $ftag = FlickrTag::get()->filter(['Value' => \strtolower($tagName)])->first();
             if (!$ftag) {
                 $ftag = FlickrTag::create();
                 $ftag->RawValue = $tagName;
-                $ftag->Value  = strtolower($tagName);
+                $ftag->Value = \strtolower($tagName);
                 $ftag->write();
             }
 

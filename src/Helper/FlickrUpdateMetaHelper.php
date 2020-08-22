@@ -1,18 +1,20 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 class FlickrUpdateMetaHelper extends FlickrHelper
 {
-    public function writePhotoToFlickr($flickrPhoto, $descriptionSuffix)
+    public function writePhotoToFlickr($flickrPhoto, $descriptionSuffix): void
     {
         $apiHelper = $this->getPhotosAPIHelper();
-        $phpFlickr = $this->getPhpFlickr(); // needed for location
+        // needed for location
+        $phpFlickr = $this->getPhpFlickr();
 
         $fullDesc = $flickrPhoto->Description."\n\n".$descriptionSuffix;
-        $fullDesc = trim($fullDesc);
+        $fullDesc = \trim($fullDesc);
 
-        $year = substr($flickrPhoto->TakenAt, 0, 4);
-        $fullDesc = str_replace('$Year', $year, $fullDesc);
+        $year = \substr($flickrPhoto->TakenAt, 0, 4);
+        $fullDesc = \str_replace('$Year', $year, $fullDesc);
         $apiHelper->setMeta($flickrPhoto->FlickrID, $flickrPhoto->Title, $fullDesc);
 
         $tagString = '';

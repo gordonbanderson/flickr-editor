@@ -1,13 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use Samwilson\PhpFlickr\PhotosetsApi;
-use Samwilson\PhpFlickr\PhpFlickr;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
@@ -18,21 +17,21 @@ class FlickrSetHelper extends FlickrHelper
 
     /**
      * Either get the set from the database, or if it does not exist get the details from flickr and add it to the database
+     *
      * @param string $flickrSetID the flickr set id
-     * @return DataObject|FlickrSet|null
+     * @return \SilverStripe\ORM\DataObject|\Suilven\Flickr\Model\Flickr\FlickrSet|null
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrSet($flickrSetID)
+    public function getOrCreateFlickrSet(string $flickrSetID)
     {
         // do we have a set object or not
         $flickrSet = FlickrSet::get()->filter([
-            'FlickrID' => $flickrSetID
+            'FlickrID' => $flickrSetID,
         ])->first();
 
 
         // if a set exists update data, otherwise create
         if (!$flickrSet) {
-
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             $setInfo = $setsHelper->getInfo($flickrSetID, null);
@@ -51,26 +50,27 @@ class FlickrSetHelper extends FlickrHelper
 
 
     /**
-     * @param PhpFlickr $phpFlickr
+     * @param \Samwilson\PhpFlickr\PhpFlickr $phpFlickr
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function importSet($flickrSetID)
+    public function importSet($flickrSetID): void
     {
         $phpFlickr = $this->getPhpFlickr();
 
         $page= 1;
-        $pages = 1e7; // this will get updated after the first call to the API, set to ridic high value
+        // this will get updated after the first call to the API, set to ridic high value
+        $pages = 1e7;
         static $only_new_photos = false;
 
 
         $path = $_GET['path'];
         $parentNode = SiteTree::get_by_link($path);
-        if ($parentNode == null) {
-            user_error( "ERROR: Path ".$path." cannot be found in this site");
+        if ($parentNode === null) {
+            \user_error("ERROR: Path ".$path." cannot be found in this site");
         }
 
 
-        error_log('Getting flickr set ' . $flickrSetID);
+        \error_log('Getting flickr set ' . $flickrSetID);
 
         $fshelper = new FlickrSetHelper();
         $flickrSet = $fshelper->getOrCreateFlickrSet($flickrSetID);
@@ -89,14 +89,14 @@ class FlickrSetHelper extends FlickrHelper
                 null,
                 $extras,
                 $perPage,
-                $page
+                $page,
             );
 
             $page++;
 
-            error_log(print_r($photoset, 1));
+            \error_log(\print_r($photoset, 1));
             $pages = $photoset['pages'];
-            error_log('PAGES: ' . $pages);
+            \error_log('PAGES: ' . $pages);
 
             // @todo Deal with non existent id gracefully
             // Reload from the database
@@ -111,21 +111,21 @@ class FlickrSetHelper extends FlickrHelper
             echo "Title set to : ".$flickrSet->Title;
 
             // @todo This was a hack and may not be necessary now
-            if ($flickrSet->Title == null) {
-                echo("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?");
+            if ($flickrSet->Title === null) {
+                echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
                 die;
             }
 
-            $datetime = explode(' ', $flickrSet->FirstPictureTakenAt);
+            $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
             $datetime = $datetime[0];
 
-            list($year, $month, $day) = explode('-', $datetime);
+            list($year, $month, $day) = \explode('-', $datetime);
             echo "Month: $month; Day: $day; Year: $year<br />\n";
 
             // now try and find a flickr set page
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
             if (!$flickrSetPage) {
-                error_log('>>>> Creating flickr set page <<<<');
+                \error_log('>>>> Creating flickr set page <<<<');
                 $flickrSetPage = new FlickrSetPage();
                 $flickrSetPage->Title = $photoset['title'];
                 $flickrSetPage->Description = $flickrSet->Description;
@@ -144,7 +144,7 @@ class FlickrSetHelper extends FlickrHelper
             //$flickrSetPage->copyVersionToStage("Live", "Stage");
 
             $flickrSetPageID = $flickrSetPage->ID;
-            gc_enable();
+            \gc_enable();
 
             /*
             $f1 = Folder::find_or_make("flickr/$year");
@@ -200,7 +200,7 @@ class FlickrSetHelper extends FlickrHelper
             $flickrSetPage = null;
             */
 
-            $numberOfPics = count($photoset['photo']);
+            $numberOfPics = \count($photoset['photo']);
             $ctr = 1;
 
             $photoHelper = new FlickrPhotoHelper();
@@ -211,10 +211,11 @@ class FlickrSetHelper extends FlickrHelper
 
                 if (!$flickrPhoto) {
                     $ctr++;
+
                     continue;
                 }
 
-                if ($value['isprimary'] == 1) {
+                if ($value['isprimary'] === 1) {
                     $flickrSet->MainImage = $flickrPhoto;
                 }
 
@@ -223,12 +224,10 @@ class FlickrSetHelper extends FlickrHelper
 
 
                 if (!$flickrPhoto->LocalCopyOfImage) {
-
-
                     //mkdir appears to be relative to teh sapphire dir
                     $structure = "../assets/flickr/$year/$month/$day/".$flickrSetID;
 
-                    if (!file_exists('../assets/flickr')) {
+                    if (!\file_exists('../assets/flickr')) {
                         echo "Creating path:".$structure;
 
                         /*
@@ -269,23 +268,23 @@ class FlickrSetHelper extends FlickrHelper
                         $fpid = $flickrPhoto->FlickrID;
 
                         $cmd = "wget -O $structure/$fpid.jpg $largeURL";
-                        exec($cmd);
+                        \exec($cmd);
 
                         $cmd = "chown  gordon:www-data $structure/$fpid.jpg";
                         // $cmd = "pwd";
-                        echo "EXECCED:".exec($cmd);
+                        echo "EXECCED:".\exec($cmd);
 
                         $image = new Image();
                         $image->Name = $this->Title;
                         $image->Title = $this->Title;
-                        $image->Filename = str_replace('../', '', $structure.'/'.$fpid.".jpg");
+                        $image->Filename = \str_replace('../', '', $structure.'/'.$fpid.".jpg");
                         $image->Title = $flickrPhoto->Title;
                         //$image->Name = $flickrPhoto->Title;
                         $image->ParentID = $flickrSetAssetFolderID;
-                        gc_collect_cycles();
+                        \gc_collect_cycles();
 
                         $image->write();
-                        gc_collect_cycles();
+                        \gc_collect_cycles();
 
                         $flickrPhoto->LocalCopyOfImageID = $image->ID;
                         $flickrPhoto->write();
@@ -309,14 +308,14 @@ class FlickrSetHelper extends FlickrHelper
             $ctr = 0;
             $exifHelper = new FlickrExifHelper();
 
-            error_log('++++ EXIF ++++');
+            \error_log('++++ EXIF ++++');
 
 
             foreach ($photoset['photo'] as $key => $value) {
                 echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
                 $flickrPhotoID = $value['id'];
 
-                /** @var FlickrPhoto $flickrPhoto */
+                /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
 
 
@@ -324,7 +323,7 @@ class FlickrSetHelper extends FlickrHelper
                     $exifHelper->loadExif($flickrPhoto);
                     $flickrPhoto->write();
                 } else {
-                    error_log('ALREADY IMPORTED');
+                    \error_log('ALREADY IMPORTED');
                 }
 
                 $ctr++;

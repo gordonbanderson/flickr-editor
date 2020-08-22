@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
 use SilverStripe\ORM\DataList;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetFolder_Controller
- *
  */
 class FlickrSetFolder_Controller extends \PageController
 {
@@ -13,6 +13,7 @@ class FlickrSetFolder_Controller extends \PageController
     {
         return DataList::create('FlickrSetPage')->where('ParentID = '.$this->ID)->sort('FirstPictureTakenAt desc');
     }
+
 
     public function FlickrSetFoldersNewestFirst()
     {

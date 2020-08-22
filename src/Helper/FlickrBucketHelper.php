@@ -1,11 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
-
 
 class FlickrBucketHelper extends FlickrHelper
 {
@@ -27,5 +27,4 @@ class FlickrBucketHelper extends FlickrHelper
 
         return $bucket;
     }
-
 }
