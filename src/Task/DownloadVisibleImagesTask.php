@@ -27,6 +27,7 @@ class DownloadVisibleImagesTask extends BuildTask
     private static $segment = 'download-flickr-set-for-facebook';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,25 +36,27 @@ class DownloadVisibleImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = isset($_GET['size'])
-            ? $_GET['size']
+        $sizeStr = $request->getVar('size');
+
+        $size = isset($sizeStr)
+            ? $sizeStr
             : 'large2048';
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
-        $this->mkdir_if_required('public/flickr');
-        $this->mkdir_if_required('public/flickr/images');
+        $this->mkdirIfRequired('public/flickr');
+        $this->mkdirIfRequired('public/flickr/images');
         $targetDir = 'public/flickr/images/' . $flickrSetID;
-        $this->mkdir_if_required($targetDir);
+        $this->mkdirIfRequired($targetDir);
 
         $this->downloadSet($flickrSet, $targetDir, $size);
     }
 
 
-    private function mkdir_if_required($dir): void
+    private function mkdirIfRequired(string $dir): void
     {
         if (\file_exists($dir) || \is_dir($dir)) {
             return;
@@ -63,7 +66,8 @@ class DownloadVisibleImagesTask extends BuildTask
     }
 
 
-    private function downloadSet($flickrSet, $targetDir, $size): void
+    /** @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
+    private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         $counter = 0;
         $photos = $flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder);
@@ -102,7 +106,6 @@ class DownloadVisibleImagesTask extends BuildTask
             \error_log('Downloading ' . $imageURL);
             $ch = \curl_init($imageURL);
 
-            $filename = \basename($imageURL);
             $complete_save_loc = \trim($targetDir) .'/' . $paddedCounter . '.JPG';
             $complete_save_loc = \str_replace(' ', '', $complete_save_loc);
 

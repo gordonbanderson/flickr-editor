@@ -1,12 +1,5 @@
 <?php declare(strict_types = 1);
 
-/**
- * Created by PhpStorm.
- * User: gordon
- * Date: 11/4/2561
- * Time: 16:22 น.
- */
-
 namespace Suilven\Flickr\Task;
 
 use MatthiasMullie\Minify\CSS;
@@ -19,6 +12,13 @@ use Suilven\Flickr\Helper\FlickrSetHelper;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 use Suilven\Spriter\Spriter;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+/**
+ * Class FlickrSetSpriteTask
+ *
+ * @package Suilven\Flickr\Task
+ */
 class FlickrSetSpriteTask extends BuildTask
 {
 
@@ -30,6 +30,7 @@ class FlickrSetSpriteTask extends BuildTask
 
     private static $segment = 'create-flickr-set-sprite';
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -38,7 +39,7 @@ class FlickrSetSpriteTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         // second number essentially means all
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
@@ -50,13 +51,12 @@ class FlickrSetSpriteTask extends BuildTask
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
         $spritesDir = 'public/flickr/sprites';
-        $this->mkdir_if_required($spritesDir);
-        $this->mkdir_if_required($spritesDir . '/' . $flickrSetID);
+        $this->mkdirIfRequired($spritesDir);
+        $this->mkdirIfRequired($spritesDir . '/' . $flickrSetID);
         $imagesDir = 'public/flickr/images/';
         $flickrSetImagesDir = $imagesDir . $flickrSetID;
         $tmpDir = $flickrSetImagesDir . '/tmp';
-        $this->mkdir_if_required($tmpDir);
-        $sourceImageDir = $tmpDir;
+        $this->mkdirIfRequired($tmpDir);
 
         $nPhotos = $flickrSet->FlickrPhotos()->count();
         $nPages = \abs($nPhotos / $imagesPerSprite) + 1;
@@ -93,7 +93,9 @@ class FlickrSetSpriteTask extends BuildTask
                 // name of the generated CSS and PNG file.
                 "spriteFilename" => "icon-sprite-" . $page,
 
-                // margin in px between tiles in the highest 'retina' dimension (default is 0) - if you generate different 'retina' dimensions, take a common multiple of the selected variants.
+                // margin in px between tiles in the highest 'retina' dimension (default is 0) -
+                // //if you generate different 'retina' dimensions, take a common multiple of the
+                // selected variants.
                 "tileMargin" => 0,
                 // defines the desired 'retina' dimensions, you want. [2,1]
                 "retina" => [2, 1],
@@ -116,17 +118,12 @@ class FlickrSetSpriteTask extends BuildTask
                         "cssDirectory" => $spriteDir,
                         // your CSS/Less/Sass target file
                         "cssFilename" => "flickr-set-sprites.css",
-                        // "globalTemplate" => "vendor/suilven/php-spriter/src/templates/",                // global template, which contains general CSS css for all icons (remove line for default)
-                        // "eachTemplate" => "vendor/suilven/php-spriter/src/templates/",                  // template for each CSS icon class (remove line for default)
-                        // "eachHoverTemplate" => "vendor/suilven/php-spriter/src/templates/",             // template for each CSS icon hover class (remove line for default)
-                        // "ratioTemplate" => "vendor/suilven/php-spriter/src/templates/"                  // template for each retina media query (remove line for default)
                     ],
                 ],
 
             ];
 
-            $spriter = new Spriter($spriterConfig);
-
+            new Spriter($spriterConfig);
 
             $minifier = new CSS();
             $csspath = $spriteDir . '/flickr-set-sprites.css';
@@ -136,7 +133,8 @@ class FlickrSetSpriteTask extends BuildTask
 
             $css .= $pageCSS;
 
-            \error_log('Moving ' . $photosForSprite->count() . ' files back from temporary space');
+            \error_log('Moving ' . $photosForSprite->count() .
+                ' files back from temporary space');
             foreach ($photosForSprite as $photo) {
                 $srcFile = $tmpDir . '/' . $photo->CSSSpriteFileName() . '.jpg';
                 $destFile = $flickrSetImagesDir . '/' . $photo->CSSSpriteFileName() . '.jpg';
@@ -153,7 +151,8 @@ class FlickrSetSpriteTask extends BuildTask
     }
 
 
-    private function mkdir_if_required($dir): void
+    /** @param string $dir The directory to make */
+    private function mkdirIfRequired(string $dir): void
     {
         if (\file_exists($dir) || \is_dir($dir)) {
             return;

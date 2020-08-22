@@ -27,6 +27,7 @@ class UpdateSetMetaTask extends BuildTask
     private static $segment = 'update-flickr-set-metadata';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,7 +36,7 @@ class UpdateSetMetaTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
         /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
         $flickrSet = FlickrSet::get()->filter(['FlickrID' => $flickrSetID])->first();
         $flickrSet->writeToFlickr();

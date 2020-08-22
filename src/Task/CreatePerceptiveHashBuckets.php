@@ -27,6 +27,7 @@ class CreatePerceptiveHashBuckets extends BuildTask
 
     private static $segment = 'buckets-from-perceptive-hash';
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,7 +36,7 @@ class CreatePerceptiveHashBuckets extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);

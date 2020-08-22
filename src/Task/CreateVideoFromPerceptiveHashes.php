@@ -15,6 +15,7 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Sluggable\Helper\SluggableHelper;
 
 class CreateVideoFromPerceptiveHashes extends BuildTask
@@ -29,7 +30,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     private static $segment = 'create-video-from-perceptive-hash';
 
 
-    public function findSequences($flickrSet, $srcDir, $targetDir): void
+    public function findSequences(FlickrSet $flickrSet, string $srcDir, string $targetDir): void
     {
         $helper = new FlickrPerceptiveHashHelper();
         $buckets = $helper->calculateSequences($flickrSet);
@@ -66,9 +67,8 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
                 \error_log('>>>> ROTATED: ' . $rotated);
                 if ($rotated) {
                     $dimensions = '1365x2048';
-                    //$dimensions = '66%x100%';
-                    //convert [input file] -resize 1920x1080 -background black -gravity center -extent 1920x1080 [output file]
-                    $cmd = ('/usr/bin/convert ' . $to .' -gravity center -background black -extent ' . $dimensions .' ' . $to);
+                    $cmd = ('/usr/bin/convert ' . $to .' -gravity center -background black -extent ' .
+                        $dimensions .' ' . $to);
                     \error_log('CMD:' . $cmd);
                     \exec($cmd);
                 }
@@ -84,6 +84,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -94,16 +95,16 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
         $size = 'small';
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
-        $this->mkdir_if_required('/tmp/flickr');
+        $this->mkdirIfRequired('/tmp/flickr');
         $targetDir = '/tmp/flickr/' . $flickrSetID;
-        $this->mkdir_if_required($targetDir);
+        $this->mkdirIfRequired($targetDir);
         $movieDir = $targetDir . '/movie';
-        $this->mkdir_if_required($movieDir);
+        $this->mkdirIfRequired($movieDir);
 
         $srcDir = 'public/flickr/images/' . $flickrSetID;
 
@@ -121,7 +122,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
-    private function mkdir_if_required($dir): void
+    private function mkdirIfRequired(string $dir): void
     {
         if (\file_exists($dir) || \is_dir($dir)) {
             return;
@@ -131,7 +132,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
-    private function calculatePerceptiveHashes($flickrSet, $targetDir, $size): void
+    private function calculatePerceptiveHashes(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('---- new image ----');
         \error_log('SIZE: ' . $size);

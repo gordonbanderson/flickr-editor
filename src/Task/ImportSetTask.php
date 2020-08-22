@@ -27,6 +27,7 @@ class ImportSetTask extends BuildTask
     private static $segment = 'import-flickr-set';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,7 +36,7 @@ class ImportSetTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSetHelper->importSet($flickrSetID);

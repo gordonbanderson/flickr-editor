@@ -27,6 +27,7 @@ class CalculatePerceptiveHashes extends BuildTask
     private static $segment = 'calculate-perceptive-hash';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,28 +36,28 @@ class CalculatePerceptiveHashes extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = isset($_GET['size'])
-            ? $_GET['size']
+        /** @var string|null $sizeFromRequest */
+        $sizeFromRequest = $request->getVar('size');
+
+        $size = isset($sizeFromRequest)
+            ? $sizeFromRequest
             : 'small';
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
-        $this->mkdir_if_required('/tmp/flickr');
+        $this->mkdirIfRequired('/tmp/flickr');
         $targetDir = '/tmp/flickr/' . $flickrSetID;
-        $this->mkdir_if_required($targetDir);
+        $this->mkdirIfRequired($targetDir);
         $movieDir = $targetDir . '/movie';
-        $this->mkdir_if_required($movieDir);
-
-        $srcDir = 'public/flickr/images/' . $flickrSetID;
-
+        $this->mkdirIfRequired($movieDir);
         $this->calculatePerceptiveHashes($flickrSet, $targetDir, $size);
     }
 
 
-    private function mkdir_if_required($dir): void
+    private function mkdirIfRequired(string $dir): void
     {
         if (\file_exists($dir) || \is_dir($dir)) {
             return;
@@ -66,7 +67,8 @@ class CalculatePerceptiveHashes extends BuildTask
     }
 
 
-    private function calculatePerceptiveHashes($flickrSet, $targetDir, $size): void
+    /** @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
+    private function calculatePerceptiveHashes(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('---- new image ----');
         \error_log('SIZE: ' . $size);
@@ -74,7 +76,6 @@ class CalculatePerceptiveHashes extends BuildTask
         $total = $flickrSet->FlickrPhotos()->count();
 
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
-            $oldHash = $flickrPhoto->PerceptiveHash;
             $counter++;
 
 
