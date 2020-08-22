@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\Tests;
+
 class FlickrTagTest extends \SilverStripe\Dev\SapphireTest
 {
     public function testNormaliseCount(): void

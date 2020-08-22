@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+namespace Suilven\Flickr\Tests;
+
 class FlickrTagsControllerTest extends \SilverStripe\Dev\SapphireTest
 {
     public function testColumnLayout(): void
