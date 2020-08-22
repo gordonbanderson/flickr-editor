@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Suilven\Flickr\Model\Flickr;
 
@@ -105,68 +105,68 @@ class FlickrPhoto extends DataObject
     private static $table_name = 'FlickrPhoto';
 
     private static $db = [
-        'Title' => 'Varchar(255)';
-    private 'FlickrID' => 'Varchar';
-    private 'Description' => 'HTMLText';
-    private 'TakenAt' => 'Datetime';
-    private 'FlickrLastUpdated' => DBDate::class;
-    private 'GeoIsPublic' => DBBoolean::class;
-    private 'IsDirty' => DBBoolean::class;
-    private 'Orientation' => 'Int';
-    private 'WoeID' => 'Int';
-    private 'Accuracy' => 'Int';
-    private 'FlickrPlaceID' => 'Varchar(255)';
-    private 'Rotation' => 'Int';
-    private 'IsPublic' => DBBoolean::class;
-    private 'Aperture' => 'Float';
-    private 'ShutterSpeed' => 'Varchar';
-    private 'ImageUniqueID' => 'Varchar';
-    private 'FocalLength35mm' => 'Int';
-    private 'ISO' => 'Int';
-    private 'AspectRatio' => 'Float';
-    private 'SmallURL' => 'Varchar(255)';
-    private 'SmallHeight' => 'Int';
-    private 'SmallWidth' => 'Int';
-    private 'SmallURL320' => 'Varchar(255)';
-    private 'SmallHeight320' => 'Int';
-    private 'SmallWidth320' => 'Int';
-    private 'MediumURL' => 'Varchar(255)';
-    private 'MediumHeight' => 'Int';
-    private 'MediumWidth' => 'Int';
-    private 'MediumURL640' => 'Varchar(255)';
-    private 'MediumHeight640' => 'Int';
-    private 'MediumWidth640' => 'Int';
-    private 'MediumURL800' => 'Varchar(255)';
-    private 'MediumHeight800' => 'Int';
-    private 'MediumWidth800' => 'Int';
-    private 'SquareURL' => 'Varchar(255)';
-    private 'SquareHeight' => 'Int';
-    private 'SquareWidth' => 'Int';
-    private 'SquareURL150' => 'Varchar(255)';
-    private 'SquareHeight150' => 'Int';
-    private 'SquareWidth150' => 'Int';
-    private 'LargeURL' => 'Varchar(255)';
-    private 'LargeHeight' => 'Int';
-    private 'LargeWidth' => 'Int';
-    private 'LargeURL1600' => 'Varchar(255)';
-    private 'LargeHeight1600' => 'Int';
-    private 'LargeWidth1600' => 'Int';
-    private 'LargeURL2048' => 'Varchar(255)';
-    private 'LargeHeight2048' => 'Int';
-    private 'LargeWidth2048' => 'Int';
-    private 'ThumbnailURL' => 'Varchar(255)';
-    private 'ThumbnailHeight' => 'Int';
-    private 'ThumbnailWidth' => 'Int';
-    private 'OriginalURL' => 'Varchar(255)';
-    private 'OriginalHeight' => 'Int';
-    private 'OriginalWidth' => 'Int';
-    private 'TimeShiftHours' => 'Int';
-    private 'PromoteToHomePage' => DBBoolean::class ;
-    private 'Imported' => 'Boolean';
-    private 'DigitalZoomRatio' => 'Float';
-    private 'UploadUnixTimeStamp' => 'Int';
-    private 'PerceptiveHash' => 'Varchar(64)';
-    private 'Visible' => 'Boolean',
+        'Title' => 'Varchar(255)',
+        'FlickrID' => 'Varchar',
+        'Description' => 'HTMLText',
+        'TakenAt' => 'Datetime',
+        'FlickrLastUpdated' => DBDate::class,
+        'GeoIsPublic' => DBBoolean::class,
+        'IsDirty' => DBBoolean::class,
+        'Orientation' => 'Int',
+        'WoeID' => 'Int',
+        'Accuracy' => 'Int',
+        'FlickrPlaceID' => 'Varchar(255)',
+        'Rotation' => 'Int',
+        'IsPublic' => DBBoolean::class,
+        'Aperture' => 'Float',
+        'ShutterSpeed' => 'Varchar',
+        'ImageUniqueID' => 'Varchar',
+        'FocalLength35mm' => 'Int',
+        'ISO' => 'Int',
+        'AspectRatio' => 'Float',
+        'SmallURL' => 'Varchar(255)',
+        'SmallHeight' => 'Int',
+        'SmallWidth' => 'Int',
+        'SmallURL320' => 'Varchar(255)',
+        'SmallHeight320' => 'Int',
+        'SmallWidth320' => 'Int',
+        'MediumURL' => 'Varchar(255)',
+        'MediumHeight' => 'Int',
+        'MediumWidth' => 'Int',
+        'MediumURL640' => 'Varchar(255)',
+        'MediumHeight640' => 'Int',
+        'MediumWidth640' => 'Int',
+        'MediumURL800' => 'Varchar(255)',
+        'MediumHeight800' => 'Int',
+        'MediumWidth800' => 'Int',
+        'SquareURL' => 'Varchar(255)',
+        'SquareHeight' => 'Int',
+        'SquareWidth' => 'Int',
+        'SquareURL150' => 'Varchar(255)',
+        'SquareHeight150' => 'Int',
+        'SquareWidth150' => 'Int',
+        'LargeURL' => 'Varchar(255)',
+        'LargeHeight' => 'Int',
+        'LargeWidth' => 'Int',
+        'LargeURL1600' => 'Varchar(255)',
+        'LargeHeight1600' => 'Int',
+        'LargeWidth1600' => 'Int',
+        'LargeURL2048' => 'Varchar(255)',
+        'LargeHeight2048' => 'Int',
+        'LargeWidth2048' => 'Int',
+        'ThumbnailURL' => 'Varchar(255)',
+        'ThumbnailHeight' => 'Int',
+        'ThumbnailWidth' => 'Int',
+        'OriginalURL' => 'Varchar(255)',
+        'OriginalHeight' => 'Int',
+        'OriginalWidth' => 'Int',
+        'TimeShiftHours' => 'Int',
+        'PromoteToHomePage' => DBBoolean::class,
+        'Imported' => 'Boolean',
+        'DigitalZoomRatio' => 'Float',
+        'UploadUnixTimeStamp' => 'Int',
+        'PerceptiveHash' => 'Varchar(64)',
+        'Visible' => 'Boolean',
 
 
         //TODO - place id
@@ -194,21 +194,23 @@ o   original image, either a jpg, gif or png, depending on source format
 
     // this one is what created the database FlickrPhoto_FlickrTagss
     private static $many_many = [
-        'FlickrTags' => FlickrTag::class;
-    private 'FlickrBuckets' => FlickrBucket::class ];
+        'FlickrTags' => FlickrTag::class,
+        'FlickrBuckets' => FlickrBucket::class
+    ];
 
     private static $has_many = [
         'Exifs' => FlickrExif::class,
     ];
 
     private static $has_one = [
-        'LocalCopyOfImage' => Image::class;
-    private 'Photographer' => FlickrAuthor::class ];
+        'LocalCopyOfImage' => Image::class,
+        'Photographer' => FlickrAuthor::class
+    ];
 
     private static $summary_fields = [
-        'Thumbnail' => 'Thumbnail';
-    private 'Title' => 'Title';
-    private 'Visible' => 'Visible',
+        'Thumbnail' => 'Thumbnail',
+        'Title' => 'Title',
+        'Visible' => 'Visible'
     ];
 
     private static $default_sort = 'TakenAt';
@@ -252,7 +254,7 @@ o   original image, either a jpg, gif or png, depending on source format
         //FIXME - is there a way to avoid a database call here?
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
-        $vh = ($intendedWidth-$fp->ThumbnailWidth)/2;
+        $vh = ($intendedWidth - $fp->ThumbnailWidth) / 2;
         $vh = \intval(\round($vh));
 
         return $vh;
@@ -270,7 +272,7 @@ o   original image, either a jpg, gif or png, depending on source format
         //FIXME - is there a way to avoid a database call here?
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
-        $vm = ($intendedHeight-$fp->ThumbnailHeight)/2;
+        $vm = ($intendedHeight - $fp->ThumbnailHeight) / 2;
         $vm = \intval(\round($vm));
 
         return $vm;
@@ -325,10 +327,10 @@ o   original image, either a jpg, gif or png, depending on source format
 
 
         $forTemplate = new ArrayData([
-                'FlickrPhoto' => $this,
-                //SS ID
-                'FlickrSetID' => $flickrSetID,
-            ]);
+            'FlickrPhoto' => $this,
+            //SS ID
+            'FlickrSetID' => $flickrSetID,
+        ]);
         $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing');
 
 
@@ -353,9 +355,9 @@ o   original image, either a jpg, gif or png, depending on source format
                 "Root.Location",
                 $mapField = new LatLongField(
                     [
-                     new TextField('Lat', 'Latitude'),
-                     new TextField('Lon', 'Longitude'),
-                     new TextField('ZoomLevel', 'Zoom'),
+                        new TextField('Lat', 'Latitude'),
+                        new TextField('Lon', 'Longitude'),
+                        new TextField('ZoomLevel', 'Zoom'),
                     ],
                     ['Address'],
                 ),
@@ -391,7 +393,7 @@ o   original image, either a jpg, gif or png, depending on source format
         //->addComponent( new GridFieldSortableRows( 'Value' ) );
         $gridConfig = GridFieldConfig_RelationEditor::create();
         $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
-            setSearchFields(['Value', 'RawValue']);
+        setSearchFields(['Value', 'RawValue']);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
         $fields->addFieldToTab("Root.Main", $gridField);
 
@@ -413,7 +415,7 @@ o   original image, either a jpg, gif or png, depending on source format
         $height = $this->LargeHeight;
 
         if ($width < $height) {
-            $width = \round($width*683/$height);
+            $width = \round($width * 683 / $height);
             $height = 683;
         }
 
@@ -479,7 +481,7 @@ o   original image, either a jpg, gif or png, depending on source format
     {
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
 
-        return \floor($position/$imagesPerSprite);
+        return \floor($position / $imagesPerSprite);
     }
 
 

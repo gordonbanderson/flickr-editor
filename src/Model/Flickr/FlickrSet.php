@@ -276,10 +276,14 @@ class FlickrSet extends DataObject
 
         // add points of interest taking into account the default icon of the layer as an override
         if (Object::has_extension($this->owner->ClassName, 'PointsOfInterestLayerExtension')) {
+            // @todo use PSR caching, this is old
             $markercache = SS_Cache::factory('mappable');
 
             $ck = $this->getPoiMarkersCacheKey();
             $map->MarkersCacheKey = $ck;
+
+            // @todo the method in question does not exist
+            $jsonMarkers = $markercache->test($ck);
 
             // If we have JSON already do not load the objects
             if (!($jsonMarkers = $markercache->test($ck))) {

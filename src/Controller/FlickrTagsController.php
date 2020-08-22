@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Suilven\Flickr\Controller;
 
@@ -12,9 +12,9 @@ use SilverStripe\ORM\DB;
 class FlickrTagsController extends \PageController
 {
     private static $allowed_actions = [
-        'index';
-    private 'photo';
-    private 'photos',
+        'index',
+        'photo',
+        'photos',
     ];
 
 
@@ -44,8 +44,8 @@ class FlickrTagsController extends \PageController
     public function photo()
     {
         $tagValue = Director::URLParam('ID');
-        $this->Title = "Photos tagged '".$tagValue."'";
-        $tag = DataObject::get_one('Tag', "Value='".$tagValue."'");
+        $this->Title = "Photos tagged '" . $tagValue . "'";
+        $tag = DataObject::get_one('Tag', "Value='" . $tagValue . "'");
         $this->TagValue = $tagValue;
         $this->Tag = $tag;
 
@@ -61,9 +61,8 @@ class FlickrTagsController extends \PageController
 
     public function PhotoKey()
     {
-        return'tagphoto_'.$ID;
+        return 'tagphoto_' . $ID;
     }
-
 
 
     /* Return all tags for rendering in a cloud */
@@ -87,7 +86,7 @@ class FlickrTagsController extends \PageController
         $tagCloud = \singleton('Tag')->buildDataObjectSet($result);
         foreach ($tagCloud as $tagV) {
             // font size in pixels
-            $tagV->Amount= 10 + \round(32*$tagV->Amount / $maxCount);
+            $tagV->Amount = 10 + \round(32 * $tagV->Amount / $maxCount);
         }
 
         $this->TagCloud = $tagCloud;

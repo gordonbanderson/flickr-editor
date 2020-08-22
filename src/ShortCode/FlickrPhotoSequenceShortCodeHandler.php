@@ -7,16 +7,22 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
 class FlickrPhotoSequenceShortCodeHandler
 {
 
-    public static function parse_flickr($arguments, $caption = null, $parser = null)
+    /**
+     * @param array $arguments
+     * @param \SilverStripe\View\Parsers\ShortcodeParser|null $parser
+     * @return \SilverStripe\ORM\FieldType\DBHTMLText|string
+     */
+    public static function parse_flickr(array $arguments, ?string $caption = null, ?ShortcodeParser $parser = null)
     {
 
         // first things first, if we dont have a image ids, then we don't need to
         // go any further
-        if (empty($arguments['setid']) || empty($arguments['photoid']) || empty($arguments['nframes'])) {
+        if (!isset($arguments['setid']) || !isset($arguments['photoid']) || !isset($arguments['nframes'])) {
             return '<div style="color: red">Please provide these parameters - setid, photoid, nframes</div>';
         }
 

@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace Suilven\Flickr\Model\Flickr;
 
@@ -16,21 +16,20 @@ class FlickrAuthor extends DataObject
     private static $table_name = 'FlickrAuthor';
 
     private static $db = [
-            'PathAlias' => 'Varchar';
-    private 'DisplayName' => 'Varchar',
-        ];
+        'PathAlias' => 'Varchar', 'DisplayName' => 'Varchar',
+    ];
 
     private static $has_many = ['FlickrPhotos' => 'FlickrPhoto'];
 
     private static $summary_fields = [
-            'PathAlias' => 'URL';
-    private 'DisplayName' => 'Display Name',
-        ];
+        'PathAlias' => 'URL',
+        'DisplayName' => 'Display Name',
+    ];
 
     /**
      * A search is made of the path alias during flickr set import
      */
     private static $indexes = [
-            'PathAlias' => true,
-        ];
+        'PathAlias' => true,
+    ];
 }

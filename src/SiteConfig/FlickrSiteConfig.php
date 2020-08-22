@@ -17,8 +17,8 @@ use SilverStripe\ORM\DataExtension;
 class FlickrSiteConfig extends DataExtension
 {
     private static $db = [
-        'ImageFooter' => 'Text';
-    private 'AddLocation' => 'Boolean',
+        'ImageFooter' => 'Text',
+        'AddLocation' => 'Boolean'
     ];
 
 
