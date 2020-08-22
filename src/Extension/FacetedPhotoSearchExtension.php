@@ -12,10 +12,7 @@ use SilverStripe\Core\Extension;
 class FacetedPhotoSearchExtension extends Extension
 {
 
-    /**
-     * @param string $facetTitle
-     */
-    public function postProcessFacetTitle(&$facetTitle): void
+    public function postProcessFacetTitle(string &$facetTitle): void
     {
 
         $titles = [
@@ -38,7 +35,7 @@ class FacetedPhotoSearchExtension extends Extension
      * @param array<string> $tokenFacets - the facets for this token
      * @return array<string> - massaged title and facets @TODO is this correct?
      */
-    public function postProcessFacetResults($token, $tokenFacets): array
+    public function postProcessFacetResults(string $token, array $tokenFacets): array
     {
         $result = [];
 
@@ -62,14 +59,14 @@ class FacetedPhotoSearchExtension extends Extension
                     if (!isset($value)) {
                         $facet['Value'] = 'Unknown';
                     }
-                    break;
 
+                    break;
                 case 'ISO':
                     if (!isset($value)) {
                         $facet['Value'] = 'Unknown';
                     }
-                    break;
 
+                    break;
                 default:
                     // do nothing
                     break;
