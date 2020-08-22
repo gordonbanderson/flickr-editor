@@ -5,6 +5,11 @@ namespace Suilven\Flickr;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\View\Requirements;
 
+// These are for the FieldHolder method
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+
 /**
  * Text input field.
  *
@@ -21,10 +26,17 @@ class FlickrPhotoSelectionField extends HiddenField
     protected $flickrID;
 
     /**
-     * Returns an input field, class="text" and type="text" with an optional maxlength
+     * FlickrPhotoSelectionField constructor.
+     *
+     * @param \SilverStripe\Forms\Form|null $form
      */
-    public function __construct($name, $title = null, $flickrPhoto = '', $maxLength = null, $form = null)
-    {
+    public function __construct(
+        string $name,
+        ?string $title = null,
+        string $flickrPhoto = '',
+        ?int $maxLength = null,
+        ?Form $form = null
+    ) {
         $this->maxLength = $maxLength;
 
         parent::setTemplate('FLickrPhotoSelectionField');
@@ -43,24 +55,25 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    public function getFlickrTitle()
+    public function getFlickrTitle(): string
     {
         return $this->flickrTitle;
     }
 
 
-    public function getFlickrID()
+    public function getFlickrID(): int
     {
         return $this->flickrID;
     }
 
 
-    public function getMediumURL()
+    public function getMediumURL(): string
     {
         return $this->mediumURL;
     }
 
 
+    /** @return $this */
     public function setMaxLength(int $length)
     {
         $this->maxLength = $length;
@@ -75,7 +88,8 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    public function getAttributes()
+    /** @return array<string,string|int|float|bool|null> */
+    public function getAttributes(): array
     {
         return \array_merge(
             parent::getAttributes(),
@@ -87,6 +101,7 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
+    /** @return \SilverStripe\ORM\FieldType\DBField|\SilverStripe\ORM\FieldType\DBHTMLText */
     public function InternallyLabelledField()
     {
         if (!$this->value) {
@@ -97,7 +112,8 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    public function FieldHolder($properties = [])
+    /** @param array $properties */
+    public function FieldHolder(array $properties = []): string
     {
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
 

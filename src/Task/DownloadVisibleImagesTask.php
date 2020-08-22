@@ -65,10 +65,9 @@ class DownloadVisibleImagesTask extends BuildTask
 
     private function downloadSet($flickrSet, $targetDir, $size): void
     {
-        \error_log('SIZE: ' . $size);
         $counter = 0;
-        foreach ($flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder)
- as $flickrPhoto) {
+        $photos = $flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder);
+        foreach ($photos as $flickrPhoto) {
             $counter++;
             $paddedCounter = \sprintf('%04d', $counter);
             $imageURL = $flickrPhoto->SmallURL;

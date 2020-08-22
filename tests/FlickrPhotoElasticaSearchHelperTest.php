@@ -4,7 +4,7 @@ namespace Suilven\Flickr\Tests;
 
 class FlickrPhotoElasticaSearchHelperTest extends \SilverStripe\Dev\SapphireTest
 {
-    public function test__construct(): void
+    public function testConstruct(): void
     {
         $this->markTestSkipped('TODO');
     }

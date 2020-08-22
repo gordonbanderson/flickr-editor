@@ -148,13 +148,13 @@ class FlickrControllerTest extends \SilverStripe\Dev\SapphireTest
     }
 
 
-    public function test_photosets_addPhoto(): void
+    public function testPhotoSetsAddPhoto(): void
     {
         $this->markTestSkipped('TODO');
     }
 
 
-    public function test_photos_addTags(): void
+    public function testPhotosAddTags(): void
     {
         $this->markTestSkipped('TODO');
     }
