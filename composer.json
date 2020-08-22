@@ -7,12 +7,12 @@
         "flickr",
         "photography"
     ],
-	"repositories": [
-		{
-			"type": "vcs",
-			"url": "git@github.com:gordonbanderson/php-spriter.git"
-		}
-	],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:gordonbanderson/php-spriter.git"
+        }
+    ],
     "authors": [
         {
             "name": "Gordon Anderson",
@@ -21,32 +21,24 @@
             "role": "Developer"
         }
     ],
-	"autoload": {
-		"psr-4": {
-			"Suilven\\Flickr\\": "src"
-		}
-	},
+    "autoload": {
+        "psr-4": {
+            "Suilven\\Flickr\\": "src"
+        }
+    },
     "support": {
         "issues": "https://github.com/gordonbanderson/flickr-editor/issues"
     },
     "require": {
         "php": ">=5.6",
         "silverstripe/recipe-core": "^4",
-		"samwilson/phpflickr": "^4",
-		"suilven/php-spriter": "dev-composerify",
-		"matthiasmullie/minify": "^1",
-		"intervention/image": "^2"
+        "samwilson/phpflickr": "^4",
+        "suilven/php-spriter": "dev-composerify",
+        "matthiasmullie/minify": "^1",
+        "intervention/image": "^2"
     },
     "license": "BSD-3-Clause",
-    "require-dev": {},
-	"extra": {
-		"expose": [
-			"dist",
-			"icons",
-			"javascript",
-			"thirdparty"
-		]
-	},
-	"minimum-stability": "dev",
-	"prefer-stable": true
+    "require-dev": [],
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
