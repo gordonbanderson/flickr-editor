@@ -30,15 +30,19 @@
         "issues": "https://github.com/gordonbanderson/flickr-editor/issues"
     },
     "require": {
-        "php": ">=5.6",
-        "silverstripe/recipe-core": "^4",
+        "php": "~7.1",
+        "league/climate": "^3.5",
+        "silverstripe/recipe-cms": "4.x-dev",
         "samwilson/phpflickr": "^4",
         "suilven/php-spriter": "dev-composerify",
         "matthiasmullie/minify": "^1",
-        "intervention/image": "^2"
+        "intervention/image": "^2",
+        "suilven/freetextsearch": "dev-master"
     },
     "license": "BSD-3-Clause",
-    "require-dev": [],
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "ergebnis/composer-normalize": "^2.7"
+    }
 }
