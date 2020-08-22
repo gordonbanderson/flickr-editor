@@ -423,7 +423,7 @@ class FlickrController extends \PageController implements PermissionProvider
 
         // Code for the register action here
         $flickrSetID = $request->getVar('ID');
-        $path = $request->getVar('path'):
+        $path = $request->getVar('path');
         $parentNode = SiteTree::get_by_link($path);
         if ($parentNode === null) {
             echo "ERROR: Path " . $path . " cannot be found in this site\n";

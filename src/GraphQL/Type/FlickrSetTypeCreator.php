@@ -8,6 +8,7 @@ use SilverStripe\GraphQL\Pagination\Connection;
 use SilverStripe\GraphQL\TypeCreator;
 
 // @phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
 
 /**
  * Class FlickrSetTypeCreator
@@ -44,11 +45,14 @@ class FlickrSetTypeCreator extends TypeCreator
             'FlickrPhotos' => [
                 'type' => $photosConnection->toType(),
                 'args' => $photosConnection->args(),
-                'resolve' => static fn ($flickrSet, array $args, $context, ResolveInfo $info) => $photosConnection->resolveList(
-                    $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
-                    $args,
-                    $context
-                ),
+                'resolve' => static function ($flickrSet, array $args, $context, ResolveInfo $info)
+ use ($photosConnection): void {
+                    $photosConnection->resolveList(
+                        $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
+                        $args,
+                        $context
+                    );
+                },
             ],
         ];
     }
