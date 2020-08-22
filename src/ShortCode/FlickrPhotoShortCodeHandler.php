@@ -8,13 +8,19 @@ use SilverStripe\View\ArrayData;
 use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+/**
+ * Class FlickrPhotoShortCodeHandler
+ *
+ * @package Suilven\Flickr\ShortCode
+ */
 class FlickrPhotoShortCodeHandler
 {
-    /** @return void|string|\SilverStripe\ORM\FieldType\DBHTMLText */
-    public static function parse_flickr(unknown $arguments, ?string $caption = null, ?unknown $parser = null)
+    /** @return \SilverStripe\ORM\FieldType\DBHTMLText|string|void */
+    public static function parse_flickr(unknown $arguments, ?string $caption = null)
     {
-
-        if (empty($arguments['id'])) {
+        if (!isset($arguments['id'])) {
             return;
         }
 
@@ -42,18 +48,16 @@ class FlickrPhotoShortCodeHandler
         $customise['Caption'] = $caption
             ? Convert::raw2xml($caption)
             : $fp->Title ;
-        $customise['Position'] = !empty($arguments['position'])
+        $customise['Position'] = isset($arguments['position'])
             ? $arguments['position']
             : 'center';
-        $customise['HideExif'] = !empty($arguments['exif'])
+        $customise['HideExif'] = isset($arguments['exif'])
             ? $arguments['exif']
             : false;
         $customise['Small'] = true;
         if ($customise['Position'] === 'center') {
             $customise['Small'] = false;
         }
-
-        $fp = null;
 
         //overide the defaults with the arguments supplied
         $customise = \array_merge($customise, $arguments);

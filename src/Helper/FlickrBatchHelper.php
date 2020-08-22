@@ -6,8 +6,18 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrBatchHelper extends FlickrHelper
 {
-    public function batchUpdateSet($flickrSet, $batchTitle, $batchDescription, $batchTags)
-    {
+    /**
+     * @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet
+     * @param array<string> $batchTags
+     * @return int the number of photos updated
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function batchUpdateSet(
+        FlickrSet $flickrSet,
+        string $batchTitle,
+        string $batchDescription,
+        array $batchTags
+    ): int {
         //FIXME authentication
 
 
@@ -42,8 +52,6 @@ class FlickrBatchHelper extends FlickrHelper
             $fp->write();
         }
 
-        return [
-            'number_of_images_updated' => $flickrPhotos->count(),
-        ];
+        return $flickrPhotos->count();
     }
 }

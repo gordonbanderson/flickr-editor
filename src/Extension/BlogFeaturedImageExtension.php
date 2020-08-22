@@ -31,9 +31,11 @@ class BlogFeaturedImageExtension extends DataExtension
     }
 
 
-    public function getFeaturedFlickrImage()
+    /** @return \Suilven\Flickr\Model\Flickr\FlickrPhoto|null the featured image, if it exists */
+    public function getFeaturedFlickrImage(): ?FlickrPhoto
     {
-        return empty($this->owner->FeaturedFlickrImageID) ?
-            null : FlickrPhoto::get()->filter('FlickrID', $this->owner->FeaturedFlickrImageID)->first();
+        return !isset($this->getOwner()->FeaturedFlickrImageID) ?
+            null : FlickrPhoto::get()->filter('FlickrID', $this->owner->FeaturedFlickrImageID)->
+            first();
     }
 }

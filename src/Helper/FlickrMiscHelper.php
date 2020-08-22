@@ -18,7 +18,6 @@ class FlickrMiscHelper extends FlickrHelper
             $pageCtr = 1;
             $flickrSetID = $set->FlickrID;
 
-            $mainImageFlickrID = null;
             $allPagesRead = false;
 
             while (!$allPagesRead) {
@@ -45,7 +44,7 @@ class FlickrMiscHelper extends FlickrHelper
                 $pages = $photos['pages'];
                 $allPagesRead = ($page === $pages);
 
-                foreach ($photoset as $key => $photo) {
+                foreach ($photoset as $photo) {
                     echo '.';
                     if ($photo['isprimary'] !== 1) {
                         continue;

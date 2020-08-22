@@ -41,7 +41,7 @@ class CreatePerceptiveHashBuckets extends BuildTask
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
         $pHashHelper = new FlickrPerceptiveHashHelper();
-        $bucketsArrary = $pHashHelper->findSequences($flickrSet);
+        $bucketsArrary = $pHashHelper->calculateSequences($flickrSet);
         \print_r($bucketsArrary);
 
         $buckets = $flickrSet->FlickrBuckets();

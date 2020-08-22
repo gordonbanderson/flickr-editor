@@ -12,6 +12,9 @@ use SilverStripe\Core\Extension;
 class FacetedPhotoSearchExtension extends Extension
 {
 
+    /**
+     * @param string $facetTitle
+     */
     public function postProcessFacetTitle(&$facetTitle): void
     {
 
@@ -22,7 +25,7 @@ class FacetedPhotoSearchExtension extends Extension
           'flickrtagid' => 'Tags',
         ];
 
-        if (!\in_array($facetTitle, \array_keys($titles))) {
+        if (!\in_array($facetTitle, \array_keys($titles), true)) {
             return;
         }
 
@@ -31,9 +34,9 @@ class FacetedPhotoSearchExtension extends Extension
 
 
     /**
-     * @param $token - the name of the facet, e.g. aperture
-     * @param $tokenFacets - the facets for this token
-     * @return array - massaged title and facets
+     * @param string $token - the name of the facet, e.g. aperture
+     * @param array<string> $tokenFacets - the facets for this token
+     * @return array<string> - massaged title and facets @TODO is this correct?
      */
     public function postProcessFacetResults($token, $tokenFacets): array
     {
@@ -50,20 +53,23 @@ class FacetedPhotoSearchExtension extends Extension
                     //$aperture = str_replace('000000', '', $aperture);
                     $value = \str_replace('00000', '', $value);
 
-                    $facet['Value'] = empty($value)
+                    $facet['Value'] = !isset($value)
                         ? 'Unknown'
                         : 'f' . $value;
 
                     break;
                 case 'Shutter Speed':
-                    if (empty($value)) {
+                    if (!isset($value)) {
                         $facet['Value'] = 'Unknown';
                     }
+                    break;
 
                 case 'ISO':
-                    if (empty($value)) {
+                    if (!isset($value)) {
                         $facet['Value'] = 'Unknown';
                     }
+                    break;
+
                 default:
                     // do nothing
                     break;

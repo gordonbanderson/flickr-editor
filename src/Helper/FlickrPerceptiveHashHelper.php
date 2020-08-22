@@ -4,7 +4,13 @@ namespace Suilven\Flickr\Helper;
 
 class FlickrPerceptiveHashHelper extends FlickrHelper
 {
-    public function findSequences(FlickrSet $flickrSet)
+    /**
+     * Calculate sequences of images based on the perception hash, and create FlickrBuckets of them
+     * in the database
+     *
+     * @return array<\Suilven\Flickr\Model\Flickr\FlickrBucket>
+     */
+    public function calculateSequences(FlickrSet $flickrSet): array
     {
         $hashes = [];
         \error_log($flickrSet->Title);
@@ -36,7 +42,7 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
         $buckets = [];
         for ($i = 1; $i < \count($hashes) - 1; $i++) {
             // if the bucket is empty, start with the current image
-            if (empty($currentBucket)) {
+            if (!isset($currentBucket)) {
                 $currentBucket[] = [
                     'url' => $hashes[$i]['URL'],
                     'rotated' => $hashes[$i]['Rotated'],
@@ -77,12 +83,15 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
         return $buckets;
     }
 
-    /*
-     * Convert hex strings to binary and then calculate hamming distance
-     * @param $hash1 hex string for perceptive hash
-     * @param $hash2 hex string for perceptive hash
+
+    /**
+     * Calculate the hamming distance
+     *
+     * @param string $hash1 first hash in lowercase hexidecimal
+     * @param string $hash2 second hash in lowercase hexidecimal
+     * @return int the number of binary bits that differ
      */
-    private function hammingDist($hash1, $hash2)
+    private function hammingDist(string $hash1, string $hash2): int
     {
         $binaryHash1 = $this->hexHashToBinary($hash1);
         $binaryHash2 = $this->hexHashToBinary($hash2);
@@ -101,10 +110,12 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
 
 
     /**
-     * @param $hash
-     * @return mixed
+     * Convert a hex number into a binary
+     *
+     * @param string $hash a hash in hexadecimal
+     * @return string a string of 1s and 0s
      */
-    private function hexHashToBinary($hash)
+    private function hexHashToBinary(string $hash): string
     {
         $binaryHash = \str_replace('0', '0000', $hash);
         $binaryHash = \str_replace('1', '0001', $binaryHash);

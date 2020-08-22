@@ -7,7 +7,12 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrTagHelper extends FlickrHelper
 {
-    public function createOrFindTags($csv)
+    /**
+     * @param string $csv tags in CVS format
+     * @return \SilverStripe\ORM\ArrayList<\Suilven\Flickr\Model\Flickr\FlickrTag>
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function createOrFindTags(string $csv): ArrayList
     {
         $result = new ArrayList();
 

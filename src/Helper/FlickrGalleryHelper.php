@@ -15,7 +15,8 @@ class FlickrGalleryHelper extends FlickrHelper
 {
 
     /**
-     * Either get the set from the database, or if it does not exist get the details from flickr and add it to the database
+     * Either get the set from the database, or if it does not exist get the details from flickr
+     * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
      * @return \SilverStripe\ORM\DataObject|\Suilven\Flickr\Helper\FlickrSet|null
@@ -50,11 +51,8 @@ class FlickrGalleryHelper extends FlickrHelper
     }
 
 
-    /**
-     * @param \Samwilson\PhpFlickr\PhpFlickr $phpFlickr
-     * @throws \SilverStripe\ORM\ValidationException
-     */
-    public function importGallery($flickrSetID): void
+    /** @throws \SilverStripe\ORM\ValidationException */
+    public function importGallery(int $flickrSetID): void
     {
         $phpFlickr = $this->getPhpFlickr();
 
@@ -85,7 +83,6 @@ class FlickrGalleryHelper extends FlickrHelper
         $perPage = Config::inst()->get(FlickrSetHelper::class, 'import_per_page');
 
         while ($page <= $pages) {
-            //    public function galleries_getPhotos($gallery_id, $extras = null, $per_page = null, $page = null)
             $photoset = $phpFlickr->galleries_getPhotos(
                 $flickrSetID,
                 $extras,
@@ -113,7 +110,8 @@ class FlickrGalleryHelper extends FlickrHelper
 
             // @todo This was a hack and may not be necessary now
             if ($flickrGallery->Title === null) {
-                \error_log("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?");
+                \error_log("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED ' .
+                    'TO READ SET INFO?");
                 die;
             }
 
@@ -124,7 +122,8 @@ class FlickrGalleryHelper extends FlickrHelper
             \error_log("Month: $month; Day: $day; Year: $year<br />\n");
 
             // now try and find a flickr set page
-            $flickrGalleryPage = FlickrGalleryPage::get()->filter(['FlickrGalleryForPageID' => $flickrGallery->ID])->first();
+            $flickrGalleryPage = FlickrGalleryPage::get()->filter(['FlickrGalleryForPageID' =>
+                $flickrGallery->ID])->first();
             if (!$flickrGalleryPage) {
                 \error_log('>>>> Creating flickr set page <<<<');
                 $flickrGalleryPage = new FlickrGalleryPage();
@@ -141,62 +140,8 @@ class FlickrGalleryHelper extends FlickrHelper
             $flickrGalleryPage->ParentID = $parentNode->ID;
             $flickrGalleryPage->write();
 
-            $flickrSetPageID = $flickrGalleryPage->ID;
-            \gc_enable();
+            $flickrGalleryPage->ID;
 
-            /*
-            $f1 = Folder::find_or_make("flickr/$year");
-            $f1->Title = $year;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month");
-            $f1->Title = $month;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month/$day");
-            $f1->Title = $day;
-            $f1->write();
-
-            exec("chmod 775 ../assets/flickr/$year");
-            exec("chmod 775 ../assets/flickr/$year/$month");
-            exec("chmod 775 ../assets/flickr/$year/$month/$day");
-            exec("chown gordon:www-data ../assets/flickr/$year");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
-            ;
-
-
-            $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);
-
-            $cmd = "chown gordon:www-data ../assets/flickr";
-            exec($cmd);
-
-            exec('chmod 775 ../assets/flickr');
-
-
-            // new folder case
-            if ($flickrSet->AssetFolderID == 0) {
-                $flickrSet->AssetFolderID = $folder->ID;
-                $folder->Title = $flickrSet->Title;
-                $folder->write();
-
-                $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-
-                $cmd = "chmod 775 ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-            }
-
-            $flickrSetAssetFolderID = $flickrSet->AssetFolderID;
-
-            $flickrSetPageDatabaseID = $flickrSetPage->ID;
-
-
-            //$flickrSet = NULL;
-            $flickrSetPage = null;
-            */
 
             $numberOfPics = \count($photoset['photo']);
             $ctr = 1;
@@ -292,7 +237,7 @@ class FlickrGalleryHelper extends FlickrHelper
                         $image = null;
                     }
 
-                    $result = $flickrPhoto->write();
+                    $flickrPhoto->write();
                 }
 
                 $ctr++;

@@ -14,17 +14,18 @@ class FlickrPhotoSequenceShortCodeHandler
 {
 
     /**
-     * @param array $arguments
-     * @param \SilverStripe\View\Parsers\ShortcodeParser|null $parser
+     * @param array<string,string> $arguments
      * @return \SilverStripe\ORM\FieldType\DBHTMLText|string
      */
-    public static function parse_flickr(array $arguments, ?string $caption = null, ?ShortcodeParser $parser = null)
+    public static function parse_flickr(array $arguments, ?string $caption = null)
     {
 
         // first things first, if we dont have a image ids, then we don't need to
         // go any further
-        if (!isset($arguments['setid']) || !isset($arguments['photoid']) || !isset($arguments['nframes'])) {
-            return '<div style="color: red">Please provide these parameters - setid, photoid, nframes</div>';
+        if (!isset($arguments['setid']) || !isset($arguments['photoid']) ||
+            !isset($arguments['nframes'])) {
+            return '<div style="color: red">Please provide these parameters - setid, photoid,
+                nframes</div>';
         }
 
         $customise = [];
@@ -36,7 +37,6 @@ class FlickrPhotoSequenceShortCodeHandler
         $frames = $arguments['nframes'];
 
         /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $set */
-        // flickr set IDs are unique
         $set = FlickrSet::get()->filter('FlickrID', $setID)->first();
         $startPhoto = $set->FlickrPhotos()->filter('FlickrID', $startPhotoID)->first();
         //         $startPhoto = FlickrPhoto::get()->filter('FlickrID', $startPhotoID)->first();

@@ -23,12 +23,6 @@ class FlickrExifHelper extends FlickrHelper
         $sql = 'DELETE from "FlickrExif" where "FlickrPhotoID"='.$flickrPhoto->ID;
         DB::query($sql);
 
-        // conversion factor or fixed legnth depending on model of camera
-        $focallength = -1;
-        $fixFocalLength = 0;
-        $focalConversionFactor = 1;
-
-
         echo "Using exif data for ".$flickrPhoto->Title."\n";
         $exifs = [];
         foreach ($exifData['exif'] as $key => $exifInfo) {
@@ -39,10 +33,7 @@ class FlickrExifHelper extends FlickrHelper
             $exif->Label = $exifInfo['label'];
             $exif->Raw = $exifInfo['raw'];
             $exif->FlickrPhotoID = $flickrPhoto->ID;
-
             $exifs[$exif->Tag] = $exif;
-            //$exif->write();
-
 
             switch ($exif->Tag) {
                 case 'FocalLength':

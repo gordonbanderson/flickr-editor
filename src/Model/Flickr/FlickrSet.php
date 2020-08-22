@@ -22,6 +22,8 @@ use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\Requirements;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Only show a page with login when not logged in
  *
@@ -92,7 +94,7 @@ class FlickrSet extends DataObject
     private static $default_sort = 'FirstPictureTakenAt DESC';
 
 
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         //dist/admin/client/js/thirdpartyvendor.js
         //Requirements::javascript('weboftalent/flickr:dist/admin/client/js/thirdpartyvendor.js');
@@ -113,21 +115,34 @@ class FlickrSet extends DataObject
             dbObject('SortOrder')->enumValues()),
         );
 
-        $fields->addFieldToTab('Root.Main', new TextField('ImageFooter', 'Text to be added to each image in this album when saving'));
-        $fields->addFieldToTab('Root.Main', new CheckboxField('LockGeo', 'If the map positions were calculated by GPS, tick this to hide map editing features'));
+        $fields->addFieldToTab('Root.Main', new TextField(
+            'ImageFooter',
+            'Text to be added to each image in this album when saving',
+        ));
+        $fields->addFieldToTab('Root.Main', new CheckboxField(
+            'LockGeo',
+            'If the map positions were calculated by GPS, tick this to hide map editing features',
+        ));
 
 
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
+        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
+            setSearchFields(['Title', 'Description']);
 
         // @todo Make page size configurable
         $gridConfig->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
-        $gridField = new GridField("FlickrPhotos", "List of Photos:", $this->FlickrPhotos(), $gridConfig);
+        $gridField = new GridField(
+            "FlickrPhotos",
+            "List of Photos:",
+            $this->FlickrPhotos(),
+            $gridConfig,
+        );
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
-        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(['Title', 'Description']);
+        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->
+            setSearchFields(['Title', 'Description']);
         $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
 
         /** @var \SilverStripe\ORM\DataList $bucketsByDate */
@@ -140,7 +155,12 @@ class FlickrSet extends DataObject
         }
         */
         if ($bucketsByDate->count() > 0) {
-            $gridField2 = new GridField("FlickrBuckets", "List of Buckets:", $bucketsByDate, $gridConfig2);
+            $gridField2 = new GridField(
+                "FlickrBuckets",
+                "List of Buckets:",
+                $bucketsByDate,
+                $gridConfig2,
+            );
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
         }
 
@@ -169,11 +189,21 @@ class FlickrSet extends DataObject
 
         $this->extend('updateCMSFields', $fields);
 
-        $fields->addFieldToTab('Root.Batch', new TextField('BatchTitle', 'Batch Title'));
-        $fields->addFieldToTab('Root.Batch', new TextAreaField('BatchDescription', 'Batch Description'));
-        $fields->addFieldToTab('Root.Batch', new TextAreaField('BatchTags', 'Batch Tags'));
+        $fields->addFieldToTab('Root.Batch', new TextField(
+            'BatchTitle',
+            'Batch Title',
+        ));
+        $fields->addFieldToTab('Root.Batch', new TextareaField(
+            'BatchDescription',
+            'Batch Description',
+        ));
+        $fields->addFieldToTab('Root.Batch', new TextareaField(
+            'BatchTags',
+            'Batch Tags',
+        ));
 
-        $htmlBatch = "<p>Click on the batch update button to update the description and title of all of the images, and add tags to each image</p>";
+        $htmlBatch = "<p>Click on the batch update button to update the description and title of ' .
+            'all of the images, and add tags to each image</p>";
         $htmlBatch .= '<input type="button" id="batchUpdatePhotographs" value="Batch Update"></input>';
         $lf = new LiteralField('BatchUpdate', $htmlBatch);
         $fields->addFieldToTab('Root.Batch', $lf);
@@ -191,13 +221,18 @@ class FlickrSet extends DataObject
     }
 
 
-    public function VisibleFlickrPhotos()
+    /**
+     * Get the photographs that are marked as visible
+     *
+     * @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Model\Flickr\FlickrPhoto>
+     */
+    public function VisibleFlickrPhotos(): DataList
     {
         return $this->FlickrPhotos()->filter(['Visible' => true]);
     }
 
 
-    /*
+    /**
     Mark image as dirty upon a save
     */
     public function onBeforeWrite(): void
@@ -212,10 +247,16 @@ class FlickrSet extends DataObject
     }
 
 
-    public function FlickrPhotosNotInBucket()
+    /**
+     * Get photos that are not part of an existing bucket
+     *
+     * @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Model\Flickr\FlickrPhoto>
+     */
+    public function FlickrPhotosNotInBucket(): DataList
     {
         return $this->FlickrPhotos()->
-        where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from "FlickrPhoto_FlickrBuckets")')
+        where('"FlickrPhoto"."ID" not in (select "FlickrPhotoID" as "ID" from ' .
+                '"FlickrPhoto_FlickrBuckets")')
             ->sort($this->SortOrder);
     }
 
@@ -226,15 +267,18 @@ class FlickrSet extends DataObject
         // the issue is worse, a unique row is being created for each unique UploadUnixTimeStamp,
         // so for now, use Title
         return FlickrBucket::get()->filter(['FlickrSetID' => $this->ID])->
-            innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = "FlickrBucket"."ID"')->
+            innerJoin('FlickrPhoto_FlickrBuckets', '"FlickrBucketID" = ' .
+                '"FlickrBucket"."ID"')->
             innerJoin('FlickrPhoto', '"FlickrPhotoID" = "FlickrPhoto"."ID"')
             ->sort('Title')
             ;
     }
 
 
-    /*
-      Count the number of non zero lat and lon points - if > 0 then we can draw a map
+    /**
+     * Count the number of non zero lat and lon points - if > 0 then we can draw a map
+     *
+     * @return true if the photographs are mappable
     */
     public function HasGeo()
     {
@@ -247,6 +291,8 @@ class FlickrSet extends DataObject
     /*
       Render a map at the provided lat,lon, zoom from the editing functions,
       */
+    /*
+     @TODO Switch to silverstripe GIS package
     public function BasicMap()
     {
         $photosWithLocation = $this->FlickrPhotos()->where('Lat != 0 AND Lon !=0');
@@ -317,6 +363,7 @@ class FlickrSet extends DataObject
         return $map;
     }
 
+    */
 
     public function writeToFlickr(): void
     {

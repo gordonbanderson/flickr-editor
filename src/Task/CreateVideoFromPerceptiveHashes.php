@@ -32,7 +32,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     public function findSequences($flickrSet, $srcDir, $targetDir): void
     {
         $helper = new FlickrPerceptiveHashHelper();
-        $buckets = $helper->findSequences($flickrSet);
+        $buckets = $helper->calculateSequences($flickrSet);
 
         $html = '';
 

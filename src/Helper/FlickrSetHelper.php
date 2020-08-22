@@ -16,7 +16,8 @@ class FlickrSetHelper extends FlickrHelper
 {
 
     /**
-     * Either get the set from the database, or if it does not exist get the details from flickr and add it to the database
+     * Either get the set from the database, or if it does not exist get the details from flickr
+     * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
      * @return \SilverStripe\ORM\DataObject|\Suilven\Flickr\Model\Flickr\FlickrSet|null
@@ -49,11 +50,8 @@ class FlickrSetHelper extends FlickrHelper
     }
 
 
-    /**
-     * @param \Samwilson\PhpFlickr\PhpFlickr $phpFlickr
-     * @throws \SilverStripe\ORM\ValidationException
-     */
-    public function importSet($flickrSetID): void
+    /** @throws \SilverStripe\ORM\ValidationException */
+    public function importSet(int $flickrSetID): void
     {
         $phpFlickr = $this->getPhpFlickr();
 
@@ -63,6 +61,7 @@ class FlickrSetHelper extends FlickrHelper
         static $only_new_photos = false;
 
 
+        // @todo Do not use global
         $path = $_GET['path'];
         $parentNode = SiteTree::get_by_link($path);
         if ($parentNode === null) {
@@ -130,8 +129,6 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrSetPage->Title = $photoset['title'];
                 $flickrSetPage->Description = $flickrSet->Description;
 
-                //update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
-
                 $flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
                 $flickrSetPage->write();
                 // create a stage version also
@@ -143,68 +140,13 @@ class FlickrSetHelper extends FlickrHelper
             // @todo See what the SS4 behaviour is here
             //$flickrSetPage->copyVersionToStage("Live", "Stage");
 
-            $flickrSetPageID = $flickrSetPage->ID;
-            \gc_enable();
 
-            /*
-            $f1 = Folder::find_or_make("flickr/$year");
-            $f1->Title = $year;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month");
-            $f1->Title = $month;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month/$day");
-            $f1->Title = $day;
-            $f1->write();
-
-            exec("chmod 775 ../assets/flickr/$year");
-            exec("chmod 775 ../assets/flickr/$year/$month");
-            exec("chmod 775 ../assets/flickr/$year/$month/$day");
-            exec("chown gordon:www-data ../assets/flickr/$year");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
-            ;
-
-
-            $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);
-
-            $cmd = "chown gordon:www-data ../assets/flickr";
-            exec($cmd);
-
-            exec('chmod 775 ../assets/flickr');
-
-
-            // new folder case
-            if ($flickrSet->AssetFolderID == 0) {
-                $flickrSet->AssetFolderID = $folder->ID;
-                $folder->Title = $flickrSet->Title;
-                $folder->write();
-
-                $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-
-                $cmd = "chmod 775 ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-            }
-
-            $flickrSetAssetFolderID = $flickrSet->AssetFolderID;
-
-            $flickrSetPageDatabaseID = $flickrSetPage->ID;
-
-
-            //$flickrSet = NULL;
-            $flickrSetPage = null;
-            */
 
             $numberOfPics = \count($photoset['photo']);
             $ctr = 1;
 
             $photoHelper = new FlickrPhotoHelper();
-            foreach ($photoset['photo'] as $key => $value) {
+            foreach ($photoset['photo'] as $value) {
                 echo "Importing photo {$ctr}/${numberOfPics}\n";
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
@@ -291,7 +233,7 @@ class FlickrSetHelper extends FlickrHelper
                         $image = null;
                     }
 
-                    $result = $flickrPhoto->write();
+                    $flickrPhoto->write();
                 }
 
                 $ctr++;
@@ -311,7 +253,7 @@ class FlickrSetHelper extends FlickrHelper
             \error_log('++++ EXIF ++++');
 
 
-            foreach ($photoset['photo'] as $key => $value) {
+            foreach ($photoset['photo'] as $value) {
                 echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
                 $flickrPhotoID = $value['id'];
 
