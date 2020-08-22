@@ -6,8 +6,12 @@ use SilverStripe\Control\Director;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
- * Class \Suilven\Flickr\Controller\FlickrTagsController
+ * Class FlickrTagsController
+ *
+ * @package Suilven\Flickr\Controller
  */
 class FlickrTagsController extends \PageController
 {
@@ -18,7 +22,7 @@ class FlickrTagsController extends \PageController
     ];
 
 
-    public function ColumnLayout()
+    public function ColumnLayout(): string
     {
         return 'layout1col';
     }
@@ -32,16 +36,15 @@ class FlickrTagsController extends \PageController
     }
 
 
-    public function index()
+    /** @return array */
+    public function index(): array
     {
         return [];
     }
 
 
-    /*
-    Show photos for a given tag
-    */
-    public function photo()
+    /** @return array */
+    public function photo(): array
     {
         $tagValue = Director::URLParam('ID');
         $this->Title = "Photos tagged '" . $tagValue . "'";
@@ -59,14 +62,14 @@ class FlickrTagsController extends \PageController
     }
 
 
-    public function PhotoKey()
+    public function PhotoKey(): string
     {
         return 'tagphoto_' . $ID;
     }
 
 
-    /* Return all tags for rendering in a cloud */
-    public function photos()
+    /** @return array */
+    public function photos(): array
     {
         $this->Tags = DataObject::get('Tag');
         $this->Title = 'Tags for photos';

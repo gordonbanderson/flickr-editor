@@ -9,11 +9,10 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\View\Requirements;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
  * Class \Suilven\Flickr\ModelAdmin\FlickrSetPageFolderAdmin
- *
- * @author Marcus Nyeholt <marcus@silverstripe.com.au>
- * @license BSD http://silverstripe.org/bsd-license/
  */
 class FlickrSetPageFolderAdmin extends ModelAdmin
 {
@@ -27,7 +26,8 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
 
     private static $menu_icon = 'weboftalent/flickr:icons/folders.png';
 
-    public function EditForm($request = null)
+    /** @param \SilverStripe\Control\HTTPRequest|null $request */
+    public function EditForm(?HTTPRequest $request = null): ?\SilverStripe\Forms\Form
     {
         $form = parent::EditForm($request);
 
@@ -40,12 +40,12 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
         $flickrSetFolders = DataList::create('FlickrSetFolder')->sort('Title');
 
         $html ='<h2>Flickr Set Folders</h2><div id="flickrFolders">';
-        foreach ($flickrSetFolders as $key => $folder) {
+        foreach ($flickrSetFolders as $folder) {
             $html.='<div class="flickrSetFolderDroppable" data-id="'.$folder->ID.'">'.$folder->Title.'</div>';
         }
 
         $html .= '</div><h2>Flickr Set Pages</h2><div id="flickrSetPages">';
-        foreach ($flickrSetPages as $key => $fspage) {
+        foreach ($flickrSetPages as $fspage) {
             $html.='<div class="flickrSetDraggable" data-id="'.$fspage->ID.'">'.$fspage->Title.'</div>';
         }
 
@@ -62,7 +62,7 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
     }
 
 
-    public function Tools()
+    public function Tools(): string
     {
         return '';
     }
