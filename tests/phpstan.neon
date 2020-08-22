@@ -1,3 +1,7 @@
 parameters:
   autoload_files:
     - ../vendor/autoload.php
+  bootstrapFiles:
+      - ../app/src/Page.php
+      - ../app/src/PageController.php
+
