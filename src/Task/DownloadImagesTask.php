@@ -20,13 +20,15 @@ class DownloadImagesTask extends BuildTask
 
     protected $title = 'Download thumbnail images of a Flickr Set';
 
-    protected $description = 'Download thumbs from a Flickr set for the purposes of either self hosting or sprite generation';
+    protected $description = 'Download thumbs from a Flickr set for the purposes of either self ' .
+        'hosting or sprite generation';
 
     protected $enabled = true;
 
     private static $segment = 'download-flickr-set-thumbs';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,23 +37,26 @@ class DownloadImagesTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $size = $_GET['size'] ?: 'small';
+        $sizeStr = $request->getVar('size');
+        $size = isset($sizeStr)
+            ? $sizeStr
+            : 'large2048';
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSet = $flickrSetHelper->getOrCreateFlickrSet($flickrSetID);
 
-        $this->mkdir_if_required('public/flickr');
-        $this->mkdir_if_required('public/flickr/images');
+        $this->mkdirIfRequired('public/flickr');
+        $this->mkdirIfRequired('public/flickr/images');
         $targetDir = 'public/flickr/images/' . $flickrSetID;
-        $this->mkdir_if_required($targetDir);
+        $this->mkdirIfRequired($targetDir);
 
         $this->downloadSet($flickrSet, $targetDir, $size);
     }
 
 
-    private function mkdir_if_required($dir): void
+    private function mkdirIfRequired(string $dir): void
     {
         if (\file_exists($dir) || \is_dir($dir)) {
             return;
@@ -61,7 +66,8 @@ class DownloadImagesTask extends BuildTask
     }
 
 
-    private function downloadSet($flickrSet, $targetDir, $size): void
+    /** @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
+    private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('SIZE: ' . $size);
         foreach ($flickrSet->FlickrPhotos() as $flickrPhoto) {

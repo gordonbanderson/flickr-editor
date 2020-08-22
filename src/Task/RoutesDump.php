@@ -14,6 +14,13 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
+/**
+ * Class RoutesDump
+ *
+ * @package Suilven\Flickr\Task
+ */
 class RoutesDump extends BuildTask
 {
 
@@ -26,7 +33,7 @@ class RoutesDump extends BuildTask
     private static $segment = 'routes-dump';
 
 
-
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin

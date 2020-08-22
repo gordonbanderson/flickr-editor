@@ -27,6 +27,7 @@ class ImportGalleryTask extends BuildTask
     private static $segment = 'import-flickr-gallery';
 
 
+    /** @inheritdoc */
     public function run($request)
     {
         // check this script is being run by admin
@@ -35,7 +36,7 @@ class ImportGalleryTask extends BuildTask
             return Security::permissionFailure($this);
         }
 
-        $flickrGalleryID = $_GET['id'];
+        $flickrGalleryID = $request->getVar('id');
 
         $flickrGalleryHelper = new FlickrGalleryHelper();
         $flickrGalleryHelper->importGallery($flickrGalleryID);
