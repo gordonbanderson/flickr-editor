@@ -41,6 +41,11 @@
             "Suilven\\Flickr\\": "src"
         }
     },
+	"autoload-dev": {
+		"psr-4": {
+			"Suilven\\Flickr\\Tests\\": "tests"
+		}
+	},
     "repositories": [
         {
             "type": "vcs",
