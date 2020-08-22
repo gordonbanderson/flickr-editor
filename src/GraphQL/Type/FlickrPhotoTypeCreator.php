@@ -7,7 +7,8 @@ use SilverStripe\GraphQL\TypeCreator;
 
 class FlickrPhotoTypeCreator extends TypeCreator
 {
-    public function attributes()
+    /** @return array<string,string> */
+    public function attributes(): array
     {
         return [
             'name' => 'flickrphoto',
@@ -15,7 +16,8 @@ class FlickrPhotoTypeCreator extends TypeCreator
     }
 
 
-    public function fields()
+    /** @return array<string, array<string, \GraphQL\Type\Definition\Type>> */
+    public function fields(): array
     {
         return [
             'ID' => ['type' => Type::nonNull(Type::id())],

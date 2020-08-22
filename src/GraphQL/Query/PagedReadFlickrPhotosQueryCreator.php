@@ -9,10 +9,18 @@ use SilverStripe\GraphQL\Pagination\PaginatedQueryCreator;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
+/**
+ * Class PagedReadFlickrPhotosQueryCreator
+ *
+ * @package Suilven\Flickr\GraphQL\Query
+ */
 class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
 {
 
-    public function args()
+    /** @return array<string, array<string,int>> */
+    public function args(): array
     {
         return [
             'FlickrSetID' => ['type' => Type::int()],
@@ -20,7 +28,7 @@ class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
     }
 
 
-    public function createConnection()
+    public function createConnection(): Connection
     {
         return Connection::create('paginatedReadFlickrPhotos')
             ->setConnectionType($this->manager->getType('flickrphoto'))

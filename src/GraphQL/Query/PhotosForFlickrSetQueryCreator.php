@@ -9,10 +9,18 @@ use SilverStripe\GraphQL\QueryCreator;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
+/**
+ * Class PhotosForFlickrSetQueryCreator
+ *
+ * @package Suilven\Flickr\GraphQL\Query
+ */
 class PhotosForFlickrSetQueryCreator extends QueryCreator implements OperationResolver
 {
 
-    public function attributes()
+    /** @return array<string,string> */
+    public function attributes(): array
     {
         return [
             'name' => 'photosForFlickrSet',
@@ -20,7 +28,8 @@ class PhotosForFlickrSetQueryCreator extends QueryCreator implements OperationRe
     }
 
 
-    public function args()
+    /** @return array<string,array<string,int>> */
+    public function args(): array
     {
         return [
             'FlickrSetID' => ['type' => Type::int()],
@@ -28,6 +37,7 @@ class PhotosForFlickrSetQueryCreator extends QueryCreator implements OperationRe
     }
 
 
+    /** @inheritDoc */
     public function type()
     {
         return Type::listOf($this->manager->getType('flickrphoto'));

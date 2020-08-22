@@ -9,9 +9,17 @@ use SilverStripe\GraphQL\OperationResolver;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
+/**
+ * Class FlickrSetMainImageMutationCreator
+ *
+ * @package Suilven\Flickr\GraphQL\Mutation
+ */
 class FlickrSetMainImageMutationCreator extends MutationCreator implements OperationResolver
 {
-    public function attributes()
+    /** @return array<string, array<string,string>> */
+    public function attributes(): array
     {
         return [
             'name' => 'changeMainImage',
@@ -20,13 +28,15 @@ class FlickrSetMainImageMutationCreator extends MutationCreator implements Opera
     }
 
 
+    /** @inheritDoc */
     public function type()
     {
         return $this->manager->getType('flickrset');
     }
 
 
-    public function args()
+    /** @return array<string, array<string, \GraphQL\Type\Definition\Type>> */
+    public function args(): array
     {
         return [
             'FlickrSetID' => ['type' => Type::nonNull(Type::int())],

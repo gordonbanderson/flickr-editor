@@ -9,9 +9,17 @@ use SilverStripe\GraphQL\OperationResolver;
 use SilverStripe\ORM\DataObject;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+
+/**
+ * Class FlickrPhotoVisibilityMutationCreator
+ *
+ * @package Suilven\Flickr\GraphQL\Mutation
+ */
 class FlickrPhotoVisibilityMutationCreator extends MutationCreator implements OperationResolver
 {
-    public function attributes()
+    /** @return array<string,array<string,string>> */
+    public function attributes(): array
     {
         return [
             'name' => 'toggleVisibility',
@@ -20,13 +28,15 @@ class FlickrPhotoVisibilityMutationCreator extends MutationCreator implements Op
     }
 
 
+    /** @inheritDoc */
     public function type()
     {
         return $this->manager->getType('flickrphoto');
     }
 
 
-    public function args()
+    /** @return array<string, array<string, \GraphQL\Type\Definition\Type>> */
+    public function args(): array
     {
         return [
             'ID' => ['type' => Type::nonNull(Type::int())],

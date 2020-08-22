@@ -7,9 +7,17 @@ use GraphQL\Type\Definition\Type;
 use SilverStripe\GraphQL\Pagination\Connection;
 use SilverStripe\GraphQL\TypeCreator;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint
+
+/**
+ * Class FlickrSetTypeCreator
+ *
+ * @package Suilven\Flickr\GraphQL\Type
+ */
 class FlickrSetTypeCreator extends TypeCreator
 {
-    public function attributes()
+    /** @return array<string,string> */
+    public function attributes(): array
     {
         return [
             'name' => 'flickrsets',
@@ -17,7 +25,8 @@ class FlickrSetTypeCreator extends TypeCreator
     }
 
 
-    public function fields()
+    /** @return array<string,array<string,mixed>> */
+    public function fields(): array
     {
         $photosConnection = Connection::create('FlickrPhotos')
             ->setConnectionType($this->manager->getType('flickrphoto'))
@@ -38,7 +47,7 @@ class FlickrSetTypeCreator extends TypeCreator
                 'resolve' => static fn ($flickrSet, array $args, $context, ResolveInfo $info) => $photosConnection->resolveList(
                     $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder),
                     $args,
-                    $context,
+                    $context
                 ),
             ],
         ];
