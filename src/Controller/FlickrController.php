@@ -26,6 +26,7 @@ use Suilven\Flickr\Model\Flickr\FlickrSet;
  */
 class FlickrController extends \PageController implements PermissionProvider
 {
+    /** @var string[]  */
     private static $allowed_actions = [
         'index',
         'importSet',

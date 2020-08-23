@@ -2,6 +2,8 @@
 
 namespace Suilven\Flickr\Helper;
 
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
+
 class FlickrUpdateMetaHelper extends FlickrHelper
 {
     /**

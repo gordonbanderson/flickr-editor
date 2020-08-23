@@ -23,7 +23,10 @@ class FlickrPhotoSelectionField extends HiddenField
     /** @var int */
     protected $maxLength;
 
+    /** @var string  */
     protected $flickrTitle;
+
+    /** @var string  */
     protected $flickrID;
 
     /**

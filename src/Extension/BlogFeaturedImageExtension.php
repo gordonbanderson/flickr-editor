@@ -25,7 +25,7 @@ class BlogFeaturedImageExtension extends DataExtension
             TextField::create(
                 'FeaturedFlickrImageID',
                 'ID of Flickr Image to Show as the default',
-                'FeaturedImage',
+                'FeaturedImage'
             ),
         ]);
     }

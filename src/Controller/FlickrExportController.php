@@ -9,6 +9,7 @@ use SilverStripe\ORM\DataList;
  */
 class FlickrExportController extends \PageController
 {
+    /** @var string[]  */
     private static $allowed_actions = [
         'toJson',
     ];
