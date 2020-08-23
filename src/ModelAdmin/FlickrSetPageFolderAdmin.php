@@ -34,15 +34,6 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
     private static $menu_icon = 'weboftalent/flickr:icons/folders.png';
 
     /**
-     * Retrieves an edit form, either for display, or to process submitted data.
-     * Also used in the template rendered through {@link Right()} in the $EditForm placeholder.
-     *
-     * This is a "pseudo-abstract" methoed, usually connected to a {@link getEditForm()}
-     * method in an entwine subclass. This method can accept a record identifier,
-     * selected either in custom logic, or through {@link currentPageID()}.
-     * The form usually construct itself from {@link DataObject->getCMSFields()}
-     * for the specific managed subclass defined in {@link LeftAndMain::$tree_class}.
-     *
      * @param HTTPRequest $request Passed if executing a HTTPRequest directly on the form.
      * If empty, this is invoked as $EditForm in the template
      * @return Form Should return a form regardless wether a record has been found.
