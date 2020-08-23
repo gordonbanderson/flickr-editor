@@ -10,11 +10,15 @@ use Suilven\Flickr\Model\Flickr\FlickrSet;
  */
 class FlickrSetAdmin extends ModelAdmin
 {
+    /** @var string[]  */
     private static $managed_models = [FlickrSet::class];
 
-    // will be linked as /admin/products
+    /** @var string  */
     private static $url_segment = 'flickr_sets';
+
+    /** @var string  */
     private static $menu_title = 'Flickr Sets';
 
+    /** @var string  */
     private static $menu_icon = 'weboftalent/flickr:icons/photo.png';
 }

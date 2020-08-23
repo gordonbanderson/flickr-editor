@@ -102,8 +102,10 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
  */
 class FlickrPhoto extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrPhoto';
 
+    /** @var array<string,string> */
     private static $db = [
         'Title' => 'Varchar(255)',
         'FlickrID' => 'Varchar',
@@ -187,32 +189,37 @@ k   large 2048, 2048 on longest side†
 o   original image, either a jpg, gif or png, depending on source format
  */
 
-
+    /** @var array<string,string> */
     private static $belongs_many_many = [
         'FlickrSets' => FlickrSet::class,
     ];
 
     // this one is what created the database FlickrPhoto_FlickrTagss
+    /** @var array<string,string> */
     private static $many_many = [
         'FlickrTags' => FlickrTag::class,
         'FlickrBuckets' => FlickrBucket::class,
     ];
 
+    /** @var string[]  */
     private static $has_many = [
         'Exifs' => FlickrExif::class,
     ];
 
+    /** @var array<string,string> */
     private static $has_one = [
         'LocalCopyOfImage' => Image::class,
         'Photographer' => FlickrAuthor::class,
     ];
 
+    /** @var array<string,string> */
     private static $summary_fields = [
         'Thumbnail' => 'Thumbnail',
         'Title' => 'Title',
         'Visible' => 'Visible',
     ];
 
+    /** @var string  */
     private static $default_sort = 'TakenAt';
 
     //helper methods to ensure that URLs are of the form //path/to/image so that http and https

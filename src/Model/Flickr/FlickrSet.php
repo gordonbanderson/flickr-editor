@@ -48,8 +48,10 @@ use SilverStripe\View\Requirements;
  */
 class FlickrSet extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrSet';
 
+    /** @var array<string,string> */
     private static $db = [
         'Title' => 'Varchar(255)',
         'FlickrID' => 'Varchar',
@@ -66,33 +68,36 @@ class FlickrSet extends DataObject
         'SortOrder' => "Enum('TakenAt,UploadUnixTimeStamp', 'UploadUnixTimeStamp')",
     ];
 
+    /** @var bool[]  */
     private static $defaults = [
         'LockGeo' => true,
     ];
 
+    /** @var array<string,string> */
     private static $many_many = [
         'FlickrPhotos' => FlickrPhoto::class,
     ];
 
-    // this is the assets folder
+    /** @var array<string,string> */
     private static $has_one = [
         'AssetFolder' => Folder::class,
         'PrimaryFlickrPhoto' => FlickrPhoto::class,
     ];
 
+    /** @var array<string,string> */
     private static $has_many = [
         'FlickrBuckets' => FlickrBucket::class,
     ];
 
-    /// model admin
+    /** @var string[]  */
     private static $summary_fields = [
         'Title',
         'Description',
         'FlickrID',
     ];
 
+    /** @var string  */
     private static $default_sort = 'FirstPictureTakenAt DESC';
-
 
     public function getCMSFields(): FieldList
     {

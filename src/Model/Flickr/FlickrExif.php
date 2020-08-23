@@ -21,8 +21,10 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrExif extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrExif';
 
+    /** @var array<string,string> */
     private static $db = [
         'TagSpace' => 'Varchar',
         'Tag' => 'Varchar',
@@ -31,10 +33,12 @@ class FlickrExif extends DataObject
         'TagSpaceID' => 'Int',
     ];
 
+    /** @var array<string,string> */
     private static $belongs_many_many = [
         'FlickrPhotos' => FlickrPhoto::class,
      ];
 
+    /** @var array<string,string> */
     private static $has_one = [
         'FlickrPhoto' => FlickrPhoto::class,
     ];

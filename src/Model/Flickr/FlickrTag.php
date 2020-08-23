@@ -19,32 +19,39 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrTag extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrTag';
 
+    /** @var array<string,string> */
     private static $db = [
         'Value' => 'Varchar',
         'FlickrID' => 'Varchar',
         'RawValue' => 'HTMLText',
     ];
 
+    /** @var string[]  */
     private static $display_fields = [
         'RawValue',
     ];
 
+    /** @var string[]  */
     private static $searchable_fields = [
         'RawValue',
     ];
 
+    /** @var string[]  */
     private static $summary_fields = [
         'Value',
         'RawValue',
         'FlickrID',
     ];
 
+    /** @var array<string,string> */
     private static $belongs_many_many = [
         'FlickrPhotos' => 'FlickrPhoto',
     ];
 
+    /** @var array<string,string> */
     private static $many_many = ['FlickrBuckets' => FlickrBucket::class];
 
     public function getCMSFields(): FieldList

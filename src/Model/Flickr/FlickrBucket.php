@@ -34,8 +34,10 @@ use Suilven\Flickr\Helper\FlickrTagHelper;
  */
 class FlickrBucket extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrBucket';
 
+    /** @var array<string,string> */
     private static $db = [
         'Title' => 'Varchar(255)',
         'Description' => 'Text',
@@ -49,15 +51,19 @@ class FlickrBucket extends DataObject
         'TagsCSV' => 'Varchar',
     ];
 
+    /** @var array<string,string> */
     private static $has_one = ['FlickrSet' => FlickrSet::class];
 
+    /** @var string[]  */
     private static $summary_fields = ['Title', 'ImageStrip' => 'ImageStrip'];
 
+    /** @var array<string,string> */
     private static $belongs_many_many = [
         'FlickrPhotos' => FlickrPhoto::class,
         'FlickrTags' => FlickrTag::class,
     ];
 
+    /** @var array<string,string> */
     private static $many_many = ['FlickrTags' => FlickrTag::class];
 
 

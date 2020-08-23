@@ -14,13 +14,16 @@ use Suilven\Flickr\FlickrSetPage;
  */
 class FlickrFolder extends \Page
 {
+    /** @var string  */
     private static $table_name = 'FlickrFolder';
 
+    /** @var string[]  */
     private static $allowed_children = [
         FlickrSetPage::class,
         FlickrFolder::class,
     ];
 
+    /** @var array<string,string> */
     private static $has_one = [
         'CoverPhoto' => Image::class,
      ];

@@ -13,14 +13,18 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrAuthor extends DataObject
 {
+    /** @var string  */
     private static $table_name = 'FlickrAuthor';
 
+    /** @var array<string,string> */
     private static $db = [
         'PathAlias' => 'Varchar', 'DisplayName' => 'Varchar',
     ];
 
+    /** @var string[]  */
     private static $has_many = ['FlickrPhotos' => 'FlickrPhoto'];
 
+    /** @var array<string,string> */
     private static $summary_fields = [
         'PathAlias' => 'URL',
         'DisplayName' => 'Display Name',

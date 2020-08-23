@@ -25,12 +25,15 @@ use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
  */
 class FlickrSetPage extends \Page
 {
+    /** @var string  */
     private static $table_name = 'FlickrSetPage';
 
+    /** @var string[]  */
     private static $has_one = [
         'FlickrSetForPage' => FlickrSet::class,
     ];
 
+    /** @var array<string,string> */
     private static $db = [
         'TimeShiftHours' => 'Int',
         'Description' => 'HTMLText',
@@ -89,7 +92,7 @@ class FlickrSetPage extends \Page
 
     public function MainImage(): ?Image
     {
-        $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
+        $resultID = $this->AllChildren()->first()->FlickrPhotoForPageID;
         $result = DataObject::get_by_id('FlickrPhoto', $resultID);
 
         return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);

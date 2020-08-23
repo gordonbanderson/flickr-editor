@@ -12,8 +12,10 @@ use Suilven\Flickr\Model\Flickr\FlickrGallery;
  */
 class FlickrGalleryPage extends FlickrSetPage
 {
+    /** @var string  */
     private static $table_name = 'FlickrGalleryPage';
 
+    /** @var array<string,string> */
     private static $has_one = [
         'FlickrGalleryForPage' => FlickrGallery::class,
     ];

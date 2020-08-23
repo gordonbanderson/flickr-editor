@@ -11,7 +11,8 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\View\Requirements;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
-// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// @phpcs:disable
+// @phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 
 /**
  * Class \Suilven\Flickr\ModelAdmin\FlickrSetPageFolderAdmin
