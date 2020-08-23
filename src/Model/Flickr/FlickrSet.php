@@ -43,8 +43,8 @@ use SilverStripe\View\Requirements;
  * @property int $PrimaryFlickrPhotoID
  * @method \SilverStripe\Assets\Folder AssetFolder()
  * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto PrimaryFlickrPhoto()
- * @method \SilverStripe\ORM\DataList|array<\Suilven\Flickr\Model\Flickr\FlickrBucket> FlickrBuckets()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrPhoto> FlickrPhotos()
+ * @method \SilverStripe\ORM\DataList FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList FlickrPhotos()
  */
 class FlickrSet extends DataObject
 {

@@ -1,6 +1,5 @@
 <?php declare(strict_types = 1);
 
-
 namespace Suilven\Flickr\Task;
 
 use SilverStripe\Control\Director;
@@ -14,6 +13,7 @@ use Suilven\Flickr\Model\Flickr\FlickrSet;
 
 /**
  * Class DownloadImagesTask
+ *
  * @package Suilven\Flickr\Task
  */
 class DownloadImagesTask extends BuildTask
@@ -70,13 +70,6 @@ class DownloadImagesTask extends BuildTask
         \mkdir($dir);
     }
 
-
-    /**
-     * @param FlickrSet $flickrSet
-     * @param string $targetDir
-     * @param string $size
-     * @phpstan-ignore-next-line
-     */
     private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('SIZE: ' . $size);

@@ -1,6 +1,5 @@
 <?php declare(strict_types = 1);
 
-
 namespace Suilven\Flickr\Task;
 
 use SilverStripe\Control\Director;
@@ -9,7 +8,6 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
-use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Sluggable\Helper\SluggableHelper;
 
@@ -17,6 +15,7 @@ use Suilven\Sluggable\Helper\SluggableHelper;
 
 /**
  * Class CreateVideoFromPerceptiveHashes
+ *
  * @package Suilven\Flickr\Task
  */
 class CreateVideoFromPerceptiveHashes extends BuildTask
@@ -28,10 +27,10 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
     protected $enabled = true;
 
-    /** @var string  */
+    /** @var string */
     private static $segment = 'create-video-from-perceptive-hash';
 
-    // @phpstan-ignore-next-line
+
     public function findSequences(FlickrSet $flickrSet, string $srcDir, string $targetDir): void
     {
         $helper = new FlickrPerceptiveHashHelper();
@@ -45,25 +44,25 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
         \error_log('BS: ' . $bucketSize);
         for ($j=0; $j< $bucketSize; $j++) {
-            /** @var FlickrBucket $bucket */
-            $bucket = $buckets[$j];
+
+            $bucketArray = $buckets[$j];
             \error_log('BUCKET, OF SIZE ' . \count($buckets));
 
             \error_log(\print_r($buckets, true));
 
             $currentBucketSize = \count($buckets);
             // HACK, had to -1 to get it to work
-            foreach ($bucket->FlickrPhotos() as $photo) {
-                $html .= "\n<img src='". $bucket[$i]['url']."'/>";
+            foreach ($bucketArray as $bucket) {
+                $html .= "\n<img src='". $bucket['url']."'/>";
 
-                $filename = \basename($bucket[$i]['url']);
+                $filename = \basename($bucket['url']);
                 $from = \trim($srcDir) .'/' . \trim($filename);
 
-                $paddedCtr = \str_pad($ctr, 8, '0', \STR_PAD_LEFT);
+                $paddedCtr = \str_pad($ctr . '', 8, '0', \STR_PAD_LEFT);
                 $to = \trim($targetDir) .'/' . $paddedCtr . '.JPG';
                 \error_log($from . ' --> ' . $to);
                 \copy($from, $to);
-                $rotated = $bucket[$i]['rotated'];
+                $rotated = $bucket['rotated'];
                 \error_log('>>>> ROTATED: ' . $rotated);
                 if ($rotated) {
                     $dimensions = '1365x2048';
@@ -91,9 +90,9 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         $size = 'small';
@@ -135,13 +134,11 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
-    // @phpstan-ignore-next-line
     private function calculatePerceptiveHashes(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('---- new image ----');
         \error_log('SIZE: ' . $size);
 
-        // @phpstan-ignore-next-line
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
 
@@ -209,11 +206,6 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
             $o = \exec($hashCMD, $output);
             $splits = \explode(' ', $o);
             $hash = $splits[0];
-
-/*
-            $hash = $hasher->hash($complete_hash_file_path);
-*/
-            \error_log('Saving hash ' . $hash);
 
             $flickrPhoto->PerceptiveHash = $hash;
             $flickrPhoto->write();

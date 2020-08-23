@@ -39,7 +39,11 @@ class FlickrPhotoSequenceShortCodeHandler
         /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $set */
         $set = FlickrSet::get()->filter('FlickrID', $setID)->first();
         $startPhoto = $set->FlickrPhotos()->filter('FlickrID', $startPhotoID)->first();
-        //         $startPhoto = FlickrPhoto::get()->filter('FlickrID', $startPhotoID)->first();
+
+        if (is_null($startPhoto)) {
+            return '<!-- Flickr Photo with ID ' . $startPhotoID . ' not found -->';
+        }
+
         $sortField = $set->SortOrder;
 
 
@@ -74,8 +78,7 @@ class FlickrPhotoSequenceShortCodeHandler
             }
         }
 
-
-        $customise['Caption'] = $caption
+        $customise['Caption'] = !is_null($caption)
             ? Convert::raw2xml($caption)
             : $startPhoto->Title ;
 

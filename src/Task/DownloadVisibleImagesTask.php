@@ -70,12 +70,9 @@ class DownloadVisibleImagesTask extends BuildTask
         \mkdir($dir);
     }
 
-    // @phpstan-ignore-next-line
     private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         $counter = 0;
-
-        // @phpstan-ignore-next-line
         $photos = $flickrSet->FlickrPhotos()->filter('Visible', true)->sort($flickrSet->SortOrder);
         foreach ($photos as $flickrPhoto) {
             $counter++;

@@ -10,7 +10,7 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
      * Calculate sequences of images based on the perception hash, and create FlickrBuckets of them
      * in the database
      *
-     * @return array<\Suilven\Flickr\Model\Flickr\FlickrBucket>
+     * @return array<array<string,mixed>>
      */
     public function calculateSequences(FlickrSet $flickrSet): array
     {

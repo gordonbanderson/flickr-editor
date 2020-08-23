@@ -1,12 +1,5 @@
 <?php declare(strict_types = 1);
 
-/**
- * Created by PhpStorm.
- * User: gordon
- * Date: 11/4/2561
- * Time: 16:22 น.
- */
-
 namespace Suilven\Flickr\Task;
 
 use SilverStripe\Control\Director;
@@ -14,7 +7,15 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrSetHelper;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+
+/**
+ * Class CalculatePerceptiveHashes
+ *
+ * @package Suilven\Flickr\Task
+ */
 class CalculatePerceptiveHashes extends BuildTask
 {
 
@@ -24,16 +25,20 @@ class CalculatePerceptiveHashes extends BuildTask
 
     protected $enabled = true;
 
+    /** @var string */
     private static $segment = 'calculate-perceptive-hash';
 
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         /** @var string|null $sizeFromRequest */
@@ -67,18 +72,16 @@ class CalculatePerceptiveHashes extends BuildTask
     }
 
 
-    /** @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
     private function calculatePerceptiveHashes(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('---- new image ----');
         \error_log('SIZE: ' . $size);
         $counter = 0;
+
         $total = $flickrSet->FlickrPhotos()->count();
 
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $counter++;
-
-
 
             if ($flickrPhoto->PerceptiveHash) {
                 continue;
@@ -108,7 +111,8 @@ class CalculatePerceptiveHashes extends BuildTask
                 default:
                     // url already defaulted
             }
-            //error_log('Downloading ' . $imageURL . ' of size ' . $size);
+
+            /** @var resource $ch */
             $ch = \curl_init($imageURL);
 
             $filename = 'tohash.jpg';
@@ -119,6 +123,8 @@ class CalculatePerceptiveHashes extends BuildTask
 
             // @todo This fails if public/flickr/images/FLICKR_SET_ID is missing
             //error_log('TARGET DIR: ' . $targetDir);
+
+            /** @var resource $fp */
             $fp = \fopen($complete_hash_file_path, 'wb');
 
             \curl_setopt($ch, \CURLOPT_FILE, $fp);

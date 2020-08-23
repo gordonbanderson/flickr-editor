@@ -20,6 +20,7 @@ use Suilven\Flickr\Helper\FlickrSetHelper;
 
 /**
  * Class CreatePerceptiveHashBuckets
+ *
  * @package Suilven\Flickr\Task
  */
 class CreatePerceptiveHashBuckets extends BuildTask
@@ -31,7 +32,7 @@ class CreatePerceptiveHashBuckets extends BuildTask
 
     protected $enabled = true;
 
-    /** @var string  */
+    /** @var string */
     private static $segment = 'buckets-from-perceptive-hash';
 
     /**

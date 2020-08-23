@@ -18,7 +18,7 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 class FlickrPhotoShortCodeHandler
 {
     /** @return \SilverStripe\ORM\FieldType\DBHTMLText|string|void */
-    public static function parse_flickr(unknown $arguments, ?string $caption = null)
+    public static function parse_flickr(array $arguments, ?string $caption = null)
     {
         if (!isset($arguments['id'])) {
             return;
@@ -29,8 +29,7 @@ class FlickrPhotoShortCodeHandler
         /*** SET DEFAULTS ***/
         $fp = DataList::create(FlickrPhoto::class)->filter(['FlickrID' => $arguments['id']])->first();
 
-
-        if (!$fp) {
+        if (!isset($fp)) {
             return '';
         }
 

@@ -32,7 +32,7 @@ class FlickrSetSpriteTask extends BuildTask
     protected $enabled = true;
 
     /** @var string */
-    protected static $segment = 'create-flickr-set-sprite';
+    private static $segment = 'create-flickr-set-sprite';
 
     /**
      * @param \SilverStripe\Control\HTTPRequest $request
@@ -66,7 +66,6 @@ class FlickrSetSpriteTask extends BuildTask
         $tmpDir = $flickrSetImagesDir . '/tmp';
         $this->mkdirIfRequired($tmpDir);
 
-        // @phpstan-ignore-next-line
         $nPhotos = $flickrSet->FlickrPhotos()->count();
         $nPages = \abs($nPhotos / $imagesPerSprite) + 1;
         $page = 0;
@@ -74,7 +73,6 @@ class FlickrSetSpriteTask extends BuildTask
         while ($page < $nPages) {
             $climate->info($page + 1 . '/' . $nPages);
 
-            // @phpstan-ignore-next-line
             $photosForSprite = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder)->
             limit($imagesPerSprite, $imagesPerSprite * $page);
 

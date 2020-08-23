@@ -16,11 +16,11 @@ use SilverStripe\ORM\DataExtension;
  */
 class FlickrSiteConfig extends DataExtension
 {
+    /** @var array<string,string> */
     private static $db = [
         'ImageFooter' => 'Text',
         'AddLocation' => 'Boolean',
     ];
-
 
     public function updateCMSFields(FieldList $fields): FieldList
     {
