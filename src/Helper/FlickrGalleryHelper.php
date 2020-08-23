@@ -113,7 +113,7 @@ class FlickrGalleryHelper extends FlickrHelper
             if ($flickrGallery->Title === null) {
                 \error_log("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED ' .
                     'TO READ SET INFO?");
-                die;
+                null();
             }
 
             $datetime = \explode(' ', $flickrGallery->FirstPictureTakenAt);

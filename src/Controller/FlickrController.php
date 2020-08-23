@@ -139,7 +139,7 @@ class FlickrController extends \PageController implements PermissionProvider
         }
 
         // abort rendering
-        die;
+        null();
     }
 
 
@@ -312,7 +312,7 @@ class FlickrController extends \PageController implements PermissionProvider
 
         echo \json_encode($result);
         // abort render
-        die;
+        null();
     }
 
 
@@ -399,7 +399,7 @@ class FlickrController extends \PageController implements PermissionProvider
             $totalImages = $data['total'];
 
             echo "Found $nPages pages\n";
-            echo "n photos returned " . \sizeof($data['photo']);
+            echo "n photos returned " . \count($data['photo']);
 
 
             foreach ($data['photo'] as $photo) {
@@ -427,7 +427,7 @@ class FlickrController extends \PageController implements PermissionProvider
         $parentNode = SiteTree::get_by_link($path);
         if ($parentNode === null) {
             echo "ERROR: Path " . $path . " cannot be found in this site\n";
-            die;
+            null();
         }
 
         $this->FlickrSetId = $flickrSetID;
@@ -456,7 +456,7 @@ class FlickrController extends \PageController implements PermissionProvider
 
         if ($flickrSet->Title === null) {
             echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
-            die;
+            null();
         }
 
         $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
@@ -618,6 +618,6 @@ class FlickrController extends \PageController implements PermissionProvider
         $this->fixDateSetTaken();
 
         // abort rendering
-        die;
+        null();
     }
 }

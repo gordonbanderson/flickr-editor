@@ -1,11 +1,5 @@
 <?php declare(strict_types = 1);
 
-/**
- * Created by PhpStorm.
- * User: gordon
- * Date: 11/4/2561
- * Time: 16:22 น.
- */
 
 namespace Suilven\Flickr\Task;
 
@@ -14,7 +8,14 @@ use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrSetHelper;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+
+/**
+ * Class DownloadImagesTask
+ * @package Suilven\Flickr\Task
+ */
 class DownloadImagesTask extends BuildTask
 {
 
@@ -25,16 +26,20 @@ class DownloadImagesTask extends BuildTask
 
     protected $enabled = true;
 
+    /** @var string string */
     private static $segment = 'download-flickr-set-thumbs';
 
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         $sizeStr = $request->getVar('size');
@@ -66,7 +71,12 @@ class DownloadImagesTask extends BuildTask
     }
 
 
-    /** @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
+    /**
+     * @param FlickrSet $flickrSet
+     * @param string $targetDir
+     * @param string $size
+     * @phpstan-ignore-next-line
+     */
     private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('SIZE: ' . $size);
@@ -101,6 +111,8 @@ class DownloadImagesTask extends BuildTask
                     // url already defaulted
             }
             \error_log('Downloading ' . $imageURL);
+
+            /** @var resource $ch */
             $ch = \curl_init($imageURL);
 
             $filename = \basename($imageURL);
@@ -109,6 +121,7 @@ class DownloadImagesTask extends BuildTask
 
             \error_log('CSL: ' . $complete_save_loc);
 
+            /** @var resource $fp */
             $fp = \fopen($complete_save_loc, 'wb');
 
             \curl_setopt($ch, \CURLOPT_FILE, $fp);

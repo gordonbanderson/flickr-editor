@@ -2,6 +2,7 @@
 
 namespace Suilven\Flickr\Task;
 
+use League\CLImate\CLImate;
 use MatthiasMullie\Minify\CSS;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Config\Config;
@@ -13,6 +14,8 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
 use Suilven\Spriter\Spriter;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+
 
 /**
  * Class FlickrSetSpriteTask
@@ -28,15 +31,20 @@ class FlickrSetSpriteTask extends BuildTask
 
     protected $enabled = true;
 
-    private static $segment = 'create-flickr-set-sprite';
+    /** @var string */
+    protected static $segment = 'create-flickr-set-sprite';
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
+        $climate = new CLImate();
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         $flickrSetID = $request->getVar('id');
@@ -44,7 +52,7 @@ class FlickrSetSpriteTask extends BuildTask
         // second number essentially means all
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
 
-        \error_log('IPS: ' . $imagesPerSprite);
+        $climate->info('Images per sprite: ' . $imagesPerSprite);
 
 
         $flickrSetHelper = new FlickrSetHelper();
@@ -58,18 +66,20 @@ class FlickrSetSpriteTask extends BuildTask
         $tmpDir = $flickrSetImagesDir . '/tmp';
         $this->mkdirIfRequired($tmpDir);
 
+        // @phpstan-ignore-next-line
         $nPhotos = $flickrSet->FlickrPhotos()->count();
         $nPages = \abs($nPhotos / $imagesPerSprite) + 1;
         $page = 0;
         $css = '';
         while ($page < $nPages) {
-            \error_log($page + 1 . '/' . $nPages);
+            $climate->info($page + 1 . '/' . $nPages);
 
+            // @phpstan-ignore-next-line
             $photosForSprite = $flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder)->
             limit($imagesPerSprite, $imagesPerSprite * $page);
 
-            \error_log('Moving ' . $photosForSprite->count() . ' files to temporary space');
-            /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $photo */
+            $climate->info('Moving ' . $photosForSprite->count() . ' files to temporary space');
+
             foreach ($photosForSprite as $photo) {
                 $srcFile = $flickrSetImagesDir . '/' . $photo->CSSSpriteFileName() . '.jpg';
                 $destFile = $tmpDir . '/' . $photo->CSSSpriteFileName() . '.jpg';
@@ -79,7 +89,6 @@ class FlickrSetSpriteTask extends BuildTask
             // create CSS for the sprite of the paged images
             $spriteDir = "public/flickr/sprites/" . $flickrSetID;
             $spriterConfig = [
-                'iconSuffix' => '-' . $page,
                 // set to true if you want to force the CSS and sprite generation.
                 "forceGenerate" => true,
 
@@ -133,7 +142,7 @@ class FlickrSetSpriteTask extends BuildTask
 
             $css .= $pageCSS;
 
-            \error_log('Moving ' . $photosForSprite->count() .
+            $climate->info('Moving ' . $photosForSprite->count() .
                 ' files back from temporary space');
             foreach ($photosForSprite as $photo) {
                 $srcFile = $tmpDir . '/' . $photo->CSSSpriteFileName() . '.jpg';

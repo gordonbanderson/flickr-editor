@@ -2,12 +2,15 @@
 
 namespace Suilven\Flickr\Task;
 
+use League\CLImate\CLImate;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Environment;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
 // @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
 
 /**
  * Class GetOAuthToken
@@ -23,18 +26,22 @@ class GetOAuthToken extends BuildTask
 
     protected $enabled = true;
 
+    /** @var string */
     private static $segment = 'get-flickr-oauth';
 
 
-    /** @inheritdoc */
-    public function run($request): void
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
+    public function run($request)
     {
+        $climate = new CLImate();
+
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            // @TODO fix return value above
-            \error_log('Access denied');
-            die;
+            return Security::permissionFailure();
         }
 
         $apiKey = Environment::getEnv('FLICKR_API_KEY');
@@ -46,31 +53,31 @@ class GetOAuthToken extends BuildTask
 
         $flickr = new \Samwilson\PhpFlickr\PhpFlickr($apiKey, $apiSecret);
 
-        /*
-         * The CLI workflow.
-         */
-        \error_log('CLI WORKFLOW');
         $storage = new \OAuth\Common\Storage\Memory();
         $flickr->setOauthStorage($storage);
         $url = $flickr->getAuthUrl('delete');
         echo "Go to $url\nEnter access code: ";
-        $code = \fgets(\STDIN);
-        $verifier = \preg_replace('/[^0-9]/', '', $code);
+        $code = (string) \fgets(\STDIN);
+        $verifier = (string) \preg_replace('/[^0-9]/', '', $code);
+
         $accessToken = $flickr->retrieveAccessToken($verifier);
 
-        if (!isset($accessToken) || !($accessToken instanceof \OAuth\Common\Token\TokenInterface)) {
+        if ($accessToken === '' || !($accessToken instanceof \OAuth\Common\Token\TokenInterface)) {
+            $climate->error(('No access token returned by Flickr'));
+
             return;
         }
 
-        /*
-         * You should save the access token and its secret somewhere safe.
-         */
-        echo '$accessToken = "' . $accessToken->getAccessToken() . '";' . \PHP_EOL;
-        echo '$accessTokenSecret = "' . $accessToken->getAccessTokenSecret() . '";' . \PHP_EOL;
+        $climate->backgroundRed('Keep these parameters safe');
+        $climate->info('$accessToken = "' . $accessToken->getAccessToken() . '";');
+
+        // @TODO the getAccessTokenSecret method does not exist.  As such is this entire task obsolete?
+        // @phpstan-ignore-next-line
+        $climate->info('$accessTokenSecret = "' . $accessToken->getAccessTokenSecret() . '";');
         /*
          * Any methods can now be called.
          */
         $login = $flickr->test()->login();
-        echo "You are authenticated as: {$login['username']}\n";
+        $climate->info("You are authenticated as: {$login['username']}\n");
     }
 }

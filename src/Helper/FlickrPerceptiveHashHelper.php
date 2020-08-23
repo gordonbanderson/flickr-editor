@@ -2,6 +2,8 @@
 
 namespace Suilven\Flickr\Helper;
 
+use Suilven\Flickr\Model\Flickr\FlickrSet;
+
 class FlickrPerceptiveHashHelper extends FlickrHelper
 {
     /**
@@ -61,7 +63,7 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
                 ];
             } else {
                 // we need to save the current bucket if it's long enough
-                if (\sizeof($currentBucket) < $minLength) {
+                if (\count($currentBucket) < $minLength) {
                     \error_log('Bucket created but is too short');
                 } else {
                     \error_log('Adding bucket');
@@ -73,7 +75,7 @@ class FlickrPerceptiveHashHelper extends FlickrHelper
         }
 
         // add the last bucket if it's long enough
-        if (\sizeof($currentBucket) < $minLength) {
+        if (\count($currentBucket) < $minLength) {
             \error_log('Bucket created but is too short');
         } else {
             \error_log('Adding bucket');

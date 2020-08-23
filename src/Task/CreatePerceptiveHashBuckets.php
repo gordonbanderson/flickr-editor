@@ -16,6 +16,12 @@ use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+
+/**
+ * Class CreatePerceptiveHashBuckets
+ * @package Suilven\Flickr\Task
+ */
 class CreatePerceptiveHashBuckets extends BuildTask
 {
 
@@ -25,15 +31,19 @@ class CreatePerceptiveHashBuckets extends BuildTask
 
     protected $enabled = true;
 
+    /** @var string  */
     private static $segment = 'buckets-from-perceptive-hash';
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         $flickrSetID = $request->getVar('id');
@@ -46,7 +56,9 @@ class CreatePerceptiveHashBuckets extends BuildTask
         \print_r($bucketsArrary);
 
         $buckets = $flickrSet->FlickrBuckets();
-        \error_log($buckets->Count());
+
+        // @TODO something funny going on here with types
+        // @phpstan-ignore-next-line
         if ($buckets->Count() !== 0) {
             return;
         }

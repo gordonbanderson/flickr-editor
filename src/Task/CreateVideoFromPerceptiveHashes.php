@@ -1,11 +1,5 @@
 <?php declare(strict_types = 1);
 
-/**
- * Created by PhpStorm.
- * User: gordon
- * Date: 11/4/2561
- * Time: 16:22 น.
- */
 
 namespace Suilven\Flickr\Task;
 
@@ -15,9 +9,16 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrPerceptiveHashHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
+use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Sluggable\Helper\SluggableHelper;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+
+/**
+ * Class CreateVideoFromPerceptiveHashes
+ * @package Suilven\Flickr\Task
+ */
 class CreateVideoFromPerceptiveHashes extends BuildTask
 {
 
@@ -27,9 +28,10 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
     protected $enabled = true;
 
+    /** @var string  */
     private static $segment = 'create-video-from-perceptive-hash';
 
-
+    // @phpstan-ignore-next-line
     public function findSequences(FlickrSet $flickrSet, string $srcDir, string $targetDir): void
     {
         $helper = new FlickrPerceptiveHashHelper();
@@ -42,18 +44,16 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
         $bucketSize = \count($buckets);
 
         \error_log('BS: ' . $bucketSize);
-
         for ($j=0; $j< $bucketSize; $j++) {
+            /** @var FlickrBucket $bucket */
             $bucket = $buckets[$j];
-            \error_log('BUCKET, OF SIZE ' . \count($bucket));
+            \error_log('BUCKET, OF SIZE ' . \count($buckets));
 
-            \error_log(\print_r($bucket, 1));
+            \error_log(\print_r($buckets, true));
 
-            $currentBucketSize = \count($bucket);
+            $currentBucketSize = \count($buckets);
             // HACK, had to -1 to get it to work
-            for ($i=0; $i<$currentBucketSize; $i++) {
-                \error_log('Bucket ' . $i);
-                \error_log(\print_r($bucket[$i], 1));
+            foreach ($bucket->FlickrPhotos() as $photo) {
                 $html .= "\n<img src='". $bucket[$i]['url']."'/>";
 
                 $filename = \basename($bucket[$i]['url']);
@@ -84,7 +84,10 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
@@ -108,7 +111,7 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
         $srcDir = 'public/flickr/images/' . $flickrSetID;
 
-        $this->calculatePerceptiveHashes($flickrSet, $srcDir, $targetDir, $size);
+        $this->calculatePerceptiveHashes($flickrSet, $targetDir, $size);
         $this->findSequences($flickrSet, $srcDir, $movieDir);
 
         $slugHelper = new SluggableHelper();
@@ -132,11 +135,13 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
     }
 
 
+    // @phpstan-ignore-next-line
     private function calculatePerceptiveHashes(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('---- new image ----');
         \error_log('SIZE: ' . $size);
 
+        // @phpstan-ignore-next-line
         foreach ($flickrSet->FlickrPhotos()->sort($flickrSet->SortOrder) as $flickrPhoto) {
             $oldHash = $flickrPhoto->PerceptiveHash;
 
@@ -174,6 +179,8 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
                     // url already defaulted
             }
             \error_log('Downloading ' . $imageURL . ' of size ' . $size);
+
+            /** @var resource $ch */
             $ch = \curl_init($imageURL);
 
             $filename = 'tohash.jpg';
@@ -184,6 +191,8 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
             // @todo This fails if public/flickr/images/FLICKR_SET_ID is missing
             \error_log('TARGET DIR: ' . $targetDir);
+
+            /** @var resource $fp */
             $fp = \fopen($complete_hash_file_path, 'wb');
 
             \curl_setopt($ch, \CURLOPT_FILE, $fp);

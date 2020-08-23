@@ -9,12 +9,14 @@
 
 namespace Suilven\Flickr\Task;
 
+use League\CLImate\CLImate;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 
 // @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
 
 /**
  * Class RoutesDump
@@ -24,26 +26,34 @@ use SilverStripe\Security\Security;
 class RoutesDump extends BuildTask
 {
 
+    /** @var string */
     protected $title = 'Dump configured routes';
 
+    /** @var string */
     protected $description = 'Dump configured routes';
 
+    /** @var bool */
     protected $enabled = true;
 
+    /** @var string */
     private static $segment = 'routes-dump';
 
 
-    /** @inheritdoc */
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
         $routes = Director::config()->get('rules');
 
-        \error_log(\print_r($routes, 1));
+        $climate = new CLImate();
+        $climate->info(\print_r($routes, true));
     }
 }

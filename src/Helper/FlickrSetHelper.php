@@ -2,6 +2,7 @@
 
 namespace Suilven\Flickr\Helper;
 
+use League\CLImate\CLImate;
 use Samwilson\PhpFlickr\PhotosetsApi;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
@@ -21,10 +22,9 @@ class FlickrSetHelper extends FlickrHelper
      * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
-     * @return \SilverStripe\ORM\DataObject|\Suilven\Flickr\Model\Flickr\FlickrSet|null
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrSet(string $flickrSetID)
+    public function getOrCreateFlickrSet(string $flickrSetID): \Suilven\Flickr\Model\Flickr\FlickrSet
     {
         // do we have a set object or not
         $flickrSet = FlickrSet::get()->filter([
@@ -52,8 +52,10 @@ class FlickrSetHelper extends FlickrHelper
 
 
     /** @throws \SilverStripe\ORM\ValidationException */
-    public function importSet(int $flickrSetID): void
+    public function importSet(string $flickrSetID): void
     {
+        $climate = new CLImate();
+
         $phpFlickr = $this->getPhpFlickr();
 
         $page= 1;
@@ -70,7 +72,7 @@ class FlickrSetHelper extends FlickrHelper
         }
 
 
-        \error_log('Getting flickr set ' . $flickrSetID);
+        $climate->info('Getting flickr set ' . $flickrSetID);
 
         $fshelper = new FlickrSetHelper();
         $flickrSet = $fshelper->getOrCreateFlickrSet($flickrSetID);
@@ -94,9 +96,9 @@ class FlickrSetHelper extends FlickrHelper
 
             $page++;
 
-            \error_log(\print_r($photoset, 1));
+            $climate->info(\print_r($photoset, 1));
             $pages = $photoset['pages'];
-            \error_log('PAGES: ' . $pages);
+            $climate->info('PAGES: ' . $pages);
 
             // @todo Deal with non existent id gracefully
             // Reload from the database
@@ -108,12 +110,12 @@ class FlickrSetHelper extends FlickrHelper
             $flickrSet->Title = $photoset['title'];
             $flickrSet->write();
 
-            echo "Title set to : ".$flickrSet->Title;
+            $climate->info("Title set to : ".$flickrSet->Title);
 
             // @todo This was a hack and may not be necessary now
             if ($flickrSet->Title === null) {
                 echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
-                die;
+                null();
             }
 
             $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
