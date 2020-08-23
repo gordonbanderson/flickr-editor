@@ -2,11 +2,10 @@
 
 namespace Suilven\Flickr;
 
-use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
 use SilverStripe\View\ArrayData;
 
-// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+// @phpcs:disable
 
 /**
  * GridFieldExifData displays read only exif data for a Flickr photograph
