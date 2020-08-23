@@ -3,7 +3,9 @@
 namespace Suilven\Flickr\ModelAdmin;
 
 use SilverStripe\Admin\ModelAdmin;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\View\Requirements;
@@ -16,19 +18,40 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
  */
 class FlickrSetPageFolderAdmin extends ModelAdmin
 {
-    /** @var \Suilven\Flickr\ModelAdmin\QueuedJobService */
+    /** @var \Symbiote\QueuedJobs\Services\QueuedJobService */
     public $jobQueue;
 
+    /** @var string */
     private static $url_segment = 'flickrsetpagefolders';
+
+    /** @var string */
     private static $menu_title = 'Flickr Set Folders';
 
+    /** @var array<string> */
     private static $managed_models = [FlickrSetPage::class];
 
+    /** @var string */
     private static $menu_icon = 'weboftalent/flickr:icons/folders.png';
 
-    /** @param \SilverStripe\Control\HTTPRequest|null $request */
-    public function EditForm(?HTTPRequest $request = null): ?\SilverStripe\Forms\Form
+    /**
+     * Retrieves an edit form, either for display, or to process submitted data.
+     * Also used in the template rendered through {@link Right()} in the $EditForm placeholder.
+     *
+     * This is a "pseudo-abstract" methoed, usually connected to a {@link getEditForm()}
+     * method in an entwine subclass. This method can accept a record identifier,
+     * selected either in custom logic, or through {@link currentPageID()}.
+     * The form usually construct itself from {@link DataObject->getCMSFields()}
+     * for the specific managed subclass defined in {@link LeftAndMain::$tree_class}.
+     *
+     * @param HTTPRequest $request Passed if executing a HTTPRequest directly on the form.
+     * If empty, this is invoked as $EditForm in the template
+     * @return Form Should return a form regardless wether a record has been found.
+     *  Form might be readonly if the current user doesn't have the permission to edit
+     *  the record.
+     */
+    public function EditForm($request = null)
     {
+
         $form = parent::EditForm($request);
 
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');

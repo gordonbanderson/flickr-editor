@@ -44,13 +44,11 @@ class CreateVideoFromPerceptiveHashes extends BuildTask
 
         \error_log('BS: ' . $bucketSize);
         for ($j=0; $j< $bucketSize; $j++) {
-
             $bucketArray = $buckets[$j];
             \error_log('BUCKET, OF SIZE ' . \count($buckets));
 
             \error_log(\print_r($buckets, true));
 
-            $currentBucketSize = \count($buckets);
             // HACK, had to -1 to get it to work
             foreach ($bucketArray as $bucket) {
                 $html .= "\n<img src='". $bucket['url']."'/>";

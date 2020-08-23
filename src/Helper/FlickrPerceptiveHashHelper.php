@@ -4,6 +4,13 @@ namespace Suilven\Flickr\Helper;
 
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint
+
+/**
+ * Class FlickrPerceptiveHashHelper
+ *
+ * @package Suilven\Flickr\Helper
+ */
 class FlickrPerceptiveHashHelper extends FlickrHelper
 {
     /**

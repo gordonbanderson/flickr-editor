@@ -70,6 +70,7 @@ class DownloadVisibleImagesTask extends BuildTask
         \mkdir($dir);
     }
 
+
     private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         $counter = 0;

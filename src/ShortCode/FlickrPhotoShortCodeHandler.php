@@ -9,6 +9,8 @@ use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+
 
 /**
  * Class FlickrPhotoShortCodeHandler
@@ -17,7 +19,10 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
  */
 class FlickrPhotoShortCodeHandler
 {
-    /** @return \SilverStripe\ORM\FieldType\DBHTMLText|string|void */
+    /**
+     * @param array<string,string> $arguments
+     * @return \SilverStripe\ORM\FieldType\DBHTMLText|string|void
+     */
     public static function parse_flickr(array $arguments, ?string $caption = null)
     {
         if (!isset($arguments['id'])) {
@@ -43,8 +48,7 @@ class FlickrPhotoShortCodeHandler
             }
         }
 
-
-        $customise['Caption'] = $caption
+        $customise['Caption'] = isset($caption)
             ? Convert::raw2xml($caption)
             : $fp->Title ;
         $customise['Position'] = isset($arguments['position'])

@@ -70,6 +70,7 @@ class DownloadImagesTask extends BuildTask
         \mkdir($dir);
     }
 
+
     private function downloadSet(FlickrSet $flickrSet, string $targetDir, string $size): void
     {
         \error_log('SIZE: ' . $size);

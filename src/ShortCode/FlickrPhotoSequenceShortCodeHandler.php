@@ -40,7 +40,7 @@ class FlickrPhotoSequenceShortCodeHandler
         $set = FlickrSet::get()->filter('FlickrID', $setID)->first();
         $startPhoto = $set->FlickrPhotos()->filter('FlickrID', $startPhotoID)->first();
 
-        if (is_null($startPhoto)) {
+        if (\is_null($startPhoto)) {
             return '<!-- Flickr Photo with ID ' . $startPhotoID . ' not found -->';
         }
 
@@ -78,7 +78,7 @@ class FlickrPhotoSequenceShortCodeHandler
             }
         }
 
-        $customise['Caption'] = !is_null($caption)
+        $customise['Caption'] = !\is_null($caption)
             ? Convert::raw2xml($caption)
             : $startPhoto->Title ;
 
