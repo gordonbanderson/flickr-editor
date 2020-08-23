@@ -19,7 +19,7 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrTag extends DataObject
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrTag';
 
     /** @var array<string,string> */
@@ -29,17 +29,17 @@ class FlickrTag extends DataObject
         'RawValue' => 'HTMLText',
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $display_fields = [
         'RawValue',
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $searchable_fields = [
         'RawValue',
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $summary_fields = [
         'Value',
         'RawValue',

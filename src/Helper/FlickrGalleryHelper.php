@@ -10,7 +10,6 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrGallery;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
-use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Site\FlickrGalleryPage;
 
 class FlickrGalleryHelper extends FlickrHelper
@@ -21,10 +20,10 @@ class FlickrGalleryHelper extends FlickrHelper
      * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
-     * @return FlickrSet
+     * @return \Suilven\Flickr\Model\Flickr\FlickrSet
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrGallery(string $flickrSetID)
+    public function getOrCreateFlickrGallery(string $flickrSetID): FlickrSet
     {
         // do we have a set object or not
         $flickrGallery = FlickrGallery::get()->filter([

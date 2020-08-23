@@ -25,10 +25,10 @@ use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
  */
 class FlickrSetPage extends \Page
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrSetPage';
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $has_one = [
         'FlickrSetForPage' => FlickrSet::class,
     ];
@@ -127,7 +127,6 @@ class FlickrSetPage extends \Page
             $this->ParentID = $parentFolderID;
         }
 
-        // FIXME
-        $this->Dirty = true;
+        $this->IsDirty = true;
     }
 }

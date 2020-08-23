@@ -12,7 +12,7 @@ use Suilven\Flickr\Model\Flickr\FlickrGallery;
  */
 class FlickrGalleryPage extends FlickrSetPage
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrGalleryPage';
 
     /** @var array<string,string> */

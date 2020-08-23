@@ -3,6 +3,7 @@
 namespace Suilven\Flickr\Controller;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+use SilverStripe\ORM\SS_List;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetPageController

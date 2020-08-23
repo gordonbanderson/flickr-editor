@@ -14,10 +14,10 @@ use Suilven\Flickr\FlickrSetPage;
  */
 class FlickrFolder extends \Page
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrFolder';
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $allowed_children = [
         FlickrSetPage::class,
         FlickrFolder::class,

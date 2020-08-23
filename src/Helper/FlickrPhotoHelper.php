@@ -21,7 +21,7 @@ class FlickrPhotoHelper extends FlickrHelper
         $pathalias = $photoInfo['pathalias'];
 
         // do we have a set object or not
-        /** @var FlickrPhoto $flickrPhoto */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
         $flickrPhoto = FlickrPhoto::get()->filter(['FlickrID' => $flickrPhotoID])->first();
 
         // if a set exists update data, otherwise create

@@ -21,7 +21,7 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrExif extends DataObject
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrExif';
 
     /** @var array<string,string> */

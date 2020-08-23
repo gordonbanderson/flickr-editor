@@ -102,7 +102,7 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
  */
 class FlickrPhoto extends DataObject
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrPhoto';
 
     /** @var array<string,string> */
@@ -204,7 +204,7 @@ o   original image, either a jpg, gif or png, depending on source format
         'FlickrBuckets' => FlickrBucket::class,
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $has_many = [
         'Exifs' => FlickrExif::class,
     ];
@@ -222,7 +222,7 @@ o   original image, either a jpg, gif or png, depending on source format
         'Visible' => 'Visible',
     ];
 
-    /** @var string  */
+    /** @var string */
     private static $default_sort = 'TakenAt';
 
     //helper methods to ensure that URLs are of the form //path/to/image so that http and https

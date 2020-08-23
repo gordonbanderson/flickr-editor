@@ -17,7 +17,9 @@ use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
 use Suilven\Flickr\Helper\FlickrBatchHelper;
 use Suilven\Flickr\Helper\FlickrBucketHelper;
+use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
+use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
@@ -26,7 +28,7 @@ use Suilven\Flickr\Model\Flickr\FlickrSet;
  */
 class FlickrController extends \PageController implements PermissionProvider
 {
-    /** @var string[]  */
+    /** @var array<string> */
     private static $allowed_actions = [
         'index',
         'importSet',

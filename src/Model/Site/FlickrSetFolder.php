@@ -16,22 +16,22 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
  */
 class FlickrSetFolder extends \Page
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrSetFolder';
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $allowed_children = [
         FlickrSetPage::class,
         FlickrSetFolder::class,
         FlickrSearchPage::class,
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $db = [
     'PromoteToHomePage' => DBBoolean::class,
      ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $has_one = [
         'MainFlickrPhoto' => FlickrPhoto::class,
     ];

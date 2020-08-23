@@ -15,7 +15,7 @@ use SilverStripe\ORM\DB;
  */
 class FlickrTagsController extends \PageController
 {
-    /** @var string[]  */
+    /** @var array<string> */
     private static $allowed_actions = [
         'index',
         'photo',

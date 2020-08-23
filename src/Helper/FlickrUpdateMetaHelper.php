@@ -9,7 +9,6 @@ class FlickrUpdateMetaHelper extends FlickrHelper
     /**
      * Update Flickr photos with the changes made in SilverStripe
      *
-     * @param \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto
      * @param string $descriptionSuffix a suffix to be appended to each description, e.g. copyright
      * @throws \Samwilson\PhpFlickr\FlickrException
      */

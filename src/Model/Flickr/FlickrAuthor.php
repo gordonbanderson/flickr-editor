@@ -13,7 +13,7 @@ use SilverStripe\ORM\DataObject;
  */
 class FlickrAuthor extends DataObject
 {
-    /** @var string  */
+    /** @var string */
     private static $table_name = 'FlickrAuthor';
 
     /** @var array<string,string> */
@@ -21,7 +21,7 @@ class FlickrAuthor extends DataObject
         'PathAlias' => 'Varchar', 'DisplayName' => 'Varchar',
     ];
 
-    /** @var string[]  */
+    /** @var array<string> */
     private static $has_many = ['FlickrPhotos' => 'FlickrPhoto'];
 
     /** @var array<string,string> */
