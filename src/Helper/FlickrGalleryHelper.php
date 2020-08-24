@@ -10,6 +10,7 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrGallery;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Site\FlickrGalleryPage;
 
 class FlickrGalleryHelper extends FlickrHelper
@@ -20,25 +21,23 @@ class FlickrGalleryHelper extends FlickrHelper
      * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
-     * @return \Suilven\Flickr\Model\Flickr\FlickrSet
+     * @return FlickrGallery
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrGallery(string $flickrSetID): FlickrSet
+    public function getOrCreateFlickrGallery(string $flickrSetID): FlickrGallery
     {
-        // do we have a set object or not
+        /** @var FlickrGallery $flickrGallery */
         $flickrGallery = FlickrGallery::get()->filter([
             'FlickrID' => $flickrSetID,
         ])->first();
 
 
         // if a set exists update data, otherwise create
-        if (!$flickrGallery) {
+        if (!isset($flickrGallery)) {
             $flickrGallery = new FlickrGallery();
             $phpFlickr = $this->getPhpFlickr();
 
             $galleryInfo = $phpFlickr->galleries_getInfo($flickrSetID)['gallery'];
-            \error_log(\print_r($galleryInfo, 1));
-
             $setTitle = $galleryInfo['title'];
             $setDescription = $galleryInfo['description'];
             $flickrGallery->Title = $setTitle;
@@ -60,6 +59,8 @@ class FlickrGalleryHelper extends FlickrHelper
         $page= 1;
         // this will get updated after the first call to the API, set to ridic high value
         $pages = 1e7;
+
+        // @todo is this still valid?
         static $only_new_photos = false;
 
         $controller = Controller::curr();
@@ -91,13 +92,9 @@ class FlickrGalleryHelper extends FlickrHelper
                 $page,
             )['photos'];
 
-            \error_log(\print_r($photoset, 1));
-
             $page++;
 
-            \error_log(\print_r($photoset, 1));
             $pages = $photoset['pages'];
-            \error_log('PAGES: ' . $pages);
 
             // @todo Deal with non existent id gracefully
             // Reload from the database

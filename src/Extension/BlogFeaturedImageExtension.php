@@ -15,6 +15,9 @@ use Suilven\Flickr\Model\Flickr\FlickrPhoto;
  */
 class BlogFeaturedImageExtension extends DataExtension
 {
+    /**
+     * @var array<string,string>
+     */
     private static $db = [
         'FeaturedFlickrImageID' => 'Varchar',
     ];

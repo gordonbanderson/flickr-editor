@@ -24,13 +24,13 @@ class FlickrTagHelper extends FlickrHelper
         $tags = \explode(',', $csv);
         foreach ($tags as $tagName) {
             $tagName = \trim($tagName);
-            if (!$tagName) {
+            if (!isset($tagName)) {
                 continue;
             }
 
             // search for an existing tag, if there is not one create it
             $ftag = FlickrTag::get()->filter(['Value' => \strtolower($tagName)])->first();
-            if (!$ftag) {
+            if (!isset($ftag)) {
                 $ftag = FlickrTag::create();
                 $ftag->RawValue = $tagName;
                 $ftag->Value = \strtolower($tagName);

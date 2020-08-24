@@ -3,17 +3,19 @@
 namespace Suilven\Flickr\Controller;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\SS_List;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetPageController
  */
 class FlickrSetPageController extends \PageController
 {
-    /** @var \Suilven\Flickr\Controller\SS_List<\Suilven\Flickr\Controller\FlickrPhoto>|null */
+    /** @var DataList<FlickrPhoto> */
     private $FlickrPics;
 
-    public function FlickrPhotos(): ?SS_List
+    public function FlickrPhotos(): ?DataList
     {
         if (!isset($this->FlickrPics)) {
             $images = $this->FlickrSetForPage()->FlickrPhotos();

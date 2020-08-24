@@ -48,7 +48,7 @@ class FlickrPhotoHelper extends FlickrHelper
 
         $flickrPhoto->Title = (string) $photoInfo['title'];
 
-        $flickrPhoto->FlickrID = $flickrPhotoID;
+        $flickrPhoto->FlickrID = (string) $flickrPhotoID;
         $flickrPhoto->KeepClean = true;
 
         //240 on longest side
@@ -167,9 +167,16 @@ class FlickrPhotoHelper extends FlickrHelper
         }
 
         $photosHelper = $this->getPhotosHelper();
-        $singlePhotoInfo = $photosHelper->getInfo(($flickrPhotoID));
+        $singlePhotoInfoOrNull = $photosHelper->getInfo(($flickrPhotoID));
 
+        // If no photo data return null
+        if ($singlePhotoInfoOrNull === false) {
+            return null;
 
+        }
+
+        /** @var array $singlePhotoInfo */
+        $singlePhotoInfo = $singlePhotoInfoOrNull;
         $flickrPhoto->Description = $singlePhotoInfo['description'];
 
         $flickrPhoto->TakenAt = $singlePhotoInfo['dates']['taken'];

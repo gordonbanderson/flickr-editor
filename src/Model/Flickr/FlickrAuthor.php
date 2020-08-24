@@ -31,6 +31,7 @@ class FlickrAuthor extends DataObject
     ];
 
     /**
+     * @var array<string,bool>
      * A search is made of the path alias during flickr set import
      */
     private static $indexes = [

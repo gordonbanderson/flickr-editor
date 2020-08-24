@@ -2,6 +2,7 @@
 
 namespace Suilven\Flickr\Model\Flickr;
 
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 
@@ -43,9 +44,9 @@ class FlickrExif extends DataObject
         'FlickrPhoto' => FlickrPhoto::class,
     ];
 
-    public function getCMSFields_forPopup(): FieldSet
+    public function getCMSFields_forPopup(): FieldList
     {
-        $fields = new FieldSet();
+        $fields = new FieldList();
         $fields->push(new TextField('Title', 'Title'));
         $fields->push(new TextField('Description'));
 

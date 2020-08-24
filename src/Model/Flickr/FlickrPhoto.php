@@ -262,6 +262,7 @@ o   original image, either a jpg, gif or png, depending on source format
     public function HorizontalMargin(int $intendedWidth): int
     {
         //FIXME - is there a way to avoid a database call here?
+        /** @var FlickrPhoto $fp */
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
         $vh = ($intendedWidth - $fp->ThumbnailWidth) / 2;
@@ -429,13 +430,16 @@ o   original image, either a jpg, gif or png, depending on source format
             $height = 683;
         }
 
-        return DBField::create_field(
-            'HTMLVarchar',
-            '<img class="flickrThumbnail" data-flickr-preview-url="' . $this->ProtocolAgnosticLargeURL() .
+        $value = '<img class="flickrThumbnail" data-flickr-preview-url="' .
+            $this->ProtocolAgnosticLargeURL() .
             '" data-flickr-preview-width=' . $width . ' ' .
             ' data-flickr-preview-height=' . $height . ' ' .
             ' src="' . $this->ThumbnailURL . '"  data-flickr-thumbnail-url="' .
-            $this->ThumbnailURL . '"/>',
+            $this->ThumbnailURL . '"/>';
+
+        return DBField::create_field(
+            'HTMLVarchar',
+            $value
         );
     }
 
@@ -443,7 +447,7 @@ o   original image, either a jpg, gif or png, depending on source format
     public function EffectiveFocalLength35mm(): int
     {
         $fl = $this->FocalLength35mm;
-        if ($this->DigitalZoomRatio) {
+        if (isset($this->DigitalZoomRatio)) {
             $fl = \round($fl * $this->DigitalZoomRatio);
         }
 
@@ -456,6 +460,8 @@ o   original image, either a jpg, gif or png, depending on source format
     /** @return bool true if the photo has geography */
     public function HasGeo(): bool
     {
+        // @TODO These fields came from Mappable, test with altnerative GIS module
+        // @phpstan-ignore-next-line
         return $this->Lat !== 0 || $this->Lon !== 0;
     }
 
@@ -480,7 +486,7 @@ o   original image, either a jpg, gif or png, depending on source format
     public function CSSSpriteFileName(): string
     {
         $splits = \explode('/', $this->SmallURL);
-        $filename = \end($splits);
+        $filename = (string) \end($splits);
         $filename = \str_replace('.jpg', '', $filename);
 
         return $filename;
@@ -491,7 +497,7 @@ o   original image, either a jpg, gif or png, depending on source format
     {
         $imagesPerSprite = Config::inst()->get(FlickrSetPage::class, 'images_per_sprite');
 
-        return \floor($position / $imagesPerSprite);
+        return (int) \floor($position / $imagesPerSprite);
     }
 
 

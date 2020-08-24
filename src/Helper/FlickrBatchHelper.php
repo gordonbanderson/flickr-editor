@@ -2,6 +2,7 @@
 
 namespace Suilven\Flickr\Helper;
 
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrBatchHelper extends FlickrHelper
