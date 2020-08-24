@@ -2,13 +2,10 @@
 
 namespace Suilven\Flickr\Model\Site;
 
-use SilverStripe\Assets\Image;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
 use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
@@ -110,8 +107,8 @@ class FlickrSetPage extends \Page
             new GridFieldSortableRows('SortOrder')
         );
 
-        /** @var GridFieldAddExistingAutocompleter $autocompleter */
-        $autocompleter =  $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        /** @var \SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
         $autocompleter->setSearchFields(['URL', 'Title', 'Description']);
 
         $fields->addFieldToTab('Root.Main', new HTMLEditorField(

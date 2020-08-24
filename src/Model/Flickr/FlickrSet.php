@@ -18,7 +18,6 @@ use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\SS_List;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
@@ -135,13 +134,13 @@ class FlickrSet extends DataObject
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
 
-        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        /** @var \SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter $autocompleter */
         $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
         $autocompleter->setSearchFields(['Title', 'Description']);
 
         // @todo Make page size configurable
 
-        /** @var GridFieldPaginator $paginator */
+        /** @var \SilverStripe\Forms\GridField\GridFieldPaginator $paginator */
         $paginator = $gridConfig->getComponentByType(GridFieldPaginator::class);
         $paginator->setItemsPerPage(100);
         $gridField = new GridField(
@@ -154,11 +153,11 @@ class FlickrSet extends DataObject
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
 
-        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        /** @var \SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter $autocompleter */
         $autocompleter = $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class);
         $autocompleter->setSearchFields(['Title', 'Description']);
 
-        /** @var GridFieldPaginator $paginator */
+        /** @var \SilverStripe\Forms\GridField\GridFieldPaginator $paginator */
         $paginator = $gridConfig2->getComponentByType(GridFieldPaginator::class);
         $paginator->setItemsPerPage(100);
 
@@ -199,8 +198,10 @@ class FlickrSet extends DataObject
             'FlickrSet' => $this,
             'SecurityToken' => SecurityToken::inst()->getValue(),
         ];
-        $htmlRendering = $forTemplate->renderWith('Includes/VisibleImageSelector',
-            $templateData);
+        $htmlRendering = $forTemplate->renderWith(
+            'Includes/VisibleImageSelector',
+            $templateData
+        );
         $lfImage = new LiteralField('VisibleImagesField', $htmlRendering->HTML());
         $fields->addFieldToTab('Root.Visible', $lfImage);
 
@@ -256,6 +257,7 @@ class FlickrSet extends DataObject
     public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
+
         $this->IsDirty = true;
     }
 
@@ -293,7 +295,7 @@ class FlickrSet extends DataObject
      *
      * @return bool true if the photographs are mappable
     */
-    public function HasGeo()
+    public function HasGeo(): bool
     {
         $ct = $this->FlickrPhotos()->where('Lat != 0 OR Lon != 0')->count();
 

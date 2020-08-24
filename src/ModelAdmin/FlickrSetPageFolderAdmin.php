@@ -3,9 +3,7 @@
 namespace Suilven\Flickr\ModelAdmin;
 
 use SilverStripe\Admin\ModelAdmin;
-use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\Form;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\DataList;
 use SilverStripe\View\Requirements;
