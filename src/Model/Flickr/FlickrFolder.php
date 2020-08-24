@@ -4,7 +4,7 @@ namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
-use Suilven\Flickr\FlickrSetPage;
+use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**
  * Defines the GalleryFolder page type

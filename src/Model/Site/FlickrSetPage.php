@@ -8,6 +8,7 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
+use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
@@ -80,7 +81,9 @@ class FlickrSetPage extends \Page
      */
     public function getPortletCaption(): string
     {
-        return $this->Descripton;
+        // this looks like a PHPStan bug
+        // @phpstan-ignore-next-line
+        return $this->FlickrSetForPage()->Descripton;
     }
 
 
@@ -89,25 +92,27 @@ class FlickrSetPage extends \Page
         return 'layout1col';
     }
 
-
+/*
     public function MainImage(): ?Image
     {
         $resultID = $this->AllChildren()->first()->FlickrPhotoForPageID;
-        $result = DataObject::get_by_id('FlickrPhoto', $resultID);
+        $result = DataObject::get_by_id(FlickrPhoto::class, $resultID);
 
-        return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
+        // @todo this does not exist - return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
     }
-
+*/
 
     public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
 
         $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(
-            new GridFieldSortableRows('SortOrder'),
+            new GridFieldSortableRows('SortOrder')
         );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
-            setSearchFields(['URL', 'Title', 'Description']);
+
+        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter =  $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields(['URL', 'Title', 'Description']);
 
         $fields->addFieldToTab('Root.Main', new HTMLEditorField(
             'Description',
@@ -118,6 +123,8 @@ class FlickrSetPage extends \Page
     }
 
 
+    // @todo This method refers to ParentFolderID which does not exist.  Is this method still needed?
+    /*
     public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
@@ -129,4 +136,5 @@ class FlickrSetPage extends \Page
 
         $this->IsDirty = true;
     }
+    */
 }

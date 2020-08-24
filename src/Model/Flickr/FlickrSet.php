@@ -15,8 +15,10 @@ use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TabSet;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBBoolean;
+use SilverStripe\ORM\SS_List;
 use SilverStripe\Security\SecurityToken;
 use SilverStripe\SiteConfig\SiteConfig;
 use SilverStripe\View\ArrayData;
@@ -114,10 +116,10 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab('Root.Main', new TextField('Title', 'Title'));
         $fields->addFieldToTab('Root.Main', new TextareaField('Description', 'Description'));
 
-        $fields->addFieldsToTab(
+        $enumValues = \singleton(FlickrSet::class)->dbObject('SortOrder')->enumValues();
+        $fields->addFieldToTab(
             'Root.Main',
-            DropdownField::create('SortOrder', 'Sort Order', \singleton(FlickrSet::class)->
-            dbObject('SortOrder')->enumValues()),
+            DropdownField::create('SortOrder', 'Sort Order', $enumValues)
         );
 
         $fields->addFieldToTab('Root.Main', new TextField(
@@ -132,11 +134,16 @@ class FlickrSet extends DataObject
 
         $gridConfig = GridFieldConfig_RelationEditor::create();
         // need to add sort order in many to many I think // ->addComponent( new GridFieldSortableRows( 'SortOrder' ) );
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
-            setSearchFields(['Title', 'Description']);
+
+        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields(['Title', 'Description']);
 
         // @todo Make page size configurable
-        $gridConfig->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
+
+        /** @var GridFieldPaginator $paginator */
+        $paginator = $gridConfig->getComponentByType(GridFieldPaginator::class);
+        $paginator->setItemsPerPage(100);
         $gridField = new GridField(
             "FlickrPhotos",
             "List of Photos:",
@@ -146,9 +153,14 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
         $gridConfig2 = GridFieldConfig_RelationEditor::create();
-        $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class)->
-            setSearchFields(['Title', 'Description']);
-        $gridConfig2->getComponentByType(GridFieldPaginator::class)->setItemsPerPage(100);
+
+        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig2->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields(['Title', 'Description']);
+
+        /** @var GridFieldPaginator $paginator */
+        $paginator = $gridConfig2->getComponentByType(GridFieldPaginator::class);
+        $paginator->setItemsPerPage(100);
 
         /** @var \SilverStripe\ORM\DataList $bucketsByDate */
         $bucketsByDate = $this->FlickrBucketsByDate();
@@ -175,20 +187,21 @@ class FlickrSet extends DataObject
             'ID' => $this->ID,
             'FlickrPhotosNotInBucket' => $this->FlickrPhotosNotInBucket(),
         ]);
-        $html = $forTemplate->renderWith('Includes/ReactFlickrBuckets');
-        $lfImage = new LiteralField('BucketEdit', $html);
+        $htmlRendering = $forTemplate->renderWith('Includes/ReactFlickrBuckets');
+        $lfImage = new LiteralField('BucketEdit', $htmlRendering->HTML());
 
 
         // @todo This is loading all the thumbnails, disable temporarily
          $fields->addFieldToTab('Root.Buckets', $lfImage);
 
 
-        $templateData = new ArrayData([
+        $templateData =[
             'FlickrSet' => $this,
             'SecurityToken' => SecurityToken::inst()->getValue(),
-        ]);
-        $html = $forTemplate->renderWith('Includes/VisibleImageSelector', $templateData);
-        $lfImage = new LiteralField('VisibleImagesField', $html);
+        ];
+        $htmlRendering = $forTemplate->renderWith('Includes/VisibleImageSelector',
+            $templateData);
+        $lfImage = new LiteralField('VisibleImagesField', $htmlRendering->HTML());
         $fields->addFieldToTab('Root.Visible', $lfImage);
 
 
@@ -218,8 +231,8 @@ class FlickrSet extends DataObject
         $forTemplate = new ArrayData([
             'ID' => $this->FlickrID,
         ]);
-        $html = $forTemplate->renderWith('Includes/UNIXCommands');
-        $lfCommands = new LiteralField('Commands', $html);
+        $htmlRendering = $forTemplate->renderWith('Includes/UNIXCommands')->HTML();
+        $lfCommands = new LiteralField('Commands', $htmlRendering);
         $fields->addFieldToTab('Root.Commands', $lfCommands);
 
         return $fields;
@@ -243,11 +256,6 @@ class FlickrSet extends DataObject
     public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
-
-        if ($this->KeepClean) {
-            return;
-        }
-
         $this->IsDirty = true;
     }
 
@@ -266,7 +274,7 @@ class FlickrSet extends DataObject
     }
 
 
-    public function FlickrBucketsByDate(): ArrayList
+    public function FlickrBucketsByDate(): DataList
     {
         // adding in a sort field of TakenAt results in duplicates.  If one uses UploadUnixTimeStamp
         // the issue is worse, a unique row is being created for each unique UploadUnixTimeStamp,
@@ -283,7 +291,7 @@ class FlickrSet extends DataObject
     /**
      * Count the number of non zero lat and lon points - if > 0 then we can draw a map
      *
-     * @return true if the photographs are mappable
+     * @return bool true if the photographs are mappable
     */
     public function HasGeo()
     {
@@ -373,6 +381,7 @@ class FlickrSet extends DataObject
     public function writeToFlickr(): void
     {
         $siteConfig = SiteConfig::current_site_config();
+        // @phpstan-ignore-next-line
         $suffix = $this->ImageFooter . "\n\n" . $siteConfig->ImageFooter;
         $imagesToUpdate = $this->FlickrPhotos()->filter(['IsDirty' => 1]);
         $ctr = 1;
