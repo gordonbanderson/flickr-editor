@@ -3,7 +3,6 @@
 namespace Suilven\Flickr\Helper;
 
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ManyManyList;
 use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
@@ -28,11 +27,11 @@ class FlickrBucketHelper extends FlickrHelper
         $flickrPhotos = FlickrPhoto::get()->filter('ID', 'in', $flickrPhotoIDs);
         $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
 
-        /** @var FlickrBucket $bucket */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrBucket $bucket */
         $bucket = new FlickrBucket();
         $bucket->write();
 
-        /** @var ManyManyList $bucketPhotos */
+        /** @var \SilverStripe\ORM\ManyManyList $bucketPhotos */
         $bucketPhotos = $bucket->FlickrPhotos();
         foreach ($flickrPhotos as $fp) {
             $bucketPhotos->add($fp);

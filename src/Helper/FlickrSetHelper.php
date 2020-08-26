@@ -4,8 +4,6 @@ namespace Suilven\Flickr\Helper;
 
 use League\CLImate\CLImate;
 use Samwilson\PhpFlickr\PhotosetsApi;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -26,7 +24,7 @@ class FlickrSetHelper extends FlickrHelper
      */
     public function getOrCreateFlickrSet(string $flickrSetID): \Suilven\Flickr\Model\Flickr\FlickrSet
     {
-        /** @var FlickrSet $flickrSet */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
         $flickrSet = FlickrSet::get()->filter([
             'FlickrID' => $flickrSetID,
         ])->first();
@@ -68,7 +66,7 @@ class FlickrSetHelper extends FlickrHelper
         $controller = Controller::curr();
         $path = $controller->getRequest()->getVar('path');
         $parentNode = SiteTree::get_by_link($path);
-        if (is_null($parentNode)) {
+        if (\is_null($parentNode)) {
             \user_error("ERROR: Path ".$path." cannot be found in this site");
         }
 
@@ -125,7 +123,7 @@ class FlickrSetHelper extends FlickrHelper
             echo "Month: $month; Day: $day; Year: $year<br />\n";
 
             // now try and find a flickr set page
-            /** @var FlickrSetPage $flickrSetPage */
+            /** @var \Suilven\Flickr\Model\Site\FlickrSetPage $flickrSetPage */
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
             if (!isset($flickrSetPage)) {
                 \error_log('>>>> Creating flickr set page <<<<');
@@ -167,8 +165,6 @@ class FlickrSetHelper extends FlickrHelper
 
                 $flickrPhoto->write();
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
-
-
             }
 
             //update orientation
