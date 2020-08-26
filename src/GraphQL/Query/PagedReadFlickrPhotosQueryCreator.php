@@ -47,7 +47,7 @@ class PagedReadFlickrPhotosQueryCreator extends PaginatedQueryCreator
                 if (!$member->canView($context['currentUser'])) {
                     throw new \InvalidArgumentException(\sprintf(
                         '%s view access not permitted',
-                        Member::class,
+                        Member::class
                     ));
                 }
 

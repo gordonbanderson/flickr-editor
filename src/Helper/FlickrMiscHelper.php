@@ -29,7 +29,7 @@ class FlickrMiscHelper extends FlickrHelper
                     null,
                     null,
                     500,
-                    $pageCtr,
+                    $pageCtr
                 );
 
                 $pageCtr +=1;

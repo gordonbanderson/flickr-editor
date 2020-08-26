@@ -36,7 +36,7 @@ class FlickrUpdateMetaHelper extends FlickrHelper
             $phpFlickr->photos_geo_setLocation(
                 $flickrPhoto->FlickrID,
                 $flickrPhoto->getMappableLatitude(),
-                $flickrPhoto->getMappableLongitude(),
+                $flickrPhoto->getMappableLongitude()
             );
         }
 

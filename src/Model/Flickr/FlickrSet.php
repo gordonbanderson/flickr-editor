@@ -123,11 +123,11 @@ class FlickrSet extends DataObject
 
         $fields->addFieldToTab('Root.Main', new TextField(
             'ImageFooter',
-            'Text to be added to each image in this album when saving',
+            'Text to be added to each image in this album when saving'
         ));
         $fields->addFieldToTab('Root.Main', new CheckboxField(
             'LockGeo',
-            'If the map positions were calculated by GPS, tick this to hide map editing features',
+            'If the map positions were calculated by GPS, tick this to hide map editing features'
         ));
 
 
@@ -147,7 +147,7 @@ class FlickrSet extends DataObject
             "FlickrPhotos",
             "List of Photos:",
             $this->FlickrPhotos(),
-            $gridConfig,
+            $gridConfig
         );
         $fields->addFieldToTab("Root.FlickrPhotos", $gridField);
 
@@ -175,7 +175,7 @@ class FlickrSet extends DataObject
                 "FlickrBuckets",
                 "List of Buckets:",
                 $bucketsByDate,
-                $gridConfig2,
+                $gridConfig2
             );
             $fields->addFieldToTab("Root.SavedBuckets", $gridField2);
         }
@@ -210,15 +210,15 @@ class FlickrSet extends DataObject
 
         $fields->addFieldToTab('Root.Batch', new TextField(
             'BatchTitle',
-            'Batch Title',
+            'Batch Title'
         ));
         $fields->addFieldToTab('Root.Batch', new TextareaField(
             'BatchDescription',
-            'Batch Description',
+            'Batch Description'
         ));
         $fields->addFieldToTab('Root.Batch', new TextareaField(
             'BatchTags',
-            'Batch Tags',
+            'Batch Tags'
         ));
 
         $htmlBatch = "<p>Click on the batch update button to update the description and title of ' .

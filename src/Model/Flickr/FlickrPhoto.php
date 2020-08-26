@@ -391,7 +391,7 @@ class FlickrPhoto extends DataObject
         // quick tags, faster than the grid editor - these are processed prior to save to create/assign tags
         $fields->addFieldToTab('Root.Main', new TextField(
             'QuickTags',
-            'Enter tags here separated by commas',
+            'Enter tags here separated by commas'
         ));
 
         //->addComponent( new GridFieldSortableRows( 'Value' ) );

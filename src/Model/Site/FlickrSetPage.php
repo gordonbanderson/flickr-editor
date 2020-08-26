@@ -113,7 +113,7 @@ class FlickrSetPage extends \Page
 
         $fields->addFieldToTab('Root.Main', new HTMLEditorField(
             'Description',
-            'Description',
+            'Description'
         ), 'Content');
 
         return $fields;

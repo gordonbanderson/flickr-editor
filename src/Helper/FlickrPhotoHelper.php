@@ -189,7 +189,7 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->write();
 
         \error_log(
-            'Written photo object',
+            'Written photo object'
         );
 
         foreach ($singlePhotoInfo['tags']['tag'] as $taginfo) {

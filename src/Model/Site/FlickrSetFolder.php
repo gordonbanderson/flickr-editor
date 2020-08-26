@@ -45,8 +45,8 @@ class FlickrSetFolder extends \Page
             new FlickrPhotoSelectionField(
                 'MainFlickrPhotoID',
                 'Cover Photo',
-                $this->MainFlickrPhoto(),
-            ),
+                $this->MainFlickrPhoto()
+            )
         );
 
 

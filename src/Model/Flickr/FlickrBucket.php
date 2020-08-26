@@ -77,25 +77,25 @@ class FlickrBucket extends DataObject
         $lf = new LiteralField(
             '<p>Instructions',
             'All of the images in this bucket will have the same information that you ' .
-            'enter here</p>',
+            'enter here</p>'
         );
         $fields->push($lf);
 
         $fields->addFieldToTab('Root.Main', $lf);
         $fields->addFieldToTab('Root.Main', new TextField(
             'Title',
-            'Bucket Title',
+            'Bucket Title'
         ));
         $fields->addFieldToTab('Root.Main', new TextareaField(
             'Description',
-            'Bucket Description',
+            'Bucket Description'
         ));
 
         // quick tags, faster than the grid editor - these are processed prior to save to
         // create/assign tags
         $fields->addFieldToTab('Root.Main', new TextField(
             'QuickTags',
-            'Quick tags - enter tags here separated by commas',
+            'Quick tags - enter tags here separated by commas'
         ));
 
         $lf2 = new LiteralField('ImageStrip', $this->getImageStrip());
