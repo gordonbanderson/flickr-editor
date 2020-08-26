@@ -33,6 +33,8 @@ class FlickrBatchHelper extends FlickrHelper
             //$possibleTags = DataList::create('FlickrTag')->where("Value='".$lowerCaseTag."'")
             $possibleTags = FlickrTag::get()->filter(['Value' => $lowerCaseTag]);
 
+            /** @var FlickrTag $tag */
+            $tag = null;
             if ($possibleTags->count() === 0) {
                 $tag = new FlickrTag();
                 $tag->Value = $lowerCaseTag;

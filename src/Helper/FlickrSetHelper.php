@@ -26,16 +26,17 @@ class FlickrSetHelper extends FlickrHelper
      */
     public function getOrCreateFlickrSet(string $flickrSetID): \Suilven\Flickr\Model\Flickr\FlickrSet
     {
-        // do we have a set object or not
+        /** @var FlickrSet $flickrSet */
         $flickrSet = FlickrSet::get()->filter([
             'FlickrID' => $flickrSetID,
         ])->first();
 
 
         // if a set exists update data, otherwise create
-        if (!$flickrSet) {
+        if (!isset($flickrSet)) {
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
+            /** @var array<string,string> $setInfo */
             $setInfo = $setsHelper->getInfo($flickrSetID, null);
 
             $setTitle = $setInfo['title'];
@@ -67,10 +68,9 @@ class FlickrSetHelper extends FlickrHelper
         $controller = Controller::curr();
         $path = $controller->getRequest()->getVar('path');
         $parentNode = SiteTree::get_by_link($path);
-        if ($parentNode === null) {
+        if (is_null($parentNode)) {
             \user_error("ERROR: Path ".$path." cannot be found in this site");
         }
-
 
         $climate->info('Getting flickr set ' . $flickrSetID);
 
@@ -86,12 +86,14 @@ class FlickrSetHelper extends FlickrHelper
 
         while ($page <= $pages) {
             $photosetsApi = new PhotosetsApi($phpFlickr);
+
+            /** @var array<array> $photoset */
             $photoset = $photosetsApi->getPhotos(
                 $flickrSetID,
                 null,
                 $extras,
                 $perPage,
-                $page,
+                $page
             );
 
             $page++;
@@ -101,8 +103,6 @@ class FlickrSetHelper extends FlickrHelper
             $climate->info('PAGES: ' . $pages);
 
             // @todo Deal with non existent id gracefully
-            // Reload from the database
-            $flickrSet = FlickrSet::get()->filter(['FlickrID' => $flickrSetID])->first();
 
             // @todo This makes the assumption that sets are ordered oldest first.  Refactor this
             $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
@@ -115,7 +115,7 @@ class FlickrSetHelper extends FlickrHelper
             // @todo This was a hack and may not be necessary now
             if ($flickrSet->Title === null) {
                 echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
-                null();
+                exit(1);
             }
 
             $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
@@ -125,8 +125,9 @@ class FlickrSetHelper extends FlickrHelper
             echo "Month: $month; Day: $day; Year: $year<br />\n";
 
             // now try and find a flickr set page
+            /** @var FlickrSetPage $flickrSetPage */
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
-            if (!$flickrSetPage) {
+            if (!isset($flickrSetPage)) {
                 \error_log('>>>> Creating flickr set page <<<<');
                 $flickrSetPage = new FlickrSetPage();
                 $flickrSetPage->Title = $photoset['title'];
@@ -154,7 +155,7 @@ class FlickrSetHelper extends FlickrHelper
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
-                if (!$flickrPhoto) {
+                if (!isset($flickrPhoto)) {
                     $ctr++;
 
                     continue;
@@ -168,80 +169,6 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
 
 
-                if (!$flickrPhoto->LocalCopyOfImage) {
-                    //mkdir appears to be relative to teh sapphire dir
-                    $structure = "../assets/flickr/$year/$month/$day/".$flickrSetID;
-
-                    if (!\file_exists('../assets/flickr')) {
-                        echo "Creating path:".$structure;
-
-                        /*
-                        // To create the nested structure, the $recursive parameter
-                        // to mkdir() must be specified.
-
-                        if (!mkdir($structure, 0, true)) {
-                         //   die('Failed to create folders...');
-                        }
-
-                        $cmd = "chown  gordon:www-data $structure";
-                        exec($cmd);
-
-                        $cmd = "chown gordon:www-data ../assets/Uploads/flickr";
-                        exec($cmd);
-
-                        exec('chmod 775 ../assets/Uploads/flickr');
-                        exec("chmod 775 $structure");
-
-
-                        error_log("Created dir?");
-                    } else {
-                        echo "Dir already exists";
-                    }
-
-
-                    */
-                        $galleries = Folder::find_or_make('flickr');
-                        $galleries->Title = 'Flickr Images';
-                        $galleries->write();
-                        $galleries = null;
-                    }
-
-                    $download_images = Config::inst()->get($this->class, 'download_images');
-
-                    if ($download_images && !($flickrPhoto->LocalCopyOfImageID)) {
-                        $largeURL = $flickrPhoto->LargeURL;
-                        $fpid = $flickrPhoto->FlickrID;
-
-                        $cmd = "wget -O $structure/$fpid.jpg $largeURL";
-                        \exec($cmd);
-
-                        $cmd = "chown  gordon:www-data $structure/$fpid.jpg";
-                        // $cmd = "pwd";
-                        echo "EXECCED:".\exec($cmd);
-
-                        $image = new Image();
-                        $image->Name = $this->Title;
-                        $image->Title = $this->Title;
-                        $image->Filename = \str_replace('../', '', $structure.'/'.$fpid.".jpg");
-                        $image->Title = $flickrPhoto->Title;
-                        //$image->Name = $flickrPhoto->Title;
-                        $image->ParentID = $flickrSetAssetFolderID;
-                        \gc_collect_cycles();
-
-                        $image->write();
-                        \gc_collect_cycles();
-
-                        $flickrPhoto->LocalCopyOfImageID = $image->ID;
-                        $flickrPhoto->write();
-                        $image = null;
-                    }
-
-                    $flickrPhoto->write();
-                }
-
-                $ctr++;
-
-                $flickrPhoto = null;
             }
 
             //update orientation
@@ -264,7 +191,7 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
 
 
-                if (!$flickrPhoto->Aperture) {
+                if (!isset($flickrPhoto->Aperture)) {
                     $exifHelper->loadExif($flickrPhoto);
                     $flickrPhoto->write();
                 } else {

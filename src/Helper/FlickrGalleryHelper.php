@@ -87,7 +87,7 @@ class FlickrGalleryHelper extends FlickrHelper
                 $flickrSetID,
                 $extras,
                 $perPage,
-                $page,
+                $page
             )['photos'];
 
             $page++;
