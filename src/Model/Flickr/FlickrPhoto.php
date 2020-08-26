@@ -21,6 +21,7 @@ use SilverStripe\ORM\FieldType\DBDate;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\Requirements;
+use Smindel\GIS\Forms\MapField;
 use Suilven\Flickr\Helper\FlickrTagHelper;
 use Suilven\Flickr\Helper\FlickrUpdateMetaHelper;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
@@ -95,10 +96,10 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
  * @property int $PhotographerID
  * @method \SilverStripe\Assets\Image LocalCopyOfImage()
  * @method \Suilven\Flickr\Model\Flickr\FlickrAuthor Photographer()
- * @method \SilverStripe\ORM\DataList|array<\Suilven\Flickr\Model\Flickr\FlickrExif> Exifs()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrTag> FlickrTags()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrBucket> FlickrBuckets()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrSet> FlickrSets()
+ * @method \SilverStripe\ORM\DataList Exifs()
+ * @method \SilverStripe\ORM\ManyManyList FlickrTags()
+ * @method \SilverStripe\ORM\ManyManyList FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyListFlickrSets()
  */
 class FlickrPhoto extends DataObject
 {
@@ -172,25 +173,19 @@ class FlickrPhoto extends DataObject
         'UploadUnixTimeStamp' => 'Int',
         'PerceptiveHash' => 'Varchar(64)',
         'Visible' => 'Boolean',
+        'Location' => 'Geometry',
 
 
         //TODO - place id
     ];
 
-    /*
- * s	small square 75x75
-q   large square 150x150
-t   thumbnail, 100 on longest side
-m   small, 240 on longest side
-n   small, 320 on longest side
--   medium, 500 on longest side
-z   medium 640, 640 on longest side
-c   medium 800, 800 on longest side†
-b   large, 1024 on longest side*
-h   large 1600, 1600 on longest side†
-k   large 2048, 2048 on longest side†
-o   original image, either a jpg, gif or png, depending on source format
- */
+    /** @var bool */
+    private static $geojsonservice = true;
+
+    /** @var array<string,int> */
+    private static $webmaptileservice = [
+        'cache_ttl' => 3600,
+    ];
 
     /** @var array<string,string> */
     private static $belongs_many_many = [
@@ -262,7 +257,7 @@ o   original image, either a jpg, gif or png, depending on source format
     public function HorizontalMargin(int $intendedWidth): int
     {
         //FIXME - is there a way to avoid a database call here?
-        /** @var FlickrPhoto $fp */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $fp */
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
         $vh = ($intendedWidth - $fp->ThumbnailWidth) / 2;
@@ -328,10 +323,9 @@ o   original image, either a jpg, gif or png, depending on source format
 
         // this worked in SS3, but not SS4
         // @todo Figure out how to get the ID of set, other than URL hacking
-        $flickrSetID = Controller::curr()->request->param('ID');
+        $flickrSetID = Controller::curr()->getRequest()->param('ID');
 
         $fields = new FieldList();
-
 
         $fields->push(new TabSet("Root", $mainTab = new Tab("Main")));
         $mainTab->setTitle(\_t('SiteTree.TABMAIN', "Main"));
@@ -361,17 +355,15 @@ o   original image, either a jpg, gif or png, depending on source format
             }
         }
 
+        /** @var \Smindel\GIS\Forms\MapField|null $mapField */
+        $mapField = null;
         if (!$lockgeo) {
             $fields->addFieldToTab(
-                "Root.Location",
-                $mapField = new LatLongField(
-                    [
-                        new TextField('Lat', 'Latitude'),
-                        new TextField('Lon', 'Longitude'),
-                        new TextField('ZoomLevel', 'Zoom'),
-                    ],
-                    ['Address'],
-                ),
+                'Root.Location',
+                MapField::create('Location')
+                    ->setControl('polyline', false)
+                    ->enableMulti(true),
+                'Content'
             );
 
 
@@ -391,7 +383,8 @@ o   original image, either a jpg, gif or png, depending on source format
             }
 
             if (\count($guidePoints) > 0) {
-                $mapField->setGuidePoints($guidePoints);
+                // @TODO Show guidepoints
+               // $mapField->setGuidePoints($guidePoints);
             }
         }
 
@@ -403,14 +396,16 @@ o   original image, either a jpg, gif or png, depending on source format
 
         //->addComponent( new GridFieldSortableRows( 'Value' ) );
         $gridConfig = GridFieldConfig_RelationEditor::create();
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->
-        setSearchFields(['Value', 'RawValue']);
+
+        /** @var \SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields(['Value', 'RawValue']);
         $gridField = new GridField("Tags", "List of Tags", $this->FlickrTags(), $gridConfig);
         $fields->addFieldToTab("Root.Main", $gridField);
 
         $fields->addFieldToTab("Root.Main", new CheckboxField(
             'PromoteToHomePage',
-            'Promote to Home Page',
+            'Promote to Home Page'
         ));
 
         return $fields;

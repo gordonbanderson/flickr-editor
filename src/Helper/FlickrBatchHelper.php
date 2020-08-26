@@ -8,7 +8,6 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 class FlickrBatchHelper extends FlickrHelper
 {
     /**
-     * @param \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet
      * @param array<string> $batchTags
      * @return int the number of photos updated
      * @throws \SilverStripe\ORM\ValidationException

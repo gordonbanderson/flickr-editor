@@ -4,15 +4,13 @@ namespace Suilven\Flickr\Controller;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\SS_List;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Class \Suilven\Flickr\Controller\FlickrSetPageController
  */
 class FlickrSetPageController extends \PageController
 {
-    /** @var DataList<FlickrPhoto> */
+    /** @var \SilverStripe\ORM\DataList<\Suilven\Flickr\Model\Flickr\FlickrPhoto> */
     private $FlickrPics;
 
     public function FlickrPhotos(): ?DataList
@@ -39,7 +37,7 @@ class FlickrSetPageController extends \PageController
             $result[$fp->ID] = $fp->LargeURL;
         }
 
-        return \json_encode($result);
+        return (string) \json_encode($result);
     }
 
 

@@ -38,7 +38,7 @@ class FlickrExifHelper extends FlickrHelper
             switch ($exif->Tag) {
                 case 'FocalLength':
                     $raw = \str_replace(' mm', '', $exif->Raw);
-                    $focalLength35 = intval($raw);
+                    $focalLength35 = \intval($raw);
                     // model focal length
                     $flickrPhoto->FocalLength35mm = $focalLength35;
 

@@ -172,7 +172,6 @@ class FlickrPhotoHelper extends FlickrHelper
         // If no photo data return null
         if ($singlePhotoInfoOrNull === false) {
             return null;
-
         }
 
         /** @var array $singlePhotoInfo */

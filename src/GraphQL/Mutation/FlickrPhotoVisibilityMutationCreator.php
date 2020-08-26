@@ -51,7 +51,7 @@ class FlickrPhotoVisibilityMutationCreator extends MutationCreator implements Op
             throw new \InvalidArgumentException('ID parameter is required');
         }
 
-        /** @var FlickrPhoto $flickrPhoto */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
         $flickrPhoto = DataObject::get_by_id(FlickrPhoto::class, $args['ID']);
         $flickrPhoto->Visible = !$flickrPhoto->Visible;
         $flickrPhoto->write();
