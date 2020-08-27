@@ -11,7 +11,7 @@ class FlickrMiscHelper extends FlickrHelper
     public function fixSetMainImages(): void
     {
         $sets = FlickrSet::get()->filter(['PrimaryFlickrPhotoID' => 0]);
-        $photosHelper = $this->getPhotoSetsHelper();
+        $photoSetsHelper = $this->getPhotoSetsHelper();
 
         /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $set */
         foreach ($sets as $set) {
@@ -24,7 +24,7 @@ class FlickrMiscHelper extends FlickrHelper
                 \error_log('Page CTR: ' . $pageCtr);
                 \error_log('SET ID: ' . $flickrSetID);
 
-                $photos = $photosHelper->getPhotos(
+                $photos = $photoSetsHelper->getPhotos(
                     $flickrSetID,
                     null,
                     null,

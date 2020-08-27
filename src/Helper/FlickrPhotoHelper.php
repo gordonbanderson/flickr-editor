@@ -30,8 +30,6 @@ class FlickrPhotoHelper extends FlickrHelper
         }
 
         if ($flickrPhoto->Imported) {
-            \error_log('Skipping import, already done');
-
             return null;
         }
 
@@ -188,9 +186,6 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->Imported = true;
         $flickrPhoto->write();
 
-        \error_log(
-            'Written photo object'
-        );
 
         foreach ($singlePhotoInfo['tags']['tag'] as $taginfo) {
             \error_log('TAG');

@@ -153,17 +153,18 @@ class FlickrSetHelper extends FlickrHelper
 
 
             $numberOfPics = \count($photoset['photo']);
+            $progress = $climate->progress()->total($numberOfPics);
+
             $ctr = 0;
 
             $photoHelper = new FlickrPhotoHelper();
             foreach ($photoset['photo'] as $value) {
                 $ctr++;
-                echo "Importing photo {$ctr}/${numberOfPics}\n";
+                $progress->current($ctr);
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
                 if (!$flickrPhoto) {
-                    error_log('not set, skipping');
                     continue;
                 }
 
@@ -179,16 +180,20 @@ class FlickrSetHelper extends FlickrHelper
             $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
             DB::query($sql);
 
-
             // now download exifs
             $ctr = 0;
             $exifHelper = new FlickrExifHelper();
 
-            \error_log('++++ EXIF ++++');
+            $climate->border();
+            $climate->green('Importing EXIF');
+            $climate->border();
+
+            $progress = $climate->progress()->total(count($photoset['photo']));
+
 
 
             foreach ($photoset['photo'] as $value) {
-                echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
+                $progress->current($ctr);
                 $flickrPhotoID = $value['id'];
 
                 /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
@@ -198,8 +203,7 @@ class FlickrSetHelper extends FlickrHelper
                 if (!isset($flickrPhoto->Aperture)) {
                     $exifHelper->loadExif($flickrPhoto);
                     $flickrPhoto->write();
-                } else {
-                    \error_log('ALREADY IMPORTED');
+
                 }
 
                 $ctr++;
@@ -209,8 +213,9 @@ class FlickrSetHelper extends FlickrHelper
 
 
         $miscHelper = new FlickrMiscHelper();
-        $miscHelper->fixSetMainImages();
         // @todo this is borked
+        //$miscHelper->fixSetMainImages();
+
         // $miscHelper->fixDateSetTaken();
     }
 }
