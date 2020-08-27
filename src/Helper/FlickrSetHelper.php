@@ -20,18 +20,19 @@ class FlickrSetHelper extends FlickrHelper
      * and add it to the database
      *
      * @param string $flickrSetID the flickr set id
+     * @return FlickrSet|null
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrSet(string $flickrSetID): \Suilven\Flickr\Model\Flickr\FlickrSet
+    public function getOrCreateFlickrSet(string $flickrSetID)
     {
-        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $flickrSet */
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet|null  $flickrSet */
         $flickrSet = FlickrSet::get()->filter([
             'FlickrID' => $flickrSetID,
         ])->first();
 
 
         // if a set exists update data, otherwise create
-        if (!isset($flickrSet)) {
+        if (!is_null($flickrSet)) {
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             /** @var array<string,string> $setInfo */
@@ -42,7 +43,6 @@ class FlickrSetHelper extends FlickrHelper
             $flickrSet->Title = $setTitle;
             $flickrSet->Description = $setDescription;
             $flickrSet->FlickrID = $flickrSetID;
-            $flickrSet->KeepClean = true;
             $flickrSet->write();
         }
 

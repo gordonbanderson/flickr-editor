@@ -30,6 +30,7 @@ class FlickrSetTypeCreator extends TypeCreator
     public function fields(): array
     {
         $photosConnection = Connection::create('FlickrPhotos')
+            // @phpstan-ignore-next-line
             ->setConnectionType($this->manager->getType('flickrphoto'))
             ->setDescription('The photos in this flickr set')
             ->setSortableFields(['ID', 'Title'])

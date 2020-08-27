@@ -14,7 +14,7 @@ class FlickrUpdateMetaHelper extends FlickrHelper
      */
     public function writePhotoToFlickr(FlickrPhoto $flickrPhoto, string $descriptionSuffix): void
     {
-        $apiHelper = $this->getPhotosAPIHelper();
+        $apiHelper = $this->getPhotosHelper();
         // needed for location
         $phpFlickr = $this->getPhpFlickr();
 
@@ -23,24 +23,30 @@ class FlickrUpdateMetaHelper extends FlickrHelper
 
         $year = \substr($flickrPhoto->TakenAt, 0, 4);
         $fullDesc = \str_replace('$Year', $year, $fullDesc);
-        $apiHelper->setMeta($flickrPhoto->FlickrID, $flickrPhoto->Title, $fullDesc);
+
+        /** @var int $flickrIDAsInt */
+        $flickrIDAsInt = intval($flickrPhoto->FlickrID);
+        $apiHelper->setMeta($flickrIDAsInt, $flickrPhoto->Title, $fullDesc);
 
         $tagString = '';
         foreach ($flickrPhoto->FlickrTags() as $tag) {
             $tagString .= '"'.$tag->Value.'" ';
         }
 
-        $apiHelper->setTags($flickrPhoto->FlickrID, $tagString);
+        $apiHelper->setTags($flickrIDAsInt, $tagString);
 
         if ($flickrPhoto->HasGeo()) {
+            // @TODO Use FLickrPhotosGeoHelper instead
+            // @TODO smindel/gis coordinates
+            /*
             $phpFlickr->photos_geo_setLocation(
                 $flickrPhoto->FlickrID,
                 $flickrPhoto->getMappableLatitude(),
                 $flickrPhoto->getMappableLongitude()
             );
+            */
         }
 
-        $flickrPhoto->KeepClean = true;
         $flickrPhoto->write();
     }
 }

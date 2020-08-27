@@ -99,7 +99,7 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
  * @method \SilverStripe\ORM\DataList Exifs()
  * @method \SilverStripe\ORM\ManyManyList FlickrTags()
  * @method \SilverStripe\ORM\ManyManyList FlickrBuckets()
- * @method \SilverStripe\ORM\ManyManyListFlickrSets()
+ * @method \SilverStripe\ORM\ManyManyList FlickrSets()
  */
 class FlickrPhoto extends DataObject
 {
@@ -223,8 +223,7 @@ class FlickrPhoto extends DataObject
     //helper methods to ensure that URLs are of the form //path/to/image so that http and https
     //  work with console warnings
 
-    /** @return string|array<string> */
-    public function ProtocolAgnosticLargeURL()
+    public function ProtocolAgnosticLargeURL(): string
     {
         return $this->stripProtocol($this->LargeURL);
     }
@@ -275,7 +274,7 @@ class FlickrPhoto extends DataObject
 
     public function VerticalMargin(int $intendedHeight): int
     {
-        //FIXME - is there a way to avoid a database call here?
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $fp */
         $fp = DataObject::get_by_id(FlickrPhoto::class, $this->ID);
 
         $vm = ($intendedHeight - $fp->ThumbnailHeight) / 2;
@@ -312,7 +311,7 @@ class FlickrPhoto extends DataObject
             $this->AspectRatio = ($this->LargeHeight) / ($this->LargeWidth);
         }
 
-        $this->IsDirty = !$this->KeepClean;
+        $this->IsDirty = true;
     }
 
 
@@ -336,7 +335,7 @@ class FlickrPhoto extends DataObject
             //SS ID
             'FlickrSetID' => $flickrSetID,
         ]);
-        $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing');
+        $imageHtml = $forTemplate->renderWith('Includes/FlickrImageEditing')->HTML();
 
 
         $lfImage = new LiteralField('FlickrImage', $imageHtml);

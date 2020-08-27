@@ -13,6 +13,7 @@ use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBField;
+use Smindel\GIS\Forms\MapField;
 use Suilven\Flickr\Helper\FlickrTagHelper;
 
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -29,8 +30,8 @@ use Suilven\Flickr\Helper\FlickrTagHelper;
  * @property string $TagsCSV
  * @property int $FlickrSetID
  * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSet()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrTag> FlickrTags()
- * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrPhoto> FlickrPhotos()
+ * @method \SilverStripe\ORM\ManyManyList FlickrTags()
+ * @method \SilverStripe\ORM\ManyManyList FlickrPhotos()
  */
 class FlickrBucket extends DataObject
 {
@@ -43,8 +44,11 @@ class FlickrBucket extends DataObject
         'Description' => 'Text',
 
         // use precision 15 and 10 decimal places for coordinates
-        'Lat' => 'Decimal(18,15)',
-        'Lon' => 'Decimal(18,15)',
+  //      'Lat' => 'Decimal(18,15)',
+  //      'Lon' => 'Decimal(18,15)',
+
+        'Location' => 'Geometry',
+
 
         'Accuracy' => 'Int',
         'ZoomLevel' => 'Int',
@@ -66,6 +70,8 @@ class FlickrBucket extends DataObject
     /** @var array<string,string> */
     private static $many_many = ['FlickrTags' => FlickrTag::class];
 
+    /** @var bool  */
+    private $virginal = true;
 
     public function getCMSFields(): FieldList
     {
@@ -98,20 +104,17 @@ class FlickrBucket extends DataObject
             'Quick tags - enter tags here separated by commas'
         ));
 
-        $lf2 = new LiteralField('ImageStrip', $this->getImageStrip());
+        $lf2 = new LiteralField('ImageStrip', $this->getImageStrip()->HTML());
         $fields->push($lf2);
 
         $lockgeo = $this->GeoLocked();
 
         if (!$lockgeo) {
-            $mapField = new LatLongField([
-                new TextField('Lat', 'Latitude'),
-                new TextField('Lon', 'Longitude'),
-                new TextField('ZoomLevel', 'Zoom'),
-            ], [
-                'Address',
-            ]);
+            $mapField = MapField::create('Location')
+                ->setControl('polyline', false)
+                ->enableMulti(true);
 
+            /*
             $guidePoints = [];
             foreach ($this->FlickrSet()->FlickrPhotos()->where('Lat != 0 and Lon != 0') as $fp) {
                 if (($fp->Lat === 0) || ($fp->Lon === 0)) {
@@ -125,11 +128,9 @@ class FlickrBucket extends DataObject
             }
 
             if (\count($guidePoints) > 0) {
-                $mapField->setGuidePoints($guidePoints);
+               /$mapField->setGuidePoints($guidePoints);
             }
-
-            $locationTab = $fields->findOrMakeTab('Root.Location');
-            $locationTab->extraClass('mappableLocationTab');
+            */
 
             $fields->addFieldToTab('Root.Location', $mapField);
         }
@@ -137,7 +138,10 @@ class FlickrBucket extends DataObject
 
         //->addComponent( new GridFieldSortableRows( 'Value' ) );
         $gridConfig = GridFieldConfig_RelationEditor::create();
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields([
+
+        /** @var GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields([
             'Value',
             'RawValue',
         ]);
@@ -196,12 +200,14 @@ class FlickrBucket extends DataObject
         $quickTags = $tagHelper->createOrFindTags($this->QuickTags);
         $this->FlickrTags()->addMany($quickTags);
 
-        if ($this->ID && ($this->FlickrPhotos()->count() > 0)) {
+        if (($this->ID !== 0) && ($this->FlickrPhotos()->count() > 0)) {
             if ($this->Title === '') {
+                // the null case has already been checked on
+                // @phpstan-ignore-next-line
                 $this->Title = $this->FlickrPhotos()->first()->TakenAt . ' - ' . $this->FlickrPhotos()->last()->TakenAt;
             }
         } else {
-            $this->Virginal = true;
+            $this->virginal = true;
         }
     }
 
@@ -215,7 +221,7 @@ class FlickrBucket extends DataObject
 
         // if the title is blank resave in order to create a time from / time to title
         // this needs checked here as on before write cannot do this when the bucket has not been saved
-        if ($this->Title === '' && !isset($this->Virginal)) {
+        if ($this->Title === '' && !isset($this->virginal)) {
             $this->write();
         }
 
