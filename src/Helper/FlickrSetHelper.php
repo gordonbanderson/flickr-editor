@@ -30,9 +30,12 @@ class FlickrSetHelper extends FlickrHelper
             'FlickrID' => $flickrSetID,
         ])->first();
 
+        error_log('T1 - FS NULL=' . is_null($flickrSet));
+
 
         // if a set exists update data, otherwise create
-        if (!is_null($flickrSet)) {
+        if (is_null($flickrSet)) {
+            error_log('T2');
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             /** @var array<string,string> $setInfo */
@@ -75,6 +78,8 @@ class FlickrSetHelper extends FlickrHelper
         $fshelper = new FlickrSetHelper();
         $flickrSet = $fshelper->getOrCreateFlickrSet($flickrSetID);
 
+        error_log('FSID: ' . print_r($flickrSet, true));
+
         // see https://www.flickr.com/services/api/misc.urls.html for URL sizes
         $extras = 'license, date_upload, date_taken, owner_name, icon_server, original_format, ' .
             ' last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_t, url_s,' .
@@ -96,16 +101,19 @@ class FlickrSetHelper extends FlickrHelper
 
             $page++;
 
-            $climate->info(\print_r($photoset, 1));
+            $climate->info(\print_r($photoset, true));
             $pages = $photoset['pages'];
             $climate->info('PAGES: ' . $pages);
 
             // @todo Deal with non existent id gracefully
 
             // @todo This makes the assumption that sets are ordered oldest first.  Refactor this
-            $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
             $flickrSet->KeepClean = true;
             $flickrSet->Title = $photoset['title'];
+
+            $firstPicTakenAt = $photoset['photo'][0]['datetaken'];
+            error_log('First pic taken at ' . $firstPicTakenAt);
+            $flickrSet->FirstPictureTakenAt = $firstPicTakenAt;
             $flickrSet->write();
 
             $climate->info("Title set to : ".$flickrSet->Title);
@@ -145,17 +153,17 @@ class FlickrSetHelper extends FlickrHelper
 
 
             $numberOfPics = \count($photoset['photo']);
-            $ctr = 1;
+            $ctr = 0;
 
             $photoHelper = new FlickrPhotoHelper();
             foreach ($photoset['photo'] as $value) {
+                $ctr++;
                 echo "Importing photo {$ctr}/${numberOfPics}\n";
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
-                if (!isset($flickrPhoto)) {
-                    $ctr++;
-
+                if (!$flickrPhoto) {
+                    error_log('not set, skipping');
                     continue;
                 }
 

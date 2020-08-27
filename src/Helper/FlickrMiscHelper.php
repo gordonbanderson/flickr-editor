@@ -36,7 +36,7 @@ class FlickrMiscHelper extends FlickrHelper
 
 
                 \error_log('================================');
-                \error_log(\print_r($photos, 1));
+                \error_log(\print_r($photos, true));
 
                 //print_r($photos);
                 $photoset = $photos['photo'];
