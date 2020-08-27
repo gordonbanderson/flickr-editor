@@ -2,8 +2,10 @@
 
 namespace Suilven\Flickr;
 
+use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\View\Requirements;
+use SilverStripe\View\ViewableData;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 // These are for the FieldHolder method
@@ -21,7 +23,7 @@ class FlickrPhotoSelectionField extends HiddenField
 {
 
     /** @var int */
-    protected $maxLength;
+    protected $maxLength = 30;
 
     /** @var string */
     protected $flickrTitle;
@@ -29,24 +31,25 @@ class FlickrPhotoSelectionField extends HiddenField
     /** @var string */
     protected $flickrID;
 
+    /** @var string  */
+    protected $mediumURL;
+
     /**
      * FlickrPhotoSelectionField constructor.
-     *
-     * @param \SilverStripe\Forms\Form|null $form
+     * @param string $name The internal field name, passed to forms.
+     * @param null|string|ViewableData $title The human-readable field label.
+     * @param mixed $value A FlickrPhoto, if one has previously been chosen
      */
     public function __construct(
-        string $name,
-        ?string $title = null,
-        ?FlickrPhoto $flickrPhoto = null,
-        ?int $maxLength = null,
-        ?Form $form = null
+         $name,
+         $title = null,
+         $value = null
     ) {
-        $this->maxLength = $maxLength;
-
         parent::setTemplate('FLickrPhotoSelectionField');
 
-        $value = '';
-        if ($flickrPhoto) {
+        if (!is_null($value)) {
+            /** @var FlickrPhoto $flickrPhoto */
+            $flickrPhoto = $value;
             $value = $flickrPhoto->ID;
             $this->flickrTitle = $flickrPhoto->Title;
             $this->flickrID = $flickrPhoto->FlickrID;
@@ -55,7 +58,9 @@ class FlickrPhotoSelectionField extends HiddenField
 
         $this->addExtraClass('flickrPhotoSelectionField');
 
-        parent::__construct($name, $title, $value, $form);
+        // @TODO is this a bug in the SilverStripe phpdoc?
+        // @phpstan-ignore-next-line
+        parent::__construct($name, $title, $value);
     }
 
 
@@ -65,7 +70,7 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    public function getFlickrID(): int
+    public function getFlickrID(): string
     {
         return $this->flickrID;
     }
@@ -92,14 +97,15 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    /** @return array<string,string|int|float|bool|null> */
+    /** @return array<int|string, mixed> */
     public function getAttributes(): array
     {
         return \array_merge(
             parent::getAttributes(),
             [
                 'maxlength' => $this->getMaxLength(),
-                'size' => ($this->getMaxLength()) ? \min($this->getMaxLength(), 30) : null,
+                // @TODO is this correct logic?
+                'size' => ($this->getMaxLength() == 0) ? \min($this->getMaxLength(), 30) : null,
             ]
         );
     }
@@ -108,7 +114,7 @@ class FlickrPhotoSelectionField extends HiddenField
     /** @return \SilverStripe\ORM\FieldType\DBField|\SilverStripe\ORM\FieldType\DBHTMLText */
     public function InternallyLabelledField()
     {
-        if (!$this->value) {
+        if (is_null($this->value)) {
             $this->value = $this->Title();
         }
 
@@ -116,8 +122,8 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    /** @inheritdoc  */
-    public function FieldHolder( $properties = []): string
+    /** @inheritdoc */
+    public function FieldHolder($properties = []): string
     {
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
 
