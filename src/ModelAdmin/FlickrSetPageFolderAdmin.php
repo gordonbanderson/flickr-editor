@@ -9,9 +9,8 @@ use SilverStripe\ORM\DataList;
 use SilverStripe\View\Requirements;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
 
-// @phpcs:disable
-// @phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
-
+//@phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
+//@phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 /**
  * Class \Suilven\Flickr\ModelAdmin\FlickrSetPageFolderAdmin
  */
@@ -33,13 +32,13 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
     private static $menu_icon = 'weboftalent/flickr:icons/folders.png';
 
     /**
-     * @param HTTPRequest $request Passed if executing a HTTPRequest directly on the form.
-     * If empty, this is invoked as $EditForm in the template
-     * @return Form Should return a form regardless wether a record has been found.
-     *  Form might be readonly if the current user doesn't have the permission to edit
-     *  the record.
+     * @param \SilverStripe\Control\HTTPRequest $request Passed if executing a HTTPRequest directly on the form.
+ * If empty, this is invoked as $EditForm in the template
+     * @return \SilverStripe\Forms\Form Should return a form regardless wether a record has been found.
+ * Form might be readonly if the current user doesn't have the permission to edit
+ * the record.
      */
-    public function EditForm($request = null)
+    public function EditForm(?HTTPRequest $request = null): Form
     {
 
         $form = parent::EditForm($request);
