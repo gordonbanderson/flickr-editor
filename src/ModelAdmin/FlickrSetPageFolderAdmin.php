@@ -38,7 +38,7 @@ class FlickrSetPageFolderAdmin extends ModelAdmin
  * Form might be readonly if the current user doesn't have the permission to edit
  * the record.
      */
-    public function EditForm(?HTTPRequest $request = null): Form
+    public function EditForm($request = null): \SilverStripe\Forms\Form
     {
 
         $form = parent::EditForm($request);
