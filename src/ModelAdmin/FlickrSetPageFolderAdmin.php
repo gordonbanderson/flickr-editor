@@ -11,6 +11,7 @@ use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 //@phpcs:disable SlevomatCodingStandard.Namespaces.UnusedUses.UnusedUse
 //@phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+//@phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
 /**
  * Class \Suilven\Flickr\ModelAdmin\FlickrSetPageFolderAdmin
  */
