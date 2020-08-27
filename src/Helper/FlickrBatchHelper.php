@@ -44,6 +44,7 @@ class FlickrBatchHelper extends FlickrHelper
                 $tag = $possibleTags->first();
             }
 
+            // @phpstan-ignore-next-line
             \array_push($tags, $tag->ID);
         }
 

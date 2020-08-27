@@ -5,8 +5,9 @@ namespace Suilven\Flickr;
 use SilverStripe\Forms\GridField\GridField_HTMLProvider;
 use SilverStripe\View\ArrayData;
 
-// @phpcs:disable
-
+//@phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
+//@phpcs:disable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification
+//@phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
 /**
  * GridFieldExifData displays read only exif data for a Flickr photograph
  *
@@ -31,10 +32,10 @@ class GridFieldFlickrImage implements GridField_HTMLProvider
      * If you attempt to return HTML for a fragment that doesn't exist, an
      * exception will be thrown when the {@link GridField} is rendered.
      *
-     * @param GridField $gridField
+     * @param \SilverStripe\Forms\GridField\GridField $gridField
      * @return array
      */
-    public function getHTMLFragments($gridField)
+    public function getHTMLFragments($gridField): array
     {
         $forTemplate = new ArrayData([]);
 
