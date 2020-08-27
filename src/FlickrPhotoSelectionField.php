@@ -116,8 +116,8 @@ class FlickrPhotoSelectionField extends HiddenField
     }
 
 
-    /** @param array $properties */
-    public function FieldHolder(array $properties = []): string
+    /** @inheritdoc  */
+    public function FieldHolder( $properties = []): string
     {
         Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
 
