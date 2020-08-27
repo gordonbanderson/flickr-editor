@@ -2,16 +2,14 @@
 
 namespace Suilven\Flickr;
 
-use SilverStripe\Forms\Form;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\View\Requirements;
-use SilverStripe\View\ViewableData;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 // These are for the FieldHolder method
 // @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
 // @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 // @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+// @phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint
 
 /**
  * Text input field.
@@ -31,24 +29,22 @@ class FlickrPhotoSelectionField extends HiddenField
     /** @var string */
     protected $flickrID;
 
-    /** @var string  */
+    /** @var string */
     protected $mediumURL;
 
     /**
      * FlickrPhotoSelectionField constructor.
+     *
      * @param string $name The internal field name, passed to forms.
-     * @param null|string|ViewableData $title The human-readable field label.
+     * @param string|\SilverStripe\View\ViewableData|null $title The human-readable field label.
      * @param mixed $value A FlickrPhoto, if one has previously been chosen
      */
-    public function __construct(
-         $name,
-         $title = null,
-         $value = null
-    ) {
+    public function __construct(string $name, $title = null, $value = null)
+    {
         parent::setTemplate('FLickrPhotoSelectionField');
 
-        if (!is_null($value)) {
-            /** @var FlickrPhoto $flickrPhoto */
+        if (!\is_null($value)) {
+            /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
             $flickrPhoto = $value;
             $value = $flickrPhoto->ID;
             $this->flickrTitle = $flickrPhoto->Title;
@@ -105,7 +101,7 @@ class FlickrPhotoSelectionField extends HiddenField
             [
                 'maxlength' => $this->getMaxLength(),
                 // @TODO is this correct logic?
-                'size' => ($this->getMaxLength() == 0) ? \min($this->getMaxLength(), 30) : null,
+                'size' => ($this->getMaxLength() === 0) ? \min($this->getMaxLength(), 30) : null,
             ]
         );
     }
@@ -114,7 +110,7 @@ class FlickrPhotoSelectionField extends HiddenField
     /** @return \SilverStripe\ORM\FieldType\DBField|\SilverStripe\ORM\FieldType\DBHTMLText */
     public function InternallyLabelledField()
     {
-        if (is_null($this->value)) {
+        if (\is_null($this->value)) {
             $this->value = $this->Title();
         }
 
