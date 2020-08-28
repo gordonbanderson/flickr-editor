@@ -21,8 +21,8 @@ class FlickrMiscHelper extends FlickrHelper
             $allPagesRead = false;
 
             while (!$allPagesRead) {
-                \error_log('Page CTR: ' . $pageCtr);
-                \error_log('SET ID: ' . $flickrSetID);
+               // \error_log('Page CTR: ' . $pageCtr);
+               // \error_log('SET ID: ' . $flickrSetID);
 
                 $photos = $photoSetsHelper->getPhotos(
                     $flickrSetID,
@@ -35,8 +35,8 @@ class FlickrMiscHelper extends FlickrHelper
                 $pageCtr +=1;
 
 
-                \error_log('================================');
-                \error_log(\print_r($photos, true));
+              //  \error_log('================================');
+              //  \error_log(\print_r($photos, true));
 
                 //print_r($photos);
                 $photoset = $photos['photo'];
@@ -45,7 +45,6 @@ class FlickrMiscHelper extends FlickrHelper
                 $allPagesRead = ($page === $pages);
 
                 foreach ($photoset as $photo) {
-                    echo '.';
                     if ($photo['isprimary'] !== 1) {
                         continue;
                     }

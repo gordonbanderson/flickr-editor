@@ -188,7 +188,7 @@ class FlickrPhotoHelper extends FlickrHelper
 
 
         foreach ($singlePhotoInfo['tags']['tag'] as $taginfo) {
-            \error_log('TAG');
+            //\error_log('TAG');
 
             $tag = FlickrTag::get()->filter(['Value' => $taginfo['_content']])->first();
             if (!$tag) {

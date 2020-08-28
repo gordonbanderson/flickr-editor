@@ -30,12 +30,10 @@ class FlickrSetHelper extends FlickrHelper
             'FlickrID' => $flickrSetID,
         ])->first();
 
-        error_log('T1 - FS NULL=' . is_null($flickrSet));
 
 
         // if a set exists update data, otherwise create
         if (is_null($flickrSet)) {
-            error_log('T2');
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             /** @var array<string,string> $setInfo */
@@ -61,6 +59,7 @@ class FlickrSetHelper extends FlickrHelper
         $phpFlickr = $this->getPhpFlickr();
 
         $page= 1;
+
         // this will get updated after the first call to the API, set to ridic high value
         $pages = 1e7;
         static $only_new_photos = false;
@@ -77,8 +76,6 @@ class FlickrSetHelper extends FlickrHelper
 
         $fshelper = new FlickrSetHelper();
         $flickrSet = $fshelper->getOrCreateFlickrSet($flickrSetID);
-
-        error_log('FSID: ' . print_r($flickrSet, true));
 
         // see https://www.flickr.com/services/api/misc.urls.html for URL sizes
         $extras = 'license, date_upload, date_taken, owner_name, icon_server, original_format, ' .
@@ -101,9 +98,15 @@ class FlickrSetHelper extends FlickrHelper
 
             $page++;
 
-            $climate->info(\print_r($photoset, true));
+
             $pages = $photoset['pages'];
-            $climate->info('PAGES: ' . $pages);
+            $climate->border('#');
+            $climate->blue('IMPORTING PAGE: ' . ($page-1) . '/' . $pages);
+            $climate->border('#');
+
+            $climate->border();
+            $climate->info('IMPORTING PHOTOGRAPHS');
+            $climate->border();
 
             // @todo Deal with non existent id gracefully
 
@@ -112,11 +115,8 @@ class FlickrSetHelper extends FlickrHelper
             $flickrSet->Title = $photoset['title'];
 
             $firstPicTakenAt = $photoset['photo'][0]['datetaken'];
-            error_log('First pic taken at ' . $firstPicTakenAt);
             $flickrSet->FirstPictureTakenAt = $firstPicTakenAt;
             $flickrSet->write();
-
-            $climate->info("Title set to : ".$flickrSet->Title);
 
             // @todo This was a hack and may not be necessary now
             if ($flickrSet->Title === null) {
@@ -128,13 +128,12 @@ class FlickrSetHelper extends FlickrHelper
             $datetime = $datetime[0];
 
             list($year, $month, $day) = \explode('-', $datetime);
-            echo "Month: $month; Day: $day; Year: $year<br />\n";
 
             // now try and find a flickr set page
             /** @var \Suilven\Flickr\Model\Site\FlickrSetPage $flickrSetPage */
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
             if (!isset($flickrSetPage)) {
-                \error_log('>>>> Creating flickr set page <<<<');
+                $climate->info('Creating Flickr Set page');
                 $flickrSetPage = new FlickrSetPage();
                 $flickrSetPage->Title = $photoset['title'];
                 $flickrSetPage->Description = $flickrSet->Description;
@@ -190,23 +189,19 @@ class FlickrSetHelper extends FlickrHelper
 
             $progress = $climate->progress()->total(count($photoset['photo']));
 
-
-
             foreach ($photoset['photo'] as $value) {
-                $progress->current($ctr);
                 $flickrPhotoID = $value['id'];
 
                 /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
-
-
-                if (!isset($flickrPhoto->Aperture)) {
+                if ($flickrPhoto->Aperture === (float) 0) {
                     $exifHelper->loadExif($flickrPhoto);
                     $flickrPhoto->write();
-
                 }
 
                 $ctr++;
+                $progress->current($ctr);
+
             }
         }
 
