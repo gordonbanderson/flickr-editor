@@ -175,9 +175,7 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
             }
 
-            //update orientation
-            $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
-            DB::query($sql);
+            $this->updateOrientation();
 
             // now download exifs
             $ctr = 0;
@@ -209,8 +207,15 @@ class FlickrSetHelper extends FlickrHelper
 
         $miscHelper = new FlickrMiscHelper();
         // @todo this is borked
-        //$miscHelper->fixSetMainImages();
+        $miscHelper->fixSetMainImages();
 
         // $miscHelper->fixDateSetTaken();
+    }
+
+    public function updateOrientation(): void
+    {
+//update orientation
+        $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
+        DB::query($sql);
     }
 }
