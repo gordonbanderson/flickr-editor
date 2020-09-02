@@ -11,10 +11,16 @@ Suilven\FreeTextSearch\Indexes:
         fields:
           - Title
           - Description
-          - ThumbnailURL
 
         tokens:
           - Aperture
           - ShutterSpeed
           - ISO
           - TakenAt
+
+        highlighted_fields:
+          - Title
+          - Description
+
+        stored_fields:
+          - ThumbnailURL
