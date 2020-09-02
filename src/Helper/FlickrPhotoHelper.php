@@ -19,6 +19,7 @@ class FlickrPhotoHelper extends FlickrHelper
 
         // the author, e.g. gordonbanderson
         $pathalias = $photoInfo['pathalias'];
+        $flickrAuthorID = $photoInfo['owner'];
 
         // do we have a set object or not
         /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
@@ -135,6 +136,7 @@ class FlickrPhotoHelper extends FlickrHelper
         if (!$author) {
             $author = new FlickrAuthor();
             $author->PathAlias = $pathalias;
+            $author->FlickrID = $flickrAuthorID;
             $author->write();
         }
 
