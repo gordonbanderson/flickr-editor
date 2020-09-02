@@ -286,7 +286,7 @@ class FlickrPhoto extends DataObject
 
     public function Link(): string
     {
-        return "http://www.flickr.com/photos/{$this->Photographer()->PathAlias}/{$this->FlickrID}/";
+        return "http://www.flickr.com/photos/{$this->Photographer()->FlickrID}/{$this->FlickrID}/";
     }
 
 
