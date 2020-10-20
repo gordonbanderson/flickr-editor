@@ -8,15 +8,15 @@ use Suilven\Flickr\Model\Flickr\FlickrTag;
 class FlickrTagHelper extends FlickrHelper
 {
     /**
-     * @param string $csv tags in CVS format
+     * @param ?string $csv tags in CVS format
      * @return \SilverStripe\ORM\ArrayList<\Suilven\Flickr\Model\Flickr\FlickrTag>
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function createOrFindTags(string $csv): ArrayList
+    public function createOrFindTags(?string $csv): ArrayList
     {
         $result = new ArrayList();
 
-        if (\trim($csv) === '') {
+        if (is_null($csv) || \trim($csv) === '') {
             // ie empty array
             return $result;
         }

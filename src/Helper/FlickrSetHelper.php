@@ -31,8 +31,9 @@ class FlickrSetHelper extends FlickrHelper
         ])->first();
 
 
+
         // if a set exists update data, otherwise create
-        if (!is_null($flickrSet)) {
+        if (is_null($flickrSet)) {
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
             /** @var array<string,string> $setInfo */
@@ -58,6 +59,7 @@ class FlickrSetHelper extends FlickrHelper
         $phpFlickr = $this->getPhpFlickr();
 
         $page= 1;
+
         // this will get updated after the first call to the API, set to ridic high value
         $pages = 1e7;
         static $only_new_photos = false;
@@ -96,19 +98,25 @@ class FlickrSetHelper extends FlickrHelper
 
             $page++;
 
-            $climate->info(\print_r($photoset, 1));
+
             $pages = $photoset['pages'];
-            $climate->info('PAGES: ' . $pages);
+            $climate->border('#');
+            $climate->blue('IMPORTING PAGE: ' . ($page-1) . '/' . $pages);
+            $climate->border('#');
+
+            $climate->border();
+            $climate->info('IMPORTING PHOTOGRAPHS');
+            $climate->border();
 
             // @todo Deal with non existent id gracefully
 
             // @todo This makes the assumption that sets are ordered oldest first.  Refactor this
-            $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
             $flickrSet->KeepClean = true;
             $flickrSet->Title = $photoset['title'];
-            $flickrSet->write();
 
-            $climate->info("Title set to : ".$flickrSet->Title);
+            $firstPicTakenAt = $photoset['photo'][0]['datetaken'];
+            $flickrSet->FirstPictureTakenAt = $firstPicTakenAt;
+            $flickrSet->write();
 
             // @todo This was a hack and may not be necessary now
             if ($flickrSet->Title === null) {
@@ -120,13 +128,12 @@ class FlickrSetHelper extends FlickrHelper
             $datetime = $datetime[0];
 
             list($year, $month, $day) = \explode('-', $datetime);
-            echo "Month: $month; Day: $day; Year: $year<br />\n";
 
             // now try and find a flickr set page
             /** @var \Suilven\Flickr\Model\Site\FlickrSetPage $flickrSetPage */
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
             if (!isset($flickrSetPage)) {
-                \error_log('>>>> Creating flickr set page <<<<');
+                $climate->info('Creating Flickr Set page');
                 $flickrSetPage = new FlickrSetPage();
                 $flickrSetPage->Title = $photoset['title'];
                 $flickrSetPage->Description = $flickrSet->Description;
@@ -145,17 +152,18 @@ class FlickrSetHelper extends FlickrHelper
 
 
             $numberOfPics = \count($photoset['photo']);
-            $ctr = 1;
+            $progress = $climate->progress()->total($numberOfPics);
+
+            $ctr = 0;
 
             $photoHelper = new FlickrPhotoHelper();
             foreach ($photoset['photo'] as $value) {
-                echo "Importing photo {$ctr}/${numberOfPics}\n";
+                $ctr++;
+                $progress->current($ctr);
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
-                if (!isset($flickrPhoto)) {
-                    $ctr++;
-
+                if (!$flickrPhoto) {
                     continue;
                 }
 
@@ -167,42 +175,47 @@ class FlickrSetHelper extends FlickrHelper
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
             }
 
-            //update orientation
-            $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
-            DB::query($sql);
-
+            $this->updateOrientation();
 
             // now download exifs
             $ctr = 0;
             $exifHelper = new FlickrExifHelper();
 
-            \error_log('++++ EXIF ++++');
+            $climate->border();
+            $climate->green('Importing EXIF');
+            $climate->border();
 
+            $progress = $climate->progress()->total(count($photoset['photo']));
 
             foreach ($photoset['photo'] as $value) {
-                echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
                 $flickrPhotoID = $value['id'];
 
                 /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
-
-
-                if (!isset($flickrPhoto->Aperture)) {
+                if ($flickrPhoto->Aperture === (float) 0) {
                     $exifHelper->loadExif($flickrPhoto);
                     $flickrPhoto->write();
-                } else {
-                    \error_log('ALREADY IMPORTED');
                 }
 
                 $ctr++;
+                $progress->current($ctr);
+
             }
         }
 
 
 
         $miscHelper = new FlickrMiscHelper();
-        $miscHelper->fixSetMainImages();
         // @todo this is borked
+        $miscHelper->fixSetMainImages();
+
         // $miscHelper->fixDateSetTaken();
+    }
+
+    public function updateOrientation(): void
+    {
+//update orientation
+        $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
+        DB::query($sql);
     }
 }

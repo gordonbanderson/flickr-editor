@@ -18,7 +18,9 @@ class FlickrAuthor extends DataObject
 
     /** @var array<string,string> */
     private static $db = [
-        'PathAlias' => 'Varchar', 'DisplayName' => 'Varchar',
+        'PathAlias' => 'Varchar',
+        'DisplayName' => 'Varchar',
+        'FlickrID' => 'Varchar',
     ];
 
     /** @var array<string> */

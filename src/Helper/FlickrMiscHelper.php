@@ -2,6 +2,8 @@
 
 namespace Suilven\Flickr\Helper;
 
+use Samwilson\PhpFlickr\PhotosetsApi;
+use SilverStripe\Core\Config\Config;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Site\FlickrSetPage;
@@ -11,32 +13,37 @@ class FlickrMiscHelper extends FlickrHelper
     public function fixSetMainImages(): void
     {
         $sets = FlickrSet::get()->filter(['PrimaryFlickrPhotoID' => 0]);
-        $photosHelper = $this->getPhotoSetsHelper();
+        $phpFlickr = $this->getPhpFlickr();
+        $photosetsApi = new PhotosetsApi($phpFlickr);
+
+        $perPage = Config::inst()->get(FlickrSetHelper::class, 'import_per_page');
+
 
         /** @var \Suilven\Flickr\Model\Flickr\FlickrSet $set */
         foreach ($sets as $set) {
-            $pageCtr = 1;
+            $page = 1;
             $flickrSetID = $set->FlickrID;
 
             $allPagesRead = false;
 
             while (!$allPagesRead) {
-                \error_log('Page CTR: ' . $pageCtr);
-                \error_log('SET ID: ' . $flickrSetID);
+               // \error_log('Page CTR: ' . $pageCtr);
+               // \error_log('SET ID: ' . $flickrSetID);
 
-                $photos = $photosHelper->getPhotos(
+                /** @var array<array> $photoset */
+                $photos = $photosetsApi->getPhotos(
                     $flickrSetID,
                     null,
                     null,
-                    500,
-                    $pageCtr
+                    $perPage,
+                    $page
                 );
 
-                $pageCtr +=1;
+                $page +=1;
 
 
-                \error_log('================================');
-                \error_log(\print_r($photos, 1));
+              //  \error_log('================================');
+              //  \error_log(\print_r($photos, true));
 
                 //print_r($photos);
                 $photoset = $photos['photo'];
@@ -45,7 +52,6 @@ class FlickrMiscHelper extends FlickrHelper
                 $allPagesRead = ($page === $pages);
 
                 foreach ($photoset as $photo) {
-                    echo '.';
                     if ($photo['isprimary'] !== 1) {
                         continue;
                     }

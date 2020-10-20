@@ -1,0 +1,26 @@
+---
+Name: flickrfreetextsearch
+---
+
+# Define indexes
+Suilven\FreeTextSearch\Indexes:
+  indexes:
+    - index:
+        name: flickrphotos
+        class: Suilven\Flickr\Model\Flickr\FlickrPhoto
+        fields:
+          - Title
+          - Description
+
+        tokens:
+          - Aperture
+          - ShutterSpeed
+          - ISO
+          - TakenAt
+
+        highlighted_fields:
+          - Title
+          - Description
+
+        stored_fields:
+          - ThumbnailURL

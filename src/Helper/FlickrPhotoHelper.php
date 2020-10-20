@@ -19,6 +19,7 @@ class FlickrPhotoHelper extends FlickrHelper
 
         // the author, e.g. gordonbanderson
         $pathalias = $photoInfo['pathalias'];
+        $flickrAuthorID = $photoInfo['owner'];
 
         // do we have a set object or not
         /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
@@ -30,8 +31,6 @@ class FlickrPhotoHelper extends FlickrHelper
         }
 
         if ($flickrPhoto->Imported) {
-            \error_log('Skipping import, already done');
-
             return null;
         }
 
@@ -137,6 +136,7 @@ class FlickrPhotoHelper extends FlickrHelper
         if (!$author) {
             $author = new FlickrAuthor();
             $author->PathAlias = $pathalias;
+            $author->FlickrID = $flickrAuthorID;
             $author->write();
         }
 
@@ -188,12 +188,9 @@ class FlickrPhotoHelper extends FlickrHelper
         $flickrPhoto->Imported = true;
         $flickrPhoto->write();
 
-        \error_log(
-            'Written photo object'
-        );
 
         foreach ($singlePhotoInfo['tags']['tag'] as $taginfo) {
-            \error_log('TAG');
+            //\error_log('TAG');
 
             $tag = FlickrTag::get()->filter(['Value' => $taginfo['_content']])->first();
             if (!$tag) {

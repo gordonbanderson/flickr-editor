@@ -5,6 +5,7 @@ namespace Suilven\Flickr\Helper;
 use OAuth\Common\Storage\Memory;
 use OAuth\OAuth1\Token\StdOAuth1Token;
 use Samwilson\PhpFlickr\PhotosApi;
+use Samwilson\PhpFlickr\PhotosetsApi;
 use Samwilson\PhpFlickr\PhpFlickr;
 use SilverStripe\Core\Environment;
 
@@ -39,13 +40,13 @@ class FlickrHelper
     public function getPhotosHelper(): PhotosApi
     {
         $phpFlickr = $this->getPhpFlickr();
-
         return new PhotosApi($phpFlickr);
     }
 
 
-    public function getPhotoSetsHelper(): PhotosApi
+    public function getPhotoSetsHelper(): PhotosetsApi
     {
-        return $this->getPhotosHelper();
+        $phpFlickr = $this->getPhpFlickr();
+        return new PhotosetsApi($phpFlickr);
     }
 }

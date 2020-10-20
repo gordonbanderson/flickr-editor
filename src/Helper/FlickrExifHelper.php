@@ -18,12 +18,10 @@ class FlickrExifHelper extends FlickrHelper
         $phpFlickr = $this->getPhpFlickr();
         $exifData = $phpFlickr->photos_getExif($flickrPhoto->FlickrID);
 
-
         // delete any old exif data
         $sql = 'DELETE from "FlickrExif" where "FlickrPhotoID"='.$flickrPhoto->ID;
         DB::query($sql);
 
-        echo "Using exif data for ".$flickrPhoto->Title."\n";
         $exifs = [];
         foreach ($exifData['exif'] as $exifInfo) {
             $exif = new FlickrExif();
@@ -76,13 +74,14 @@ class FlickrExifHelper extends FlickrHelper
                     // do nothing
                     break;
             };
+
+            // EXIF data is unweildy to store, as such do not store it
+            // @TODO geo
         }
 
         $this->extend('augmentPhotographWithExif', $flickrPhoto, $exifs);
 
 
         $flickrPhoto->write();
-
-        echo "/storing exif";
     }
 }
