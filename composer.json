@@ -23,7 +23,7 @@
         "matthiasmullie\/minify": "^1",
         "samwilson\/phpflickr": "^4",
         "silverstripe\/recipe-cms": "4.x-dev",
-        "suilven\/freetextsearch": "dev-master",
+        "suilven\/freetextsearch": "^1",
         "suilven\/php-spriter": "dev-composerify",
         "symbiote/silverstripe-phpstan": "^4.0",
         "phpunit/phpunit": "^5.7",
