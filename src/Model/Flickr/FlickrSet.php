@@ -133,7 +133,7 @@ class FlickrSet extends DataObject
         $fields->addFieldToTab('Root.Batch', new TextAreaField('BatchTags', 'Batch Tags'));
 
         $htmlBatch = "<p>Click on the batch update button to update the description and title of all of the images, and add tags to each image</p>";
-        $htmlBatch .= '<input type="button" id="batchUpdatePhotographs" value="Batch Update"></input>';
+        $htmlBatch .= '<input type="button" class="btn action btn-primary font-icon-camera"  id="batchUpdatePhotographs" value="Batch Update"></input>';
         $lf = new LiteralField('BatchUpdate', $htmlBatch);
         $fields->addFieldToTab('Root.Batch', $lf);
         return $fields;
