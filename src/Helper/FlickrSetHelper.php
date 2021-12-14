@@ -1,17 +1,12 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
+use League\CLImate\CLImate;
 use Samwilson\PhpFlickr\PhotosetsApi;
-use Samwilson\PhpFlickr\PhpFlickr;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Assets\Image;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
@@ -21,37 +16,34 @@ class FlickrSetHelper extends FlickrHelper
 {
 
     /**
-     * Either get the set from the database, or if it does not exist get the details from flickr and add it to the database
+     * Either get the set from the database, or if it does not exist get the details from flickr
+     * and add it to the database
+     *
      * @param string $flickrSetID the flickr set id
-     * @return DataObject|FlickrSet|null
+     * @return FlickrSet|null
      * @throws \SilverStripe\ORM\ValidationException
      */
-    public function getOrCreateFlickrSet($flickrSetID)
+    public function getOrCreateFlickrSet(string $flickrSetID)
     {
-        // do we have a set object or not
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrSet|null  $flickrSet */
         $flickrSet = FlickrSet::get()->filter([
-            'FlickrID' => $flickrSetID
+            'FlickrID' => $flickrSetID,
         ])->first();
 
-        error_log('T1');
+
 
         // if a set exists update data, otherwise create
-        if (!$flickrSet) {
-            error_log('T2');
-
+        if (is_null($flickrSet)) {
             $flickrSet = new FlickrSet();
             $setsHelper = $this->getPhotoSetsHelper();
+            /** @var array<string,string> $setInfo */
             $setInfo = $setsHelper->getInfo($flickrSetID, null);
-
-            error_log(print_r($setInfo, 1));
-
 
             $setTitle = $setInfo['title'];
             $setDescription = $setInfo['description'];
             $flickrSet->Title = $setTitle;
             $flickrSet->Description = $setDescription;
             $flickrSet->FlickrID = $flickrSetID;
-            $flickrSet->KeepClean = true;
             $flickrSet->write();
         }
 
@@ -59,81 +51,92 @@ class FlickrSetHelper extends FlickrHelper
     }
 
 
-    /**
-     * @param PhpFlickr $phpFlickr
-     * @throws \SilverStripe\ORM\ValidationException
-     */
-    public function importSet($flickrSetID)
+    /** @throws \SilverStripe\ORM\ValidationException */
+    public function importSet(string $flickrSetID): void
     {
+        $climate = new CLImate();
+
         $phpFlickr = $this->getPhpFlickr();
 
         $page= 1;
-        $pages = 1e7; // this will get updated after the first call to the API
+
+        // this will get updated after the first call to the API, set to ridic high value
+        $pages = 1e7;
         static $only_new_photos = false;
 
 
-        $path = $_GET['path'];
+        $controller = Controller::curr();
+        $path = $controller->getRequest()->getVar('path');
         $parentNode = SiteTree::get_by_link($path);
-        if ($parentNode == null) {
-            user_error( "ERROR: Path ".$path." cannot be found in this site");
+        if (\is_null($parentNode)) {
+            \user_error("ERROR: Path ".$path." cannot be found in this site");
         }
 
-
-        error_log('Getting flickr set ' . $flickrSetID);
+        $climate->info('Getting flickr set ' . $flickrSetID);
 
         $fshelper = new FlickrSetHelper();
         $flickrSet = $fshelper->getOrCreateFlickrSet($flickrSetID);
-        error_log(print_r($flickrSet, 1));
+
+        // see https://www.flickr.com/services/api/misc.urls.html for URL sizes
+        $extras = 'license, date_upload, date_taken, owner_name, icon_server, original_format, ' .
+            ' last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_t, url_s,' .
+            ' url_q, url_m, url_n, url, url_z, url_c, url_h, url_k, url_l, url_o, description, url_sq';
+
+        $perPage = Config::inst()->get(FlickrSetHelper::class, 'import_per_page');
 
         while ($page <= $pages) {
             $photosetsApi = new PhotosetsApi($phpFlickr);
+
+            /** @var array<array> $photoset */
             $photoset = $photosetsApi->getPhotos(
                 $flickrSetID,
                 null,
-                'license, date_upload, date_taken, owner_name, icon_server, original_format, last_update, geo, tags, machine_tags, o_dims, views, media, path_alias, url_sq, url_t, url_s, url_m, url_o, url_l,description',
-                500,
+                $extras,
+                $perPage,
                 $page
             );
 
             $page++;
 
-            error_log(print_r($photoset, 1));
+
             $pages = $photoset['pages'];
-            error_log('PAGES: ' . $pages);
+            $climate->border('#');
+            $climate->blue('IMPORTING PAGE: ' . ($page-1) . '/' . $pages);
+            $climate->border('#');
+
+            $climate->border();
+            $climate->info('IMPORTING PHOTOGRAPHS');
+            $climate->border();
 
             // @todo Deal with non existent id gracefully
-            // Reload from the database
-            $flickrSet = FlickrSet::get()->filter(['FlickrID' => $flickrSetID])->first();
 
             // @todo This makes the assumption that sets are ordered oldest first.  Refactor this
-            $flickrSet->FirstPictureTakenAt = $photoset['photo'][0]['datetaken'];
             $flickrSet->KeepClean = true;
             $flickrSet->Title = $photoset['title'];
+
+            $firstPicTakenAt = $photoset['photo'][0]['datetaken'];
+            $flickrSet->FirstPictureTakenAt = $firstPicTakenAt;
             $flickrSet->write();
 
-            echo "Title set to : ".$flickrSet->Title;
-
             // @todo This was a hack and may not be necessary now
-            if ($flickrSet->Title == null) {
-                echo("ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?");
-                die;
+            if ($flickrSet->Title === null) {
+                echo "ABORTING DUE TO NULL TITLE FOUND IN SET - ARE YOU AUTHORISED TO READ SET INFO?";
+                exit(1);
             }
 
-            $datetime = explode(' ', $flickrSet->FirstPictureTakenAt);
+            $datetime = \explode(' ', $flickrSet->FirstPictureTakenAt);
             $datetime = $datetime[0];
 
-            list($year, $month, $day) = explode('-', $datetime);
-            echo "Month: $month; Day: $day; Year: $year<br />\n";
+            list($year, $month, $day) = \explode('-', $datetime);
 
             // now try and find a flickr set page
+            /** @var \Suilven\Flickr\Model\Site\FlickrSetPage $flickrSetPage */
             $flickrSetPage = FlickrSetPage::get()->filter(['FlickrSetForPageID' => $flickrSet->ID])->first();
-            if (!$flickrSetPage) {
-                error_log('>>>> Creating flickr set page <<<<');
+            if (!isset($flickrSetPage)) {
+                $climate->info('Creating Flickr Set page');
                 $flickrSetPage = new FlickrSetPage();
                 $flickrSetPage->Title = $photoset['title'];
                 $flickrSetPage->Description = $flickrSet->Description;
-
-                //update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
 
                 $flickrSetPage->FlickrSetForPageID = $flickrSet->ID;
                 $flickrSetPage->write();
@@ -146,191 +149,73 @@ class FlickrSetHelper extends FlickrHelper
             // @todo See what the SS4 behaviour is here
             //$flickrSetPage->copyVersionToStage("Live", "Stage");
 
-            $flickrSetPageID = $flickrSetPage->ID;
-            gc_enable();
-
-            /*
-            $f1 = Folder::find_or_make("flickr/$year");
-            $f1->Title = $year;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month");
-            $f1->Title = $month;
-            $f1->write();
-
-            $f1 = Folder::find_or_make("flickr/$year/$month/$day");
-            $f1->Title = $day;
-            $f1->write();
-
-            exec("chmod 775 ../assets/flickr/$year");
-            exec("chmod 775 ../assets/flickr/$year/$month");
-            exec("chmod 775 ../assets/flickr/$year/$month/$day");
-            exec("chown gordon:www-data ../assets/flickr/$year");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month");
-            ;
-            exec("chown gordon:www-data ../assets/flickr/$year/$month/$day");
-            ;
 
 
-            $folder = Folder::find_or_make("flickr/$year/$month/$day/" . $flickrSetID);
+            $numberOfPics = \count($photoset['photo']);
+            $progress = $climate->progress()->total($numberOfPics);
 
-            $cmd = "chown gordon:www-data ../assets/flickr";
-            exec($cmd);
-
-            exec('chmod 775 ../assets/flickr');
-
-
-            // new folder case
-            if ($flickrSet->AssetFolderID == 0) {
-                $flickrSet->AssetFolderID = $folder->ID;
-                $folder->Title = $flickrSet->Title;
-                $folder->write();
-
-                $cmd = "chown gordon:www-data ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-
-                $cmd = "chmod 775 ../assets/flickr/$year/$month/$day/".$flickrSetID;
-                exec($cmd);
-            }
-
-            $flickrSetAssetFolderID = $flickrSet->AssetFolderID;
-
-            $flickrSetPageDatabaseID = $flickrSetPage->ID;
-
-
-            //$flickrSet = NULL;
-            $flickrSetPage = null;
-            */
-
-            $numberOfPics = count($photoset['photo']);
-            $ctr = 1;
+            $ctr = 0;
 
             $photoHelper = new FlickrPhotoHelper();
-            foreach ($photoset['photo'] as $key => $value) {
-                echo "Importing photo {$ctr}/${numberOfPics}\n";
+            foreach ($photoset['photo'] as $value) {
+                $ctr++;
+                $progress->current($ctr);
 
                 $flickrPhoto = $photoHelper->createFromFlickrArray($value);
 
-                if ($value['isprimary'] == 1) {
+                if (!$flickrPhoto) {
+                    continue;
+                }
+
+                if ($value['isprimary'] === 1) {
                     $flickrSet->MainImage = $flickrPhoto;
                 }
 
                 $flickrPhoto->write();
                 $flickrSet->FlickrPhotos()->add($flickrPhoto);
-
-                // $flickrPhoto->write();
-
-                if (!$flickrPhoto->LocalCopyOfImage) {
-
-
-                    //mkdir appears to be relative to teh sapphire dir
-                    $structure = "../assets/flickr/$year/$month/$day/".$flickrSetID;
-
-                    if (!file_exists('../assets/flickr')) {
-                        echo "Creating path:".$structure;
-
-                        /*
-                        // To create the nested structure, the $recursive parameter
-                        // to mkdir() must be specified.
-
-                        if (!mkdir($structure, 0, true)) {
-                         //   die('Failed to create folders...');
-                        }
-
-                        $cmd = "chown  gordon:www-data $structure";
-                        exec($cmd);
-
-                        $cmd = "chown gordon:www-data ../assets/Uploads/flickr";
-                        exec($cmd);
-
-                        exec('chmod 775 ../assets/Uploads/flickr');
-                        exec("chmod 775 $structure");
-
-
-                        error_log("Created dir?");
-                    } else {
-                        echo "Dir already exists";
-                    }
-
-
-                    */
-                        $galleries = Folder::find_or_make('flickr');
-                        $galleries->Title = 'Flickr Images';
-                        $galleries->write();
-                        $galleries = null;
-                    }
-
-                    $download_images = Config::inst()->get($this->class, 'download_images');
-
-                    if ($download_images && !($flickrPhoto->LocalCopyOfImageID)) {
-                        $largeURL = $flickrPhoto->LargeURL;
-                        $fpid = $flickrPhoto->FlickrID;
-
-                        $cmd = "wget -O $structure/$fpid.jpg $largeURL";
-                        exec($cmd);
-
-                        $cmd = "chown  gordon:www-data $structure/$fpid.jpg";
-                        // $cmd = "pwd";
-                        echo "EXECCED:".exec($cmd);
-
-                        $image = new Image();
-                        $image->Name = $this->Title;
-                        $image->Title = $this->Title;
-                        $image->Filename = str_replace('../', '', $structure.'/'.$fpid.".jpg");
-                        $image->Title = $flickrPhoto->Title;
-                        //$image->Name = $flickrPhoto->Title;
-                        $image->ParentID = $flickrSetAssetFolderID;
-                        gc_collect_cycles();
-
-                        $image->write();
-                        gc_collect_cycles();
-
-                        $flickrPhoto->LocalCopyOfImageID = $image->ID;
-                        $flickrPhoto->write();
-                        $image = null;
-                    }
-
-                    $result = $flickrPhoto->write();
-                }
-
-                $ctr++;
-
-                $flickrPhoto = null;
             }
 
-            //update orientation
-            $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
-            DB::query($sql);
-
+            $this->updateOrientation();
 
             // now download exifs
             $ctr = 0;
             $exifHelper = new FlickrExifHelper();
 
-            error_log('++++ EXIF ++++');
+            $climate->border();
+            $climate->green('Importing EXIF');
+            $climate->border();
 
+            $progress = $climate->progress()->total(count($photoset['photo']));
 
-            foreach ($photoset['photo'] as $key => $value) {
-                error_log('KV = ' . $key . ' --> ' . print_r($value,1));
-                echo "IMPORTING EXIF {$ctr}/$numberOfPics\n";
+            foreach ($photoset['photo'] as $value) {
                 $flickrPhotoID = $value['id'];
 
-                error_log('ID' . $flickrSetPageID);
-
-                /** @var FlickrPhoto $flickrPhoto */
+                /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
                 $flickrPhoto = FlickrPhoto::get()->filter('FlickrID', $flickrPhotoID)->first();
-                $exifHelper->loadExif($flickrPhoto);
-                $flickrPhoto->write();
+                if ($flickrPhoto->Aperture === (float) 0) {
+                    $exifHelper->loadExif($flickrPhoto);
+                    $flickrPhoto->write();
+                }
+
                 $ctr++;
+                $progress->current($ctr);
+
             }
         }
 
 
 
         $miscHelper = new FlickrMiscHelper();
-        $miscHelper->fixSetMainImages();
         // @todo this is borked
+        $miscHelper->fixSetMainImages();
+
         // $miscHelper->fixDateSetTaken();
+    }
+
+    public function updateOrientation(): void
+    {
+//update orientation
+        $sql = 'update "FlickrPhoto" set "Orientation" = 90 where "ThumbnailHeight" > "ThumbnailWidth";';
+        DB::query($sql);
     }
 }

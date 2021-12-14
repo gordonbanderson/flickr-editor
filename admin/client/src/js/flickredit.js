@@ -6,6 +6,8 @@ console.log('flickr edit');
 
 		console.log("Flickr edit doc ready");
 
+		$( '<div id="previewContainer"><img id="previewImage"/></div>' ).insertAfter( '#Form_ItemEditForm_FlickrPhotos' );
+
 		$('.flickrSetDraggable').draggable();
 
 		$('.flickrSetFolderDroppable').droppable({
@@ -120,21 +122,38 @@ console.log('flickr edit');
 
 
 		$('.flickrThumbnail').entwine({
-			onmouseover: function(e) {
-				var image = $(e.target);
-				console.log(image);
-				image.attr('src', image.attr('data-flickr-medium-url'));
+			onmouseenter: function(e) {
+				var image = $('#previewImage');
+				var srcImage = $(e.target);
+
+				console.log(image.width(), image.height());
+				image.attr('src', srcImage.attr('data-flickr-preview-url'));
 				image.addClass('hoverLarge');
+				image.width(srcImage.attr('data-flickr-preview-width'));
+				image.height(srcImage.attr('data-flickr-preview-height'));
+
+				image.removeClass('horizontal');
+				image.removeClass('vertical');
+
+				if (image.width() > image.height()) {
+					image.addClass('horizontal');
+				} else {
+					image.addClass('vertical');
+				}
+
 				e.preventDefault();
 				return false;
 			},
-			onmouseout: function(e) {
-				var image = $(e.target);
-				image.attr('src', image.attr('data-flickr-thumbnail-url'));
+			onmouseleave: function(e) {
+				var image = $('#previewImage');
+				var srcImage = $(e.target);
+
+				image.attr('src', srcImage.attr('data-flickr-thumbnail-url'));
 				image.removeClass('hoverLarge');
 				e.preventDefault();
 				return false;
 			}
+
 		});
 
 		$('#bucketTimeProgressBar').entwine({
@@ -239,29 +258,6 @@ console.log('flickr edit');
 			onclick: function() {
 				console.log('bucket img entwine');
 				$(this).html('test');
-			}
-		});
-
-		$('#changeMainPictureButton').entwine({
-			onclick: function() {
-				var button = $(this);
-				var flickr_set_id = button.attr('data-flickr-set-id');
-				var fpid = button.attr('data-flickr-photo-id');
-
-				$.ajax({
-					url: "/flickr/changeFlickrSetMainImage/" + flickr_set_id + "/" + fpid,
-					type: 'POST',
-					dataType: 'json',
-					//context: document.body,
-					success: function(data) {
-						//statusMessage('Main picture successfully updated');
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						// log the error to the console
-						console.log("The following error occured: " + textStatus, errorThrown);
-						//statusMessage('An error occurred - '+ textStatus);
-					}
-				})
 			}
 		});
 

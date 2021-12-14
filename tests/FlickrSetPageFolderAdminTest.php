@@ -1,12 +1,17 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrSetPageFolderAdminTest extends SapphireTest {
-	public function testEditForm() {
-		$this->markTestSkipped('TODO');
-	}
+namespace Suilven\Flickr\Tests;
 
-	public function testTools() {
-		$this->markTestSkipped('TODO');
-	}
+class FlickrSetPageFolderAdminTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testEditForm(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
+
+    public function testTools(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

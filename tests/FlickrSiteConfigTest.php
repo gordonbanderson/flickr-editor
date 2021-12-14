@@ -1,8 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrSiteConfigTest extends SapphireTest {
-	public function testUpdateCMSFields() {
-		$this->markTestSkipped('TODO');
-	}
+namespace Suilven\Flickr\Tests;
 
+class FlickrSiteConfigTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testUpdateCMSFields(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

@@ -1,0 +1,9 @@
+---
+Name: flickr-components
+---
+
+# Configure Admin Extensions:
+
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_javascript:
+    - "weboftalent/flickr: dist/admin/client/js/app.js"

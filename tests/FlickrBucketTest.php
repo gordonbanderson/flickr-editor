@@ -1,24 +1,35 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrBucketTest extends SapphireTest {
-	public function testGetCMSFields() {
-		$this->markTestSkipped('TODO');
-	}
+namespace Suilven\Flickr\Tests;
 
-	public function testGeoLocked() {
-		$this->markTestSkipped('TODO');
-	}
+class FlickrBucketTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testGetCMSFields(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testGetImageStrip() {
-		$this->markTestSkipped('TODO');
-	}
 
-	public function testOnBeforeWrite() {
-		$this->markTestSkipped('TODO');
-	}
+    public function testGeoLocked(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 
-	public function testOnAfterWrite() {
-		$this->markTestSkipped('TODO');
-	}
 
+    public function testGetImageStrip(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testOnBeforeWrite(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
+
+
+    public function testOnAfterWrite(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

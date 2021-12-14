@@ -1,4 +1,14 @@
-FlickrController:
-  #Set this to true if you wish to download the flickr images to your assets directory.
-  #Alternatively set this to false if you are using the Flickr URLs (in which case a local copy is not necessary)
-  download_images: false
+---
+Name: flickr
+---
+Suilven\Flickr\Helper\FlickrSetHelper:
+  # The number of images to import at a time.  The maximum is 500 at the Flickr API level.  Use a
+  # smaller value if connection issues to avoid repeating 500 images
+  import_per_page: 500
+
+
+Suilven\Flickr\Model\Site\FlickrSetPage:
+  # With large number of gallery images, say 2000, the flickr sprite images get extremely large,
+  # even after being processed with pngquant.  As such they are split up into groups using the
+  # value below
+  images_per_sprite: 200

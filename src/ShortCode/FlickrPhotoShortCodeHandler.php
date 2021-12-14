@@ -1,31 +1,40 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\ShortCode;
 
-use SilverStripe\ORM\DataList;
 use SilverStripe\Core\Convert;
-use SilverStripe\View\SSViewer;
+use SilverStripe\ORM\DataList;
 use SilverStripe\View\ArrayData;
+use SilverStripe\View\SSViewer;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+
+
+/**
+ * Class FlickrPhotoShortCodeHandler
+ *
+ * @package Suilven\Flickr\ShortCode
+ */
 class FlickrPhotoShortCodeHandler
 {
-
-    // taken from http://www.ssbits.com/tutorials/2010/2-4-using-short-codes-to-embed-a-youtube-video/ and adapted for SS3
-    public static function parse_flickr($arguments, $caption = null, $parser = null)
+    /**
+     * @param array<string,string> $arguments
+     * @return \SilverStripe\ORM\FieldType\DBHTMLText|string|void
+     */
+    public static function parse_flickr(array $arguments, ?string $caption = null)
     {
-        // first things first, if we dont have a video ID, then we don't need to
-        // go any further
-        if (empty($arguments['id'])) {
+        if (!isset($arguments['id'])) {
             return;
         }
 
-        $customise = array();
+        $customise = [];
+
         /*** SET DEFAULTS ***/
         $fp = DataList::create(FlickrPhoto::class)->filter(['FlickrID' => $arguments['id']])->first();
 
-        error_log('FP: ' . $fp->ID);
-
-        if (!$fp) {
+        if (!isset($fp)) {
             return '';
         }
 
@@ -39,18 +48,22 @@ class FlickrPhotoShortCodeHandler
             }
         }
 
-
-        $customise['Caption'] = $caption ? Convert::raw2xml($caption) : $fp->Title ;
-        $customise['Position'] = !empty($arguments['position']) ? $arguments['position'] : 'center';
+        $customise['Caption'] = isset($caption)
+            ? Convert::raw2xml($caption)
+            : $fp->Title ;
+        $customise['Position'] = isset($arguments['position'])
+            ? $arguments['position']
+            : 'center';
+        $customise['HideExif'] = isset($arguments['exif'])
+            ? $arguments['exif']
+            : false;
         $customise['Small'] = true;
-        if ($customise['Position'] == 'center') {
+        if ($customise['Position'] === 'center') {
             $customise['Small'] = false;
         }
 
-        $fp = null;
-
         //overide the defaults with the arguments supplied
-        $customise = array_merge($customise, $arguments);
+        $customise = \array_merge($customise, $arguments);
 
         //get our YouTube template
         $template = new SSViewer('Includes/ShortCodeFlickrPhoto');

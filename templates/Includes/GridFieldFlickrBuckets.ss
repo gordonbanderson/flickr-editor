@@ -16,7 +16,7 @@
 <tbody>
 <tr>
 <td colspan="2">
-1s <input id="bucketTimeProgressBar" type="range" min="1" max="240" /> 240s
+<input id="bucketTimeProgressBar" type="range" min="1" max="240" /> 240s
 <div id="selectedBucketTime">&nbsp;</div>
 </td>
 </tr>
@@ -53,7 +53,11 @@
 <tr>
 <% loop $FlickrPhotosNotInBucket %>
 <td id="flickrPhoto_$ID" data-time="$TakenAt" class="bucketPhoto">
-<img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" class="imgDrag" style="width:{$ThumbnailWidth}px;"/>
+<img data-id="$ID" src="$ThumbnailURL" alt="$Title" title="$Title" class="imgDrag flickrThumbnail"
+	 data-flickr-preview-url="$ProtocolAgnosticLargeURL"
+	 data-flickr-preview-width="$LargeWidth"
+	 data-flickr-preview-width="$LargeHeight"
+	 style="width:{$ThumbnailWidth}px;"/>
 </td>
 </tr>
 <% end_loop %>

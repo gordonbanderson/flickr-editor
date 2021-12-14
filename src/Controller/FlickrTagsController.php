@@ -1,72 +1,87 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
-use SilverStripe\Control\Director;
-use SilverStripe\ORM\DataObject;
+use SilverStripe\Control\Controller;
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DB;
+use Suilven\Flickr\Model\Flickr\FlickrTag;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+/**
+ * Class FlickrTagsController
+ *
+ * @package Suilven\Flickr\Controller
+ */
 class FlickrTagsController extends \PageController
 {
-    private static $allowed_actions = array(
+    /** @var \SilverStripe\ORM\DataList|null */
+    private $FlickrPhotos;
+
+    /** @var \SilverStripe\ORM\DataList|null */
+    private $Tags;
+
+    /** @var string */
+    private $Title;
+
+    /** @var string|null */
+    private $TagValue;
+
+    /** @var \Suilven\Flickr\Model\Flickr\FlickrTag|null */
+    private $Tag;
+
+    /** @var array<string> */
+    private static $allowed_actions = [
         'index',
         'photo',
-        'photos'
-    );
+        'photos',
+    ];
 
 
-    public function ColumnLayout()
+    public function ColumnLayout(): string
     {
         return 'layout1col';
     }
 
-    public function init()
+
+    public function init(): void
     {
         parent::init();
 
         // Requirements, etc. here
     }
 
-    public function index()
-    {
-        return array();
-    }
 
-
-    /*
-    Show photos for a given tag
-    */
-    public function photo()
+    public function photo(): DataList
     {
-        $tagValue = Director::URLParam('ID');
-        $this->Title = "Photos tagged '".$tagValue."'";
-        $tag = DataObject::get_one('Tag', "Value='".$tagValue."'");
+        $tagValue = Controller::curr()->getRequest()->getVar('ID');
+        $this->Title = "Photos tagged '" . $tagValue . "'";
+
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrTag $tag */
+        $tag = FlickrTag::get()->filter('Value', $tagValue)->first();
         $this->TagValue = $tagValue;
         $this->Tag = $tag;
 
-        $result = array();
-        if ($tag) {
-            $result = $tag->FlickrPhotos();
+        // @TODO what is this value when tag is undefined
+        if (isset($tag)) {
             $this->FlickrPhotos = $tag->FlickrPhotos();
         }
 
-        return array();
-    }
-
-    public function PhotoKey()
-    {
-        $key ='tagphoto_'.$ID;
-        return $key;
+        return $this->FlickrPhotos;
     }
 
 
+    // @TODO check this method, old as
 
-    /* Return all tags for rendering in a cloud */
-    public function photos()
+    /** @return \SilverStripe\ORM\DataList<\Suilven\Flickr\Model\Flickr\FlickrPhoto> */
+    public function photos(): \SilverStripe\ORM\DataList
     {
-        $this->Tags = DataObject::get('Tag');
+        $this->Tags = FlickrTag::get();
         $this->Title = 'Tags for photos';
 
-        $maxCount  = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by TagID Order by ct desc limit 1")->value();
+        $maxCount = DB::query("SELECT COUNT(TagID) as ct FROM FlickrPhoto_FlickrTags Group by' .'
+            ' TagID Order by ct desc limit 1")->value();
 
         $sql = "select t.ID, t.ClassName, count(TagID) as Amount, t.Value
 				From FlickrPhoto_FlickrTags ft
@@ -78,13 +93,12 @@ class FlickrTagsController extends \PageController
 
         $result = DB::query($sql);
 
-        $tagCloud = singleton('Tag')->buildDataObjectSet($result);
+        $tagCloud = \singleton('Tag')->buildDataObjectSet($result);
         foreach ($tagCloud as $tagV) {
             // font size in pixels
-            $tagV->Amount= 10 + round(32*$tagV->Amount / $maxCount);
+            $tagV->Amount = 10 + \round(32 * $tagV->Amount / $maxCount);
         }
 
         $this->TagCloud = $tagCloud;
-        return array();
     }
 }

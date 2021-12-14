@@ -1,63 +1,51 @@
-<?php
-/**
- * Created by PhpStorm.
- * User: gordon
- * Date: 11/4/2561
- * Time: 16:22 น.
- */
+<?php declare(strict_types = 1);
 
 namespace Suilven\Flickr\Task;
 
-use Samwilson\PhpFlickr\PhotosetsApi;
-use Samwilson\PhpFlickr\PhpFlickr;
-use SilverStripe\Assets\Folder;
-use SilverStripe\Assets\Image;
-use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\BuildTask;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DB;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
-use Suilven\Flickr\Helper\FlickrHelper;
 use Suilven\Flickr\Helper\FlickrSetHelper;
-use Suilven\Flickr\Model\Flickr\FlickrPhoto;
-use Suilven\Flickr\Model\Flickr\FlickrSet;
-use Suilven\Flickr\Model\Site\FlickrSetPage;
 
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
 
+/**
+ * Class ImportSetTask
+ *
+ * @package Suilven\Flickr\Task
+ */
 class ImportSetTask extends BuildTask
 {
 
+    /** @var string */
     protected $title = 'Import a Flickr set';
 
+    /** @var string */
     protected $description = 'Import a flickr set';
 
-    private static $segment = 'import-flickr-set';
-
+    /** @var bool */
     protected $enabled = true;
 
+    /** @var string */
+    private static $segment = 'import-flickr-set';
 
+
+    /**
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse | void
+     */
     public function run($request)
     {
         // check this script is being run by admin
-        $canAccess = (Director::isDev() || Director::is_cli() || Permission::check("ADMIN"));
+        $canAccess = (Director::isDev() || Director::is_cli() || (bool) Permission::check("ADMIN"));
         if (!$canAccess) {
-            return Security::permissionFailure($this);
+            return Security::permissionFailure();
         }
 
-        $flickrSetID = $_GET['id'];
+        $flickrSetID = $request->getVar('id');
 
         $flickrSetHelper = new FlickrSetHelper();
         $flickrSetHelper->importSet($flickrSetID);
     }
-
-
-
-
-
-
-
-
 }

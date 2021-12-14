@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
 use SilverStripe\ORM\DataObject;
@@ -6,18 +7,31 @@ use Suilven\Flickr\Model\Flickr\FlickrBucket;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
 
+/**
+ * Class FlickrBucketHelper
+ *
+ * @package Suilven\Flickr\Helper
+ */
 class FlickrBucketHelper extends FlickrHelper
 {
-    // @todo DOCS
-    public function createBucket($flickrSetID, $flickrPhotoIDs)
+    /**
+     * @param array<int> $flickrPhotoIDs
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function createBucket(int $flickrSetID, array $flickrPhotoIDs): FlickrBucket
     {
         // @todo Check if the ORM does in
-        $flickrPhotos = FlickrPhoto::get()->where('"ID" in ('.$flickrPhotoIDs.')');
+       // $flickrPhotos = FlickrPhoto::get()->where('"ID" in ('.$flickrPhotoIDs.')');
+        $flickrPhotos = FlickrPhoto::get()->filter('ID', 'in', $flickrPhotoIDs);
         $flickrSet = DataObject::get_by_id(FlickrSet::class, $flickrSetID);
+
+        /** @var \Suilven\Flickr\Model\Flickr\FlickrBucket $bucket */
         $bucket = new FlickrBucket();
         $bucket->write();
 
+        /** @var \SilverStripe\ORM\ManyManyList $bucketPhotos */
         $bucketPhotos = $bucket->FlickrPhotos();
         foreach ($flickrPhotos as $fp) {
             $bucketPhotos->add($fp);
@@ -27,5 +41,4 @@ class FlickrBucketHelper extends FlickrHelper
 
         return $bucket;
     }
-
 }

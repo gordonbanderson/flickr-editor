@@ -1,40 +1,40 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Flickr;
 
-use SilverStripe\Assets\Image;
 use SilverStripe\AssetAdmin\Forms\UploadField;
-use Suilven\Flickr\FlickrSetPage;
+use SilverStripe\Assets\Image;
+use Suilven\Flickr\Model\Site\FlickrSetPage;
 
 /**
  * Defines the GalleryFolder page type
+ *
+ * @property int $CoverPhotoID
+ * @method \SilverStripe\Assets\Image CoverPhoto()
  */
 class FlickrFolder extends \Page
 {
+    /** @var string */
     private static $table_name = 'FlickrFolder';
 
+    /** @var array<string> */
     private static $allowed_children = [
         FlickrSetPage::class,
-        FlickrFolder::class
+        FlickrFolder::class,
     ];
 
+    /** @var array<string,string> */
     private static $has_one = [
         'CoverPhoto' => Image::class,
      ];
 
 
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
         $fields->addFieldToTab("Root.Content.CoverPhoto", new UploadField('CoverPhoto'));
-
-
         $fields->renameField("Content", "Brief Description");
 
-
-        /*
-        $fields->addFieldToTab('Root.Content.Main', new CalendarDateField('Date'), 'Content');
-        $fields->addFieldToTab('Root.Content.Main', new TextField('Author'), 'Content');
-        */
         return $fields;
     }
 }

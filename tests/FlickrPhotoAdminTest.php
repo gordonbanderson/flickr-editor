@@ -1,4 +1,7 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrPhotoAdminTest extends SapphireTest {
+namespace Suilven\Flickr\Tests;
+
+class FlickrPhotoAdminTest extends \SilverStripe\Dev\SapphireTest
+{
 }

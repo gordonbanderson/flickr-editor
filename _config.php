@@ -9,6 +9,7 @@
 use SilverStripe\View\Parsers\ShortcodeParser;
 
 ShortcodeParser::get('default')->register('FlickrPhoto',array('Suilven\Flickr\ShortCode\FlickrPhotoShortCodeHandler','parse_flickr'));
+ShortcodeParser::get('default')->register('FlickrPhotoSequence',array('Suilven\Flickr\ShortCode\FlickrPhotoSequenceShortCodeHandler','parse_flickr'));
 
 
 

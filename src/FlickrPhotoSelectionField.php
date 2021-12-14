@@ -1,8 +1,15 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr;
 
-use SilverStripe\View\Requirements;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\View\Requirements;
+
+// These are for the FieldHolder method
+// @phpcs:disable SlevomatCodingStandard.Functions.UnusedParameter.UnusedParameter
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+// @phpcs:disable SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
+// @phpcs:disable SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint.DisallowedMixedTypeHint
 
 /**
  * Text input field.
@@ -13,25 +20,32 @@ use SilverStripe\Forms\HiddenField;
 class FlickrPhotoSelectionField extends HiddenField
 {
 
-    /**
-     * @var int
-     */
-    protected $maxLength;
+    /** @var int */
+    protected $maxLength = 30;
 
+    /** @var string */
     protected $flickrTitle;
+
+    /** @var string */
     protected $flickrID;
 
-    /**
-     * Returns an input field, class="text" and type="text" with an optional maxlength
-     */
-    public function __construct($name, $title = null, $flickrPhoto = '', $maxLength = null, $form = null)
-    {
-        $this->maxLength = $maxLength;
+    /** @var string */
+    protected $mediumURL;
 
+    /**
+     * FlickrPhotoSelectionField constructor.
+     *
+     * @param string $name The internal field name, passed to forms.
+     * @param string|\SilverStripe\View\ViewableData|null $title The human-readable field label.
+     * @param mixed $value A FlickrPhoto, if one has previously been chosen
+     */
+    public function __construct(string $name, $title = null, $value = null)
+    {
         parent::setTemplate('FLickrPhotoSelectionField');
 
-        $value = '';
-        if ($flickrPhoto) {
+        if (!\is_null($value)) {
+            /** @var \Suilven\Flickr\Model\Flickr\FlickrPhoto $flickrPhoto */
+            $flickrPhoto = $value;
             $value = $flickrPhoto->ID;
             $this->flickrTitle = $flickrPhoto->Title;
             $this->flickrID = $flickrPhoto->FlickrID;
@@ -40,66 +54,75 @@ class FlickrPhotoSelectionField extends HiddenField
 
         $this->addExtraClass('flickrPhotoSelectionField');
 
-
-        parent::__construct($name, $title, $value, $form);
+        // @TODO is this a bug in the SilverStripe phpdoc?
+        // @phpstan-ignore-next-line
+        parent::__construct($name, $title, $value);
     }
 
-    public function getFlickrTitle()
+
+    public function getFlickrTitle(): string
     {
         return $this->flickrTitle;
     }
 
-    public function getFlickrID()
+
+    public function getFlickrID(): string
     {
         return $this->flickrID;
     }
 
-    public function getMediumURL()
+
+    public function getMediumURL(): string
     {
         return $this->mediumURL;
     }
 
-    /**
-     * @param int $length
-     */
-    public function setMaxLength($length)
+
+    /** @return $this */
+    public function setMaxLength(int $length)
     {
         $this->maxLength = $length;
 
         return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getMaxLength()
+
+    public function getMaxLength(): int
     {
         return $this->maxLength;
     }
 
-    public function getAttributes()
+
+    /** @return array<int|string, mixed> */
+    public function getAttributes(): array
     {
-        return array_merge(
+        return \array_merge(
             parent::getAttributes(),
-            array(
+            [
                 'maxlength' => $this->getMaxLength(),
-                'size' => ($this->getMaxLength()) ? min($this->getMaxLength(), 30) : null
-            )
+                // @TODO is this correct logic?
+                'size' => ($this->getMaxLength() === 0) ? \min($this->getMaxLength(), 30) : null,
+            ]
         );
     }
 
+
+    /** @return \SilverStripe\ORM\FieldType\DBField|\SilverStripe\ORM\FieldType\DBHTMLText */
     public function InternallyLabelledField()
     {
-        if (!$this->value) {
+        if (\is_null($this->value)) {
             $this->value = $this->Title();
         }
+
         return $this->Field();
     }
 
 
-    public function FieldHolder($properties = array())
+    /** @inheritdoc */
+    public function FieldHolder($properties = []): string
     {
-        Requirements::javascript('weboftalent/flickr:javascript/flickredit.js');
+        Requirements::javascript('weboftalent/flickr:dist/admin/client/js/flickredit.js');
+
         return parent::FieldHolder();
     }
 }

@@ -1,69 +1,74 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Flickr;
 
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 /**
-* Only show a page with login when not logged in
-*/
+ * Only show a page with login when not logged in
+ *
+ * @property string $Value
+ * @property string $FlickrID
+ * @property string $RawValue
+ * @method \SilverStripe\ORM\ManyManyList|array<\Suilven\Flickr\Model\Flickr\FlickrBucket> FlickrBuckets()
+ * @method \SilverStripe\ORM\ManyManyList|array<\FlickrPhoto> FlickrPhotos()
+ */
 class FlickrTag extends DataObject
 {
+    /** @var string */
     private static $table_name = 'FlickrTag';
 
-    private static $db = array(
+    /** @var array<string,string> */
+    private static $db = [
         'Value' => 'Varchar',
         'FlickrID' => 'Varchar',
-        'RawValue' => 'HTMLText'
-    );
+        'RawValue' => 'HTMLText',
+    ];
 
-    private static $display_fields = array(
-        'RawValue'
-    );
+    /** @var array<string> */
+    private static $display_fields = [
+        'RawValue',
+    ];
 
+    /** @var array<string> */
+    private static $searchable_fields = [
+        'RawValue',
+    ];
 
-    private static $searchable_fields = array(
-        'RawValue'
-    );
-
-    private static $summary_fields = array(
+    /** @var array<string> */
+    private static $summary_fields = [
         'Value',
         'RawValue',
-        'FlickrID'
-    );
+        'FlickrID',
+    ];
 
-    private static $belongs_many_many = array(
-        'FlickrPhotos' => 'FlickrPhoto'
-    );
+    /** @var array<string,string> */
+    private static $belongs_many_many = [
+        'FlickrPhotos' => 'FlickrPhoto',
+    ];
 
-    private static $many_many = array('FlickrBuckets' => FlickrBucket::class);
+    /** @var array<string,string> */
+    private static $many_many = ['FlickrBuckets' => FlickrBucket::class];
 
-
-
-    public function NormaliseCount($c)
-    {
-        return log(doubleval($c), 2);
-    }
-
-
-    public function getCMSFields()
+    public function getCMSFields(): FieldList
     {
         $fields = new FieldList();
         $fields->push(new TextField('Value'));
         $fields->push(new TextField('RawValue'));
+
         return $fields;
     }
 
 
-    // this is required so the grid field autocompleter returns readable entries after searching
-    public function Title()
+    /**
+     * This is reqired for the GridFieldAutoCompleter to show tag names correctly in the CMS
+     */
+    public function Title(): string
     {
         return $this->RawValue;
     }
-
-
-
 }

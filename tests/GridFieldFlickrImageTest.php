@@ -1,8 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
 
-class GridFieldFlickrImageTest extends SapphireTest {
-	public function testGetHTMLFragments() {
-		$this->markTestSkipped('TODO');
-	}
+namespace Suilven\Flickr\Tests;
 
+class GridFieldFlickrImageTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testGetHTMLFragments(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

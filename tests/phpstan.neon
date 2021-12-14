@@ -1,0 +1,7 @@
+parameters:
+    # Issues with iterations and any DataObject
+    checkMissingIterableValueType: false
+    bootstrapFiles:
+      - ../app/src/Page.php
+      - ../app/src/PageController.php
+

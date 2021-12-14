@@ -1,23 +1,37 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Site;
 
-use SilverStripe\ORM\FieldType\DBBoolean;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Assets\Image;
-use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter;
+use SilverStripe\Forms\GridField\GridFieldConfig_RelationEditor;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\ORM\FieldType\DBBoolean;
 use Suilven\Flickr\Model\Flickr\FlickrSet;
 use UndefinedOffset\SortableGridField\Forms\GridFieldSortableRows;
 
+// @phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
+/**
+ * Class \Suilven\Flickr\Model\Site\FlickrSetPage
+ *
+ * @property int $TimeShiftHours
+ * @property string $Description
+ * @property bool $IsDirty
+ * @property string $FirstPictureTakenAt
+ * @property int $FlickrSetForPageID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrSet FlickrSetForPage()
+ */
 class FlickrSetPage extends \Page
 {
+    /** @var string */
     private static $table_name = 'FlickrSetPage';
 
+    /** @var array<string> */
     private static $has_one = [
-        'FlickrSetForPage' => FlickrSet::class
+        'FlickrSetForPage' => FlickrSet::class,
     ];
 
+    /** @var array<string,string> */
     private static $db = [
         'TimeShiftHours' => 'Int',
         'Description' => 'HTMLText',
@@ -25,10 +39,16 @@ class FlickrSetPage extends \Page
         'IsDirty' => DBBoolean::class,
 
         //FIXME This is duplicated data, but problems wtih the join for ordering flickr set pages via flickr sets
-        'FirstPictureTakenAt' => 'Datetime'
+        'FirstPictureTakenAt' => 'Datetime',
     ];
 
-    public function getPortletTitle()
+    public function getFlickrImageCollectionForPage(): FlickrSet
+    {
+        return $this->FlickrSetForPage();
+    }
+
+
+    public function getPortletTitle(): string
     {
         return $this->Title;
     }
@@ -36,119 +56,73 @@ class FlickrSetPage extends \Page
 
     /**
      * An accessor method for an image for a portlet
+     *
      * @example
      * <code>
      *  return $this->NewsItemImage;
      * </code>
-     *
-     * @return string
      */
-    public function getPortletImage()
+    public function getPortletImage(): string
     {
-        return $this->FlickrSetForPage()->PrimaryFlickrPhoto();
+        return $this->FlickrSetForPage()->PrimaryFlickrPhoto()->ThumbnailURL;
     }
 
 
     /**
      * An accessor for text associated with the portlet
+     *
      * @example
      * <code>
      * return $this->Summary
      * </code>
-     *
-     * @return string
      */
-    public function getPortletCaption()
+    public function getPortletCaption(): string
     {
-        return $this->Descripton;
+        // this looks like a PHPStan bug
+        // @phpstan-ignore-next-line
+        return $this->FlickrSetForPage()->Descripton;
     }
 
 
-
-
-
-    /*
-
-update FlickrSetPage set Description = FlickrSet.Description where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID;
-
-update FlickrSetPage set Description = 'wibble';
-update FlickrSetPage set Description = (select Description from FlickrSet where FlickrSet.ID = FlickrSetPage.FlickrSetForPageID);
-
- 'filterable_many_many' => '*',
-    'extra_many_many' => array(
-        'documents' => 'select (' . SphinxSearch::unsignedcrc('SiteTree') . '<<32) | PageID AS id, DocumentID AS Documents FROM Page_Documents')
-
-    */
-
-
-    public function ColumnLayout()
+    public function ColumnLayout(): string
     {
         return 'layout1col';
     }
 
-    /* Get the main image of the set
-    FIXME: Use flickr option, and make more efficient
-    */
-    public function MainImage()
+/*
+    public function MainImage(): ?Image
     {
-        $resultID = $this->AllChildren()->First()->FlickrPhotoForPageID;
-        $result = DataObject::get_by_id('FlickrPhoto', $resultID);
-        return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
+        $resultID = $this->AllChildren()->first()->FlickrPhotoForPageID;
+        $result = DataObject::get_by_id(FlickrPhoto::class, $resultID);
+
+        // @todo this does not exist - return DataObject::get_by_id(Image::class, $result->LocalCopyOfImageID);
     }
+*/
 
-
-
-
-
-
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
 
-
-        // this is what shows int he tab with the table in it
-
-        /*
-        $tablefield = new HasOneComplexTableField(
-            $this,
-            'FlickrSetForPage',
-            'FlickrSet',
-            array(
-                'Title' => 'Title'
-            ),
-            'getCMSFields_forPopup'
+        $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(
+            new GridFieldSortableRows('SortOrder')
         );
 
-        $tablefield->setParentClass('FLickrSetPage');
-        */
+        /** @var \SilverStripe\Forms\GridField\GridFieldAddExistingAutocompleter $autocompleter */
+        $autocompleter = $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class);
+        $autocompleter->setSearchFields(['URL', 'Title', 'Description']);
 
-        $gridConfig = GridFieldConfig_RelationEditor::create()->addComponent(new GridFieldSortableRows('SortOrder'));
-        $gridConfig->getComponentByType(GridFieldAddExistingAutocompleter::class)->setSearchFields(array( 'URL', 'Title', 'Description' ));
-        //$gridField = new GridField( "Links", "List of Links:", $this->Links()->sort( 'SortOrder' ), $gridConfig );
-        //$fields->addFieldToTab( "Root.Links", $gridField );
+        $fields->addFieldToTab('Root.Main', new HTMLEditorField(
+            'Description',
+            'Description'
+        ), 'Content');
 
-
-        $fields->addFieldToTab('Root.Main', new HTMLEditorField('Description', 'Description'), 'Content');
-        //fields->addFieldToTab( 'Root.FlickrSet', $tablefield );
-
-
-        //$dropdown = new DropdownField('FlickrSetFolderID', 'Flickr Set Folder', FlickrSetFolder::get()->map('ID','Title');
-        /*
-        $dropdown->setEmptyString('-- Please Select One --');
-        $fields->addFieldToTab('Root.ParentGallery',
-            $dropdown
-        );
-        */
         return $fields;
     }
 
 
-
-
-
-
-
-    public function onBeforeWrite()
+    // @todo This method refers to ParentFolderID which does not exist.  Is this method still needed?
+    /*
+    public function onBeforeWrite(): void
     {
         parent::onBeforeWrite();
 
@@ -157,13 +131,7 @@ update FlickrSetPage set Description = (select Description from FlickrSet where 
             $this->ParentID = $parentFolderID;
         }
 
-        // FIXME
-        $this->Dirty = true;
+        $this->IsDirty = true;
     }
-
-
-    public function BasicMap()
-    {
-        return $this->FlickrSetForPage()->BasicMap();
-    }
+    */
 }

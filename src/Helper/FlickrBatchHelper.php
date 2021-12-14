@@ -1,13 +1,23 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Helper;
 
-use SilverStripe\ORM\DataList;
+use Suilven\Flickr\Model\Flickr\FlickrSet;
 use Suilven\Flickr\Model\Flickr\FlickrTag;
 
 class FlickrBatchHelper extends FlickrHelper
 {
-    public function batchUpdateSet($flickrSet, $batchTitle, $batchDescription, $batchTags)
-    {
+    /**
+     * @param array<string> $batchTags
+     * @return int the number of photos updated
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function batchUpdateSet(
+        FlickrSet $flickrSet,
+        string $batchTitle,
+        string $batchDescription,
+        array $batchTags
+    ): int {
         //FIXME authentication
 
 
@@ -16,14 +26,16 @@ class FlickrBatchHelper extends FlickrHelper
         // $batchDescription = $batchDescription ."\n\n".$flickrSet->ImageFooter;
         // $batchDescription = $batchDescription ."\n\n".$this->SiteConfig()->ImageFooter;
 
-        $tags = array();
+        $tags = [];
         foreach ($batchTags as $batchTag) {
-            $batchTag = trim($batchTag);
-            $lowerCaseTag = strtolower($batchTag);
+            $batchTag = \trim($batchTag);
+            $lowerCaseTag = \strtolower($batchTag);
             //$possibleTags = DataList::create('FlickrTag')->where("Value='".$lowerCaseTag."'")
             $possibleTags = FlickrTag::get()->filter(['Value' => $lowerCaseTag]);
 
-            if ($possibleTags->count() == 0) {
+            /** @var \Suilven\Flickr\Model\Flickr\FlickrTag $tag */
+            $tag = null;
+            if ($possibleTags->count() === 0) {
                 $tag = new FlickrTag();
                 $tag->Value = $lowerCaseTag;
                 $tag->RawValue = $batchTag;
@@ -32,7 +44,8 @@ class FlickrBatchHelper extends FlickrHelper
                 $tag = $possibleTags->first();
             }
 
-            array_push($tags, $tag->ID);
+            // @phpstan-ignore-next-line
+            \array_push($tags, $tag->ID);
         }
 
         foreach ($flickrPhotos as $fp) {
@@ -42,11 +55,6 @@ class FlickrBatchHelper extends FlickrHelper
             $fp->write();
         }
 
-        $result = array(
-            'number_of_images_updated' => $flickrPhotos->count()
-        );
-
-        return $result;
+        return $flickrPhotos->count();
     }
-
 }

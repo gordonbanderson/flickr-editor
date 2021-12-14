@@ -1,8 +1,11 @@
-<?php
+<?php declare(strict_types = 1);
 
-class FlickrExifTest extends SapphireTest {
-	public function testGetCMSFields_forPopup() {
-		$this->markTestSkipped('TODO');
-	}
+namespace Suilven\Flickr\Tests;
 
+class FlickrExifTest extends \SilverStripe\Dev\SapphireTest
+{
+    public function testGetCMSFieldsForPopup(): void
+    {
+        $this->markTestSkipped('TODO');
+    }
 }

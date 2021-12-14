@@ -1,37 +1,53 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Model\Site;
 
-use SilverStripe\ORM\FieldType\DBBoolean;
 use SilverStripe\Forms\CheckboxField;
-use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\FieldType\DBBoolean;
 use Suilven\Flickr\FlickrPhotoSelectionField;
 use Suilven\Flickr\Model\Flickr\FlickrPhoto;
 
 /**
  * Defines the FlickrSetFolder page type
+ *
+ * @property bool $PromoteToHomePage
+ * @property int $MainFlickrPhotoID
+ * @method \Suilven\Flickr\Model\Flickr\FlickrPhoto MainFlickrPhoto()
  */
 class FlickrSetFolder extends \Page
 {
+    /** @var string */
     private static $table_name = 'FlickrSetFolder';
 
+    /** @var array<string> */
     private static $allowed_children = [
         FlickrSetPage::class,
-        FlickrSetFolder::class
+        FlickrSetFolder::class,
+        FlickrSearchPage::class,
     ];
 
-    private static $db = array(
-    'PromoteToHomePage' => DBBoolean::class
-     );
+    /** @var array<string> */
+    private static $db = [
+    'PromoteToHomePage' => DBBoolean::class,
+     ];
 
+    /** @var array<string> */
     private static $has_one = [
-        'MainFlickrPhoto' => FlickrPhoto::class
+        'MainFlickrPhoto' => FlickrPhoto::class,
     ];
 
 
-    public function getCMSFields()
+    public function getCMSFields(): \SilverStripe\Forms\FieldList
     {
         $fields = parent::getCMSFields();
-        $fields->addFieldToTab('Root.CoverPhoto', new FlickrPhotoSelectionField('MainFlickrPhotoID', 'Cover Photo', $this->MainFlickrPhoto()));
+        $fields->addFieldToTab(
+            'Root.CoverPhoto',
+            new FlickrPhotoSelectionField(
+                'MainFlickrPhotoID',
+                'Cover Photo',
+                $this->MainFlickrPhoto()
+            )
+        );
 
 
         $fields->renameField("Content", "Brief Description");
@@ -41,7 +57,7 @@ class FlickrSetFolder extends \Page
     }
 
 
-    public function getPortletTitle()
+    public function getPortletTitle(): string
     {
         return $this->Title;
     }
@@ -49,29 +65,27 @@ class FlickrSetFolder extends \Page
 
     /**
      * An accessor method for an image for a portlet
+     *
      * @example
      * <code>
      *  return $this->NewsItemImage;
      * </code>
-     *
-     * @return string
      */
-    public function getPortletImage()
+    public function getPortletImage(): string
     {
-        return $this->MainFlickrPhoto();
+        return $this->MainFlickrPhoto()->ThumbnailURL;
     }
 
 
     /**
      * An accessor for text associated with the portlet
+     *
      * @example
      * <code>
      * return $this->Summary
      * </code>
-     *
-     * @return string
      */
-    public function getPortletCaption()
+    public function getPortletCaption(): string
     {
         return $this->Title;
     }

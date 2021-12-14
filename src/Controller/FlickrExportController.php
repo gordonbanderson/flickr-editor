@@ -1,26 +1,27 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Suilven\Flickr\Controller;
 
 use SilverStripe\ORM\DataList;
 
+/**
+ * Class \Suilven\Flickr\Controller\FlickrExportController
+ */
 class FlickrExportController extends \PageController
 {
-    private static $allowed_actions = array(
-        'toJson'
-    );
+    /** @var array<string> */
+    private static $allowed_actions = [
+        'toJson',
+    ];
 
-    public function index()
-    {
-        return 'wibble';
-    }
 
-    public function toJson()
+    public function toJson(): void
     {
         $flickrSetID = $this->request->param('ID');
         $flickrSet = DataList::create('FlickrSet')->where('FlickrID = '.$flickrSetID)->first();
-        $images = array();
+        $images = [];
         foreach ($flickrSet->FlickrPhotos() as $fp) {
-            $image = array();
+            $image = [];
 
             $image['Lat'] = $fp->Lat;
             $image['Lon'] = $fp->Lon;
@@ -31,9 +32,9 @@ class FlickrExportController extends \PageController
             $image['LargeURL'] = $fp-> LargeURL;
             $image['Title'] = $fp-> Title;
             $image['Description'] = $fp-> Title;
-            array_push($images, $image);
+            \array_push($images, $image);
         }
 
-        file_put_contents("/tmp/output.json", stripslashes(json_encode($images)));
+        \file_put_contents("/tmp/output.json", \stripslashes(\json_encode($images)));
     }
 }
